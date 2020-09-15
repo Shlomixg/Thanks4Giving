@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Thanks4Giving</string>
+    <item name="open" type="string">Open</item>
+    <item name="close" type="string">Close</item>
 </resources>
