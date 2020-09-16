@@ -4,8 +4,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -18,10 +20,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     ImageButton watch;
     private PostClickListener listener;
 
-    public void setListener(PostClickListener listener){this.listener=listener;}
+    public void setListener(PostClickListener listener) {
+        this.listener = listener;
+    }
 
-    interface PostClickListener{
+    interface PostClickListener {
         void onClickListener(int pos, View v);
+
         void onLongClickListener(int pos, View v);
     }
 
@@ -70,16 +75,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener!=null)
-                        listener.onClickListener(getAdapterPosition(),v);
+                    if (listener != null)
+                        listener.onClickListener(getAdapterPosition(), v);
                 }
             });
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(listener!=null)
-                        listener.onLongClickListener(getAdapterPosition(),v);
+                    if (listener != null)
+                        listener.onLongClickListener(getAdapterPosition(), v);
                     return false;
                 }
             });

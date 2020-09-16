@@ -2,27 +2,36 @@ package com.tsk.thanks4giving;
 
 public class Comment {
 
-    private String name;
-    private String comment;
+    private int id;
+    private int userID;
+    private String text;
 
-    public Comment(String name, String comment) {
-        this.name = name;
-        this.comment = comment;
+    public Comment(int userID, String text) {
+        this.userID = userID;
+        this.text = text;
     }
 
-    public String getName() {
-        return name;
+    /* Getters */
+
+    public int getID() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getUserID() {
+        return userID;
     }
 
-    public String getComment() {
-        return comment;
+    public String getText() {
+        return text;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    /* Setters */
+
+    public void setUserID(int userID) {
+        this.userID = userID;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
