@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:background="@color/colorAccent"
         android:orientation="vertical">
 
         <ImageView
@@ -41,29 +42,29 @@
                 android:layout_gravity="center"
                 android:layout_margin="20dp" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/like_img"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:src="@drawable/ic_thumb_up" />
+                android:background="@drawable/ic_thumb_up" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/comment_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:src="@drawable/ic_chat_bubble" />
+                android:background="@drawable/ic_chat_bubble" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/watch_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:src="@drawable/ic_remove_red_eye" />
+                android:background="@drawable/ic_remove_red_eye" />
 
         </LinearLayout>
 

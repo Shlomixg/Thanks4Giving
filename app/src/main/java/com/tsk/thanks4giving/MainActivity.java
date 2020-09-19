@@ -2,22 +2,17 @@ package com.tsk.thanks4giving;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,10 +29,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        for (int i = 0; i < 10; i++)
+            postList.add(new Post(null, null, 222, null, null));
+
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
         recycler = findViewById(R.id.recycler);
+        adapter = new PostAdapter(postList);
 
         setSupportActionBar(toolbar);
 
@@ -66,41 +65,39 @@ public class MainActivity extends AppCompatActivity {
                 //adapter.notifyDataSetChanged();
                 return true;
             }
-
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
+                /*final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
                 dialog.setMessage("Delete this song from the list?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 postList.remove(viewHolder.getAdapterPosition());
                                 adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                                //TODO writeToFile();
                             }
                         }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     }
-                }).setCancelable(false).create().show();
+                }).setCancelable(false).create().show();*/
             }
         };
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recycler);
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-
+                //TODO open post in fragment with bigger picture and show all comments
             }
-
             @Override
             public void onLongClickListener(int pos, View v) {
-
+            //TODO NOTHING
             }
         });
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recycler);
+        recycler.setAdapter(adapter);
     }
 
     @Override
