@@ -18,8 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
         for (int i = 0; i < 10; i++) {
-            Post post = new Post(path, path, i+100, null, null);
+            Post post = new Post(path, path, i + 100, null, null);
             postList.add(post);
         }
 
@@ -54,14 +56,13 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PostAdapter(postList);
         adapter.notifyDataSetChanged();
 
-
-        //TODO find out why app closes with NO ERROR!!!!!
+        // TODO: find out why app closes with NO ERROR!!!
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.drawer,new newPostFragment(),NEW_POST_FRAG).addToBackStack(null).commit();
+                transaction.add(R.id.drawer, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
             }
         });
 
@@ -88,10 +89,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 adapter.onItemMove(postList, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                //TODO writeToFile();
+                // TODO: writeToFile();
                 //adapter.notifyDataSetChanged();
                 return true;
             }
+
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
                 /*final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
@@ -114,11 +116,12 @@ public class MainActivity extends AppCompatActivity {
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-                //TODO open post in fragment with bigger picture and show all comments
+                // TODO: open post in fragment with bigger picture and show all comments
             }
+
             @Override
             public void onLongClickListener(int pos, View v) {
-            //TODO NOTHING
+                // TODO: NOTHING
             }
         });
 
