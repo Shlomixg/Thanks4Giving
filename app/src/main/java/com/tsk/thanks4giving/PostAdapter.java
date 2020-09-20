@@ -1,13 +1,14 @@
 package com.tsk.thanks4giving;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -75,9 +76,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     @Override
     public void onBindViewHolder(@NonNull PostCardHolder holder, int position) {
         Post post = list.get(position);
-        holder.postImage.setImageResource(R.drawable.background_round_padded);
-        holder.profileImage.setImageResource(R.drawable.ic_launcher_foreground);
-        holder.like.setText(post.getLikes());
+        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getPostImage())).centerCrop().into(holder.postImage);
+        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getProfileImage())).centerCrop().into(holder.profileImage);
+        holder.like.setText("" + post.getLikes());
         /*holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

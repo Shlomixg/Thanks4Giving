@@ -48,7 +48,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:background="@drawable/ic_thumb_up" />
+                android:background="@drawable/ic_thumb_up"/>
 
             <Button
                 android:id="@+id/comment_btn"

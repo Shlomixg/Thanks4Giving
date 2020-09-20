@@ -6,17 +6,17 @@ public class Profile {
 
     private String firstName;
     private String lastName;
-    private String email;
+    //private String email;
     private String profileImage;
     private int age;
     private String address;
     private ArrayList<Post> postWatched;
     private ArrayList<Post> postPosted;
 
-    public Profile(String firstName, String lastName, String email, String profileImage, int age, String address, ArrayList<Post> postWatched, ArrayList<Post> postPosted) {
+    public Profile(String firstName, String lastName /*,String email*/, String profileImage, int age, String address, ArrayList<Post> postWatched, ArrayList<Post> postPosted) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
+        //this.email = email;
         this.profileImage = profileImage;
         this.age = age;
         this.address = address;
@@ -34,9 +34,9 @@ public class Profile {
         return lastName;
     }
 
-    public String getEmail() {
+   /* public String getEmail() {
         return email;
-    }
+    }*/
 
     public String getProfileImage() {
         return profileImage;
@@ -68,9 +68,9 @@ public class Profile {
         this.lastName = lastName;
     }
 
-    public void setEmail(String email) {
+   /* public void setEmail(String email) {
         this.email = email;
-    }
+    }*/
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;

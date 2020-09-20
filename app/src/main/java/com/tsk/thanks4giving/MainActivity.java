@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -29,14 +30,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        for (int i = 0; i < 10; i++)
-            postList.add(new Post(null, null, 222, null, null));
+        String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
+        for (int i = 0; i < 10; i++) {
+            Post post = new Post(path, path, i+100, null, null);
+            postList.add(post);
+        }
 
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
         recycler = findViewById(R.id.recycler);
+        recycler.setHasFixedSize(true);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PostAdapter(postList);
+        adapter.notifyDataSetChanged();
 
         setSupportActionBar(toolbar);
 
