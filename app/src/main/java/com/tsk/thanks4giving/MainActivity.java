@@ -6,21 +6,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    final String NEW_POST_FRAG = "new post fragment";
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
+    FloatingActionButton addBtn;
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
@@ -40,10 +48,22 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
         recycler = findViewById(R.id.recycler);
+        addBtn = findViewById(R.id.add_btn);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PostAdapter(postList);
         adapter.notifyDataSetChanged();
+
+
+        //TODO find out why app closes with NO ERROR!!!!!
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.add(R.id.drawer,new newPostFragment(),NEW_POST_FRAG).addToBackStack(null).commit();
+            }
+        });
 
         setSupportActionBar(toolbar);
 
