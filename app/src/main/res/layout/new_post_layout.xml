@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:padding="5dp"
     android:background="@color/colorAccent">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:gravity="center"
         android:text="Post new item"
         android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,9 +27,11 @@
         android:background="@drawable/bg"
         android:gravity="center"
         android:hint="Condition"
+        android:textColorHint="@color/colorWhite"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@color/colorWhite"
         android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
@@ -38,9 +42,11 @@
         android:background="@drawable/bg"
         android:gravity="center"
         android:hint="Address"
+        android:textColorHint="@color/colorWhite"
         android:textColor="@color/colorWhite"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/condition_editText" />
 
     <Button
@@ -55,6 +61,7 @@
         android:textColor="@color/colorWhite"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/address_editText"/>
 
     <ImageView
@@ -74,36 +81,31 @@
         android:id="@+id/picBtnsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/newPostImage"
-        >
+        app:layout_constraintTop_toBottomOf="@id/newPostImage">
 
         <Button
             android:id="@+id/pic_btn"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="3dp"
             android:padding="3dp"
             android:background="@drawable/bg"
             android:text="Take Picture"
-            android:textColor="@color/colorWhite"
-            />
+            android:textColor="@color/colorWhite"/>
 
         <Button
             android:id="@+id/gallery_btn"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="3dp"
             android:padding="3dp"
             android:background="@drawable/bg"
             android:text="Picture from gallery"
-            android:textColor="@color/colorWhite"
-            />
+            android:textColor="@color/colorWhite"/>
 
     </LinearLayout>
 

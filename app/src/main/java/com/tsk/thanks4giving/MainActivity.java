@@ -6,27 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     final String NEW_POST_FRAG = "new post fragment";
+    final String POST_FRAG = "post fragment";
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -41,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             Post post = new Post(path, path, i + 100, null, null);
             postList.add(post);
         }
@@ -56,13 +52,14 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PostAdapter(postList);
         adapter.notifyDataSetChanged();
 
-        // TODO: find out why app closes with NO ERROR!!!
+        //TODO: add buttons to toolbar (new post, my watched posts, my profile?)
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: make the fragments start below toolbar and go down to the bottom
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.drawer, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
+                transaction.replace(R.id.fragment_layout, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
             }
         });
 
@@ -85,18 +82,17 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+/*        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 adapter.onItemMove(postList, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                // TODO: writeToFile();
                 //adapter.notifyDataSetChanged();
                 return true;
             }
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                /*final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
                 dialog.setMessage("Delete this song from the list?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
@@ -109,25 +105,29 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         adapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     }
-                }).setCancelable(false).create().show();*/
+                }).setCancelable(false).create().show();
             }
         };
+
+         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recycler);*/
 
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-                // TODO: open post in fragment with bigger picture and show all comments
+                //TODO: make the fragments start below toolbar and go down to the bottom
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_layout, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
-
             @Override
             public void onLongClickListener(int pos, View v) {
                 // TODO: NOTHING
             }
         });
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recycler);
         recycler.setAdapter(adapter);
+
     }
 
     @Override
