@@ -50,15 +50,6 @@
             android:layout_margin="5dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
-            android:layout_gravity="end|top"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_baseline_add_24"
-            android:id="@+id/add_btn"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -11,10 +11,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
-    FloatingActionButton addBtn;
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
@@ -46,22 +45,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
         recycler = findViewById(R.id.recycler);
-        addBtn = findViewById(R.id.add_btn);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new PostAdapter(postList);
         adapter.notifyDataSetChanged();
 
-        //TODO: add buttons to toolbar (new post, my watched posts, my profile?)
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: make the fragments start below toolbar and go down to the bottom
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_layout, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
-            }
-        });
+        //TODO: make the fragments start below toolbar and go down to the bottom
 
         setSupportActionBar(toolbar);
 
@@ -85,14 +74,12 @@ public class MainActivity extends AppCompatActivity {
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-                //TODO: make the fragments start below toolbar and go down to the bottom
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_layout, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
             @Override
             public void onLongClickListener(int pos, View v) {
-                // TODO: NOTHING
             }
         });
 
@@ -101,10 +88,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu,menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             drawerLayout.openDrawer(GravityCompat.START);
             return true;
+        }
+        switch (item.getItemId())
+        {
+            case R.id.new_post:
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_layout, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
+                break;
+            case R.id.my_profile:
+                //TODO open profile in fragment
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
