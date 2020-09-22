@@ -82,36 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-/*        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                adapter.onItemMove(postList, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                //adapter.notifyDataSetChanged();
-                return true;
-            }
-
-            @Override
-            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-                final AlertDialog.Builder dialog = new AlertDialog.Builder(viewHolder.itemView.getContext());
-                dialog.setMessage("Delete this song from the list?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                postList.remove(viewHolder.getAdapterPosition());
-                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                            }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                    }
-                }).setCancelable(false).create().show();
-            }
-        };
-
-         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recycler);*/
-
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
