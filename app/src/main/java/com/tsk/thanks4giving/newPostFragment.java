@@ -11,9 +11,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,25 +24,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 public class newPostFragment extends Fragment implements LocationListener {
-    final int LOCATION_PERMISSION_REQUEST =1 ;
+    final int WRITE_PERMISSION_REQUEST =1 ;
+    final int LOCATION_PERMISSION_REQUEST =2 ;
+    static final int PICK_IMAGE=1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     EditText coordinateTv;
     EditText addressTv;
     Handler handler = new Handler();//##
     Geocoder geocoder; //##
     LocationManager manager;//##
-    Button btn_gps;//##
+    Button btn_gps,camera_btn,browse_btn;//##
+    File file;
+    Uri imageUri;
+    ImageView image;
+
+
+
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -51,13 +67,13 @@ public class newPostFragment extends Fragment implements LocationListener {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
 
-        if(Build.VERSION.SDK_INT>=23) {
-
-            int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-            if(hasLocationPermission!= PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST);
-            }
-        }
+//        if(Build.VERSION.SDK_INT>=23) {
+//
+//            int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+//            if(hasLocationPermission!= PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST);
+//            }
+//        }
 
         manager = (LocationManager)getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -79,6 +95,7 @@ public class newPostFragment extends Fragment implements LocationListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.new_post_layout,container,false);
         coordinateTv=rootView.findViewById(R.id.condition_editText);//##
+        image=rootView.findViewById(R.id.newPostImage);
         addressTv=rootView.findViewById(R.id.address_editText);//##
         btn_gps=rootView.findViewById(R.id.gpsLocation_btn);
         btn_gps.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +113,51 @@ public class newPostFragment extends Fragment implements LocationListener {
                 }
                 else
                     manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,100,newPostFragment.this);
+
+            }
+        });
+
+        camera_btn =rootView.findViewById(R.id.pic_btn);
+        camera_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT>=23)
+                {
+
+                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
+                    {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},WRITE_PERMISSION_REQUEST);
+
+
+                    }
+                    else
+                    {
+                        Random r = new Random();
+                        int low = 10;
+                        int high = 1000000;
+                        int result = r.nextInt(high-low) + low;
+                        file=new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),""+result+".jpg"); //eran
+                        imageUri= FileProvider.getUriForFile(getActivity(),getActivity().getPackageName()+".provider",file);
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);// eran
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+                        //camera_btn.setVisibility(View.GONE);
+                        // browse_btn.setVisibility(View.GONE);
+                    }
+
+                }
+
+            }
+        });
+        browse_btn =rootView.findViewById(R.id.gallery_btn);
+        browse_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Image"),PICK_IMAGE);
 
             }
         });
@@ -163,9 +225,10 @@ public class newPostFragment extends Fragment implements LocationListener {
                         @Override
                         public void run() {
 
-                            addressTv.setText(bestAddress.getCountryName() + ","
-                                    + bestAddress.getFeatureName() + " , " +bestAddress.getThoroughfare() + " , " +bestAddress.getSubThoroughfare()
-                                    +"," +bestAddress.getAdminArea()  + " , "+ bestAddress.getLocality() + "," + bestAddress.getSubLocality());
+                            addressTv.setText(bestAddress.getCountryName() + ","+
+                                    bestAddress.getLocality() + ","  +bestAddress.getThoroughfare() + " , "
+                                    +bestAddress.getFeatureName() );
+
                         }
                     });
 
@@ -213,6 +276,39 @@ public class newPostFragment extends Fragment implements LocationListener {
                             }
                         }).setCancelable(false).show();
             }
+        }
+        if (requestCode == WRITE_PERMISSION_REQUEST) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getActivity(), "can't choose an image", Toast.LENGTH_SHORT).show();
+                camera_btn.setVisibility(View.GONE);
+                browse_btn.setVisibility(View.GONE);
+            } else {
+                camera_btn.setVisibility(View.VISIBLE);
+                browse_btn.setVisibility(View.VISIBLE);
+                Random r = new Random();
+                int low = 10;
+                int high = 1000000;
+                int result = r.nextInt(high-low) + low;
+                file=new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),""+result+".jpg"); //eran
+                imageUri= FileProvider.getUriForFile(getActivity(),getActivity().getPackageName()+".provider",file);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);// eran
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE && resultCode==getActivity().RESULT_OK) {
+            imageUri=data.getData();
+            image.setImageURI(imageUri);
+        }
+        else  if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            image.setImageURI(imageUri);
+
         }
     }
 }

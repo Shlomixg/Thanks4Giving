@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
@@ -18,6 +19,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+        android:id="@+id/autocomplete_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingClass,MissingConstraints" />
 
     <EditText
         android:id="@+id/condition_editText"
@@ -62,6 +69,7 @@
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableLeft="@drawable/ic_baseline_location_on_24"
         app:layout_constraintTop_toBottomOf="@id/address_editText"/>
 
     <ImageView
@@ -89,13 +97,14 @@
 
         <Button
             android:id="@+id/pic_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
-            android:padding="3dp"
             android:background="@drawable/bg"
+            android:padding="3dp"
             android:text="Take Picture"
-            android:textColor="@color/colorWhite"/>
+            android:drawableLeft="@drawable/ic_baseline_camera_alt_24"
+            android:textColor="@color/colorWhite" />
 
         <Button
             android:id="@+id/gallery_btn"
@@ -105,6 +114,7 @@
             android:padding="3dp"
             android:background="@drawable/bg"
             android:text="Picture from gallery"
+            android:drawableLeft="@drawable/ic_baseline_insert_photo_24"
             android:textColor="@color/colorWhite"/>
 
     </LinearLayout>
