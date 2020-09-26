@@ -1,46 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="128dp"
     android:gravity="bottom"
-    android:orientation="vertical">
+    android:background="?attr/colorOnPrimary"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:ignore="ExtraText">
 
-    <LinearLayout
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/nav_profile_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/profile_man"
+        app:civ_border_width="0dp"
+        app:civ_border_color="#FFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/nav_tv_user_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorOnPrimary"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        tools:ignore="ExtraText">
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="Welcome guest"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nav_profile_image"
+        />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="User Name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="?attr/colorPrimary"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="somemail@gmail.com"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="?attr/colorPrimary" />
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/bottom_rounded_view"
-        style="@style/TransparentView"
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:background="@drawable/round_top_background" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

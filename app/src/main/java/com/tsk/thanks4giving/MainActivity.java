@@ -10,12 +10,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import com.google.android.material.navigation.NavigationView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,14 +32,15 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recycler;
     PostAdapter adapter;
 
+    boolean isConnected = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             Post post = new Post(path, path, i + 100, null, null);
             postList.add(post);
         }
@@ -50,9 +54,19 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PostAdapter(postList);
         adapter.notifyDataSetChanged();
 
-        //TODO: make the fragments start below toolbar and go down to the bottom
+        // TODO: make the fragments start below toolbar and go down to the bottom
 
         setSupportActionBar(toolbar);
+
+        // TODO: Check if the user connected
+        if (!isConnected) {
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.guest_main_menu);
+        } else {
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.main_menu);
+            // TODO: Change the profile name & picture
+        }
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -78,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_layout, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
+
             @Override
             public void onLongClickListener(int pos, View v) {
             }
@@ -89,25 +104,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
+        // TODO: check if the user is connected
+        boolean isConnected = false;
+        if (isConnected) {
+            getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-            return true;
-        }
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
             case R.id.new_post:
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_layout, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
                 break;
             case R.id.my_profile:
-                //TODO open profile in fragment
+                // TODO: open profile in fragment
                 break;
         }
         return super.onOptionsItemSelected(item);

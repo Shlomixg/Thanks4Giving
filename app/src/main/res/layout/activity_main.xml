@@ -67,6 +67,6 @@
         android:layout_gravity="start"
         android:clipToPadding="false"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/main_menu"/>
+        />
 
 </androidx.drawerlayout.widget.DrawerLayout>
