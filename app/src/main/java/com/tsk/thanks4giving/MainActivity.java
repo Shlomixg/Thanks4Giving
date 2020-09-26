@@ -6,15 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -23,14 +21,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String NEW_POST_FRAG = "new post fragment";
-    final String POST_FRAG = "post fragment";
+    final String NEW_POST_FRAG = "New Post Fragment";
+    final String RECYCLER_FRAG = "Recycler View Fragment";
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
     ArrayList<Post> postList = new ArrayList<>();
-    RecyclerView recycler;
-    PostAdapter adapter;
 
     boolean isConnected = true;
 
@@ -48,11 +44,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
-        recycler = findViewById(R.id.recycler);
-        recycler.setHasFixedSize(true);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PostAdapter(postList);
-        adapter.notifyDataSetChanged();
 
         // TODO: make the fragments start below toolbar and go down to the bottom
 
@@ -71,10 +62,20 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        break;
+                    default:
+                        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
                 navigationView.setCheckedItem(item);
+                setTitle(item.getTitle());
                 drawerLayout.closeDrawers();
-                Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
-                return false;
+                return true;
             }
         });
 
@@ -85,27 +86,22 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        adapter.setListener(new PostAdapter.PostClickListener() {
-            @Override
-            public void onClickListener(int pos, View v) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_layout, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
-            }
+        // Setting the first fragment
+        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+    }
 
-            @Override
-            public void onLongClickListener(int pos, View v) {
-            }
-        });
+    private void setFragment(Fragment fragment, String FRAG) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        recycler.setAdapter(adapter);
-
+        transaction.replace(R.id.flContent, fragment, FRAG);
+        if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // TODO: check if the user is connected
-        boolean isConnected = false;
         if (isConnected) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         }
@@ -119,9 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.new_post:
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.fragment_layout, new newPostFragment(), NEW_POST_FRAG).addToBackStack(null).commit();
+                setFragment(new NewPostFragment(), NEW_POST_FRAG);
                 break;
             case R.id.my_profile:
                 // TODO: open profile in fragment
