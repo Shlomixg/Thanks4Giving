@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "880894471820",
+    "firebase_url": "https://thanks4giving-99318.firebaseio.com",
+    "project_id": "thanks4giving-99318",
+    "storage_bucket": "thanks4giving-99318.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880894471820:android:7c885b5f4a18f4d36bd5a9",
+        "android_client_info": {
+          "package_name": "com.tsk.thanks4giving"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880894471820-attrj6avhagutk6tb7q1nm9gad6dbok3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm6mOxWCnbvfYkwawKY-yEEqgMp2iTc_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "880894471820-attrj6avhagutk6tb7q1nm9gad6dbok3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

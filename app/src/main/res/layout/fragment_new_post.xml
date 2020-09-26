@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="bottom"
     android:padding="5dp"
     android:background="@color/colorAccent">
@@ -20,11 +20,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+    <!--<androidx.appcompat.widget.AppCompatAutoCompleteTextView
         android:id="@+id/autocomplete_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:ignore="MissingClass,MissingConstraints" />
+        tools:ignore="MissingClass,MissingConstraints" />-->
 
     <EditText
         android:id="@+id/condition_editText"

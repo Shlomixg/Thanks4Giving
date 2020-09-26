@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
 
     private ArrayList<Post> list;
@@ -33,7 +35,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     public class PostCardHolder extends RecyclerView.ViewHolder {
 
         ImageView postImage;
-        ImageView profileImage;
+        CircleImageView profileImage;
         Button like;
         Button comment;
         Button watch;

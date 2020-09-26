@@ -1,9 +1,12 @@
 package com.tsk.thanks4giving;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Post {
 
+    //for firebase usage
+    private int ID;
     // the item image
     private String postImage;
     // the profile pic of the person who posted it
@@ -12,10 +15,10 @@ public class Post {
     private int likes;
     // list of Comment objects
     private ArrayList<Comment> comments;
-    // list of people watching this post
-    private ArrayList<Profile> watching;
+    // list ID's watching this post
+    private List<Integer> watching;
 
-    public Post(String postImage, String profileImage, int likes, ArrayList<Comment> comments, ArrayList<Profile> watching) {
+    public Post(String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<Integer> watching) {
         this.postImage = postImage;
         this.profileImage = profileImage;
         this.likes = likes;
@@ -41,8 +44,12 @@ public class Post {
         return comments;
     }
 
-    public ArrayList<Profile> getWatching() {
+    public List<Integer> getWatching() {
         return watching;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     /* Setters */
@@ -63,7 +70,15 @@ public class Post {
         this.comments = comments;
     }
 
-    public void setWatching(ArrayList<Profile> watching) {
+    public void setWatching(List<Integer> watching) {
         this.watching = watching;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void addToWatching(int id){
+        watching.add(id);
     }
 }

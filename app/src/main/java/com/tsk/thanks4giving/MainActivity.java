@@ -9,13 +9,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -23,12 +26,16 @@ public class MainActivity extends AppCompatActivity {
 
     final String NEW_POST_FRAG = "New Post Fragment";
     final String RECYCLER_FRAG = "Recycler View Fragment";
+    final String SIGNUP_FRAG = "signup fragment";
+    final String LOGIN_FRAG = "login fragment";
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
     ArrayList<Post> postList = new ArrayList<>();
 
-    boolean isConnected = true;
+    boolean isConnected = false;
+
+    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        break;
+                    case R.id.nav_user_sign_up:
+                        setFragment(new signupFragment(), SIGNUP_FRAG);
+                        break;
+                    case R.id.nav_user_login:
+                        setFragment(new loginFragment(), LOGIN_FRAG);
                         break;
                     default:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);

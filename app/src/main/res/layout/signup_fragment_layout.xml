@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#E65426"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign-up"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/email_input"
+        android:inputType="textEmailAddress"
+        android:textSize="20sp"
+        android:hint="Email"
+        android:textColorHint="@color/colorWhite"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/bg"/>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fullname_input"
+        android:inputType="textPersonName"
+        android:textSize="20sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:hint="Full Name"
+        android:textColorHint="@color/colorWhite"
+        android:textColor="@color/colorWhite"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/bg"/>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_input"
+        android:inputType="number|numberPassword"
+        android:textSize="20sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/colorWhite"
+        android:hint="Password"
+        android:textColorHint="@color/colorWhite"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/bg"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Confirm And Sign Up"
+        android:id="@+id/signup_btn"
+        android:layout_margin="5dp"
+        android:textColor="@color/colorWhite"/>
+
+</LinearLayout>
