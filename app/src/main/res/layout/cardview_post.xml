@@ -26,8 +26,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
-            />
+            android:layout_margin="10dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -35,14 +34,13 @@
             android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profile_img"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                app:civ_border_width="1dp"
-                app:civ_border_color="#FF000000"/>
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="1dp" />
 
             <Button
                 android:id="@+id/like_img"
@@ -50,7 +48,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:background="@drawable/ic_thumb_up"/>
+                android:background="@drawable/ic_thumb_up" />
 
             <Button
                 android:id="@+id/comment_btn"

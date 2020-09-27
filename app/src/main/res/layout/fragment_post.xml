@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
-    android:padding="3dp"
-    android:background="@color/colorAccent">
+    android:background="@color/colorAccent"
+    android:padding="3dp">
 
     <TextView
         android:id="@+id/post_title"
@@ -17,25 +17,25 @@
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/BigPostImage"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_margin="5dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground"
         android:layout_below="@id/post_title"
-        android:contentDescription="Item Photo"/>
+        android:layout_margin="5dp"
+        android:contentDescription="Item Photo"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comments_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:layout_below="@id/BigPostImage"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_margin="5dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </RelativeLayout>
 

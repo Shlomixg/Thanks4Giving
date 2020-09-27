@@ -2,7 +2,6 @@ package com.tsk.thanks4giving;
 
 import android.net.Uri;
 
-
 public class MessageEvent {
 
     String TAG1 = "signup";
@@ -13,18 +12,16 @@ public class MessageEvent {
     public String userToken;
     public String action;
 
-    public MessageEvent(String username, String usertoken)
-    {
+    public MessageEvent(String username, String userToken) {
         name = username;
-        userToken = usertoken;
+        this.userToken = userToken;
         action = TAG1;
     }
 
-    public MessageEvent(String username, Uri photo, String usertoken)
-    {
+    public MessageEvent(String username, Uri photo, String userToken) {
         name = username;
         photoUrl = photo;
-        userToken = usertoken;
+        this.userToken = userToken;
         action = TAG2;
     }
 

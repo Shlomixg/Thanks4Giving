@@ -9,27 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class signupFragment extends Fragment {
+public class LoginFragment extends Fragment {
 
     EditText email;
-    EditText fullname;
     EditText password;
-    Button confirmBtn;
-    FirebaseAuth mAuth;
-    String name;
+    Button loginBtn;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -44,43 +42,35 @@ public class signupFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.signup_fragment_layout,container,false);
-        email = rootView.findViewById(R.id.email_input);
-        fullname = rootView.findViewById(R.id.fullname_input);
-        password = rootView.findViewById(R.id.password_input);
-        confirmBtn = rootView.findViewById(R.id.signup_btn);
-        mAuth = FirebaseAuth.getInstance();
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        email = rootView.findViewById(R.id.login_email_input);
+        password = rootView.findViewById(R.id.login_password_input);
+        loginBtn = rootView.findViewById(R.id.login_btn);
 
-        confirmBtn.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mail  = email.getText().toString();
-                name = fullname.getText().toString();
+                String mail = email.getText().toString();
                 String pass = password.getText().toString();
-                //sign up new user
-                mAuth.createUserWithEmailAndPassword(mail,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+                firebaseAuth.signInWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful())
-                        {
-                            Log.d("log","success");
+
+                        if (task.isSuccessful()) {
+                            Log.d("log", "success");
 
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             String name = user.getDisplayName();
-                            Log.d("log"," "+name);
+                            Log.d("log", " " + name);
+                            Uri photoUrl = user.getPhotoUrl();
                             String userToken = user.getIdToken(true).toString();
 
-                            User newUser = new User(name, userToken);
-
-                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("users").child(userToken).setValue(user);
-
-                            //send name+photoUrl+token(id) to mainActivity to display after signup
-                            EventBus.getDefault().post(new MessageEvent(name, userToken));
+                            //send name+photoUrl+token(id) to mainActivity to display after log in
+                            EventBus.getDefault().post(new MessageEvent(name, photoUrl, userToken));
                             getActivity().onBackPressed(); //close fragment
-                        }
-                        else
-                            Log.d("log","fail");
+                        } else
+                            Log.d("log", "fail");
                     }
                 });
             }

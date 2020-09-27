@@ -78,7 +78,7 @@ public class Post {
         this.ID = ID;
     }
 
-    public void addToWatching(String id){
+    public void addToWatching(String id) {
         watching.add(id);
     }
 }

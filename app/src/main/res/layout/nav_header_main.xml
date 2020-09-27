@@ -5,23 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="128dp"
-    android:gravity="bottom"
     android:background="?attr/colorOnPrimary"
+    android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
     tools:ignore="ExtraText">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/nav_profile_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/profile_man"
-        app:civ_border_width="0dp"
         app:civ_border_color="#FFF"
+        app:civ_border_width="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/nav_tv_user_name"
@@ -33,7 +31,6 @@
         android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nav_profile_image"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/nav_profile_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

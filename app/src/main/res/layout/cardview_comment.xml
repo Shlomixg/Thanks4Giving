@@ -21,18 +21,18 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_margin="5dp"
             android:layout_gravity="start"
-            android:text="Profile Name"/>
+            android:layout_margin="5dp"
+            android:text="Profile Name"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
             android:layout_gravity="start"
             android:layout_margin="5dp"
-            android:text="Comment Message Body"/>
+            android:text="Comment Message Body"
+            android:textSize="15sp" />
 
     </LinearLayout>
 

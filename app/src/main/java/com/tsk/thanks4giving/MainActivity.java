@@ -33,8 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
     final String NEW_POST_FRAG = "New Post Fragment";
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    final String SIGNUP_FRAG = "signup fragment";
-    final String LOGIN_FRAG = "login fragment";
+    final String SIGNUP_FRAG = "Signup Fragment";
+    final String LOGIN_FRAG = "Login Fragment";
+    final String PROFILE_FRAG = "Profile Fragment";
+
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     static Uri photoURL;
     static String token;
 
-    boolean isConnected = false;
+    boolean isConnected = true;
 
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -84,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
                         break;
                     case R.id.nav_user_sign_up:
-                        setFragment(new signupFragment(), SIGNUP_FRAG);
+                        setFragment(new SignupFragment(), SIGNUP_FRAG);
                         break;
                     case R.id.nav_user_login:
-                        setFragment(new loginFragment(), LOGIN_FRAG);
+                        setFragment(new LoginFragment(), LOGIN_FRAG);
                         break;
                     default:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 setFragment(new NewPostFragment(), NEW_POST_FRAG);
                 break;
             case R.id.my_profile:
-                // TODO: open profile in fragment
+                setFragment(new ProfileFragment(), PROFILE_FRAG);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -157,14 +159,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        if(event.action.equals("signup"))
-        {
+        if (event.action.equals("signup")) {
             TextView userName = findViewById(R.id.nav_tv_user_name);
             userName.setText("Welcome " + event.name);
             Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
-        }
-        else if(event.action.equals("login"))
-        {
+        } else if (event.action.equals("login")) {
             TextView userName = findViewById(R.id.nav_tv_user_name);
             CircleImageView profilePic = findViewById(R.id.nav_profile_image);
             userName.setText("Welcome " + event.name);

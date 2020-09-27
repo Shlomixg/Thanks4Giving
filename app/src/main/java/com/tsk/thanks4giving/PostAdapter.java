@@ -6,9 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -21,6 +24,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
+
         void onLongClickListener(int pos, View v);
     }
 
@@ -29,7 +33,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     }
 
     public PostAdapter(ArrayList<Post> postList) {
-        this.list=postList;
+        this.list = postList;
     }
 
     public class PostCardHolder extends RecyclerView.ViewHolder {
@@ -70,7 +74,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     @NonNull
     @Override
     public PostCardHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_post, parent, false);
         PostCardHolder holder = new PostCardHolder(v);
         return holder;
     }
