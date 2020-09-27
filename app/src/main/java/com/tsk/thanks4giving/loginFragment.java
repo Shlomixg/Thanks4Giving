@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -54,7 +53,7 @@ public class loginFragment extends Fragment {
 
                         if(task.isSuccessful()) {
                             Log.d("login","success");
-                            //TODO: send fullname to mainActivity to display after sign up
+                            //TODO: send fullname to mainActivity to display after log in and change isConnected to true
                             getActivity().getFragmentManager().popBackStack();
                         }
                         else

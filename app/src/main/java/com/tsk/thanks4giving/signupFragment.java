@@ -22,8 +22,9 @@ public class signupFragment extends Fragment {
     EditText fullname;
     EditText password;
     Button confirmBtn;
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    FirebaseAuth mAuth;
     String name;
+    final String TAG = "SIGN";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -43,6 +44,7 @@ public class signupFragment extends Fragment {
         fullname = rootView.findViewById(R.id.fullname_input);
         password = rootView.findViewById(R.id.password_input);
         confirmBtn = rootView.findViewById(R.id.signup_btn);
+        mAuth = FirebaseAuth.getInstance();
 
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,15 +52,14 @@ public class signupFragment extends Fragment {
                 String mail  = email.getText().toString();
                 name = fullname.getText().toString();
                 String pass = password.getText().toString();
-
-                //sign up the user
-                firebaseAuth.createUserWithEmailAndPassword(mail,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                //sign up new user
+                mAuth.createUserWithEmailAndPassword(mail,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
                             Log.d("sign","success");
-                            //TODO: send fullname to mainActivity to display after sign up
+                            //TODO: send fullname to mainActivity to display after sign up and change isConnected to true
                             getActivity().onBackPressed();
                         }
                         else
