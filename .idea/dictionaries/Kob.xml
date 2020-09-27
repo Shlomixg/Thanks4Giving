@@ -3,6 +3,7 @@
     <words>
       <w>fullname</w>
       <w>signup</w>
+      <w>usertoken</w>
     </words>
   </dictionary>
 </component>

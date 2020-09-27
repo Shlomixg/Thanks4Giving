@@ -16,9 +16,9 @@ public class Post {
     // list of Comment objects
     private ArrayList<Comment> comments;
     // list ID's watching this post
-    private List<Integer> watching;
+    private List<String> watching;
 
-    public Post(String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<Integer> watching) {
+    public Post(String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<String> watching) {
         this.postImage = postImage;
         this.profileImage = profileImage;
         this.likes = likes;
@@ -44,7 +44,7 @@ public class Post {
         return comments;
     }
 
-    public List<Integer> getWatching() {
+    public List<String> getWatching() {
         return watching;
     }
 
@@ -70,7 +70,7 @@ public class Post {
         this.comments = comments;
     }
 
-    public void setWatching(List<Integer> watching) {
+    public void setWatching(List<String> watching) {
         this.watching = watching;
     }
 
@@ -78,7 +78,7 @@ public class Post {
         this.ID = ID;
     }
 
-    public void addToWatching(int id){
+    public void addToWatching(String id){
         watching.add(id);
     }
 }

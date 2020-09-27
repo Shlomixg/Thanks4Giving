@@ -9,18 +9,25 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     NavigationView navigationView;
     ArrayList<Post> postList = new ArrayList<>();
+    static String displayName;
+    static Uri photoURL;
+    static String token;
 
     boolean isConnected = false;
 
@@ -143,5 +153,36 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else
             super.onBackPressed();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        if(event.action.equals("signup"))
+        {
+            TextView userName = findViewById(R.id.nav_tv_user_name);
+            userName.setText("Welcome " + event.name);
+            Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
+        }
+        else if(event.action.equals("login"))
+        {
+            TextView userName = findViewById(R.id.nav_tv_user_name);
+            CircleImageView profilePic = findViewById(R.id.nav_profile_image);
+            userName.setText("Welcome " + event.name);
+            Glide.with(this).load(event.photoUrl).centerCrop().into(profilePic);
+            Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
+        }
+        isConnected = true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

@@ -1,6 +1,7 @@
 package com.tsk.thanks4giving;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class signupFragment extends Fragment {
 
@@ -24,7 +30,6 @@ public class signupFragment extends Fragment {
     Button confirmBtn;
     FirebaseAuth mAuth;
     String name;
-    final String TAG = "SIGN";
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -58,12 +63,24 @@ public class signupFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful())
                         {
-                            Log.d("sign","success");
-                            //TODO: send fullname to mainActivity to display after sign up and change isConnected to true
-                            getActivity().onBackPressed();
+                            Log.d("log","success");
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            String name = user.getDisplayName();
+                            Log.d("log"," "+name);
+                            String userToken = user.getIdToken(true).toString();
+
+                            User newUser = new User(name, userToken);
+
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            mDatabase.child("users").child(userToken).setValue(user);
+
+                            //send name+photoUrl+token(id) to mainActivity to display after signup
+                            EventBus.getDefault().post(new MessageEvent(name, userToken));
+                            getActivity().onBackPressed(); //close fragment
                         }
                         else
-                            Log.d("sign","fail");
+                            Log.d("log","fail");
                     }
                 });
             }

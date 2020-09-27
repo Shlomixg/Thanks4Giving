@@ -1,6 +1,7 @@
 package com.tsk.thanks4giving;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class loginFragment extends Fragment {
 
@@ -52,12 +56,20 @@ public class loginFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()) {
-                            Log.d("login","success");
-                            //TODO: send fullname to mainActivity to display after log in and change isConnected to true
-                            getActivity().getFragmentManager().popBackStack();
+                            Log.d("log","success");
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            String name = user.getDisplayName();
+                            Log.d("log"," "+name);
+                            Uri photoUrl = user.getPhotoUrl();
+                            String userToken = user.getIdToken(true).toString();
+
+                            //send name+photoUrl+token(id) to mainActivity to display after log in
+                            EventBus.getDefault().post(new MessageEvent(name,photoUrl,userToken));
+                            getActivity().onBackPressed(); //close fragment
                         }
                         else
-                            Log.d("login","fail");
+                            Log.d("log","fail");
                     }
                 });
             }
