@@ -66,9 +66,9 @@ public class LoginFragment extends Fragment {
                             Uri photoUrl = user.getPhotoUrl();
                             String userToken = user.getIdToken(true).toString();
 
-                            //send name+photoUrl+token(id) to mainActivity to display after log in
+                            // Send name+photoUrl+token(id) to mainActivity to display after log in
                             EventBus.getDefault().post(new MessageEvent(name, photoUrl, userToken));
-                            getActivity().onBackPressed(); //close fragment
+                            getActivity().onBackPressed(); // Close fragment
                         } else
                             Log.d("log", "fail");
                     }

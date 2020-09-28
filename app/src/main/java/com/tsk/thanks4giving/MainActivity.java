@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
     static Uri photoURL;
     static String token;
 
-    boolean isConnected = true;
+    boolean isConnected = false;
 
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +67,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
 
-        // TODO: make the fragments start below toolbar and go down to the bottom
-
         setSupportActionBar(toolbar);
 
+        mAuth = FirebaseAuth.getInstance();
         // TODO: Check if the user connected
         if (!isConnected) {
             navigationView.getMenu().clear();
@@ -113,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting the first fragment
         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) Toast.makeText(this, currentUser.toString(), Toast.LENGTH_SHORT).show();
+        // updateUI(currentUser);
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
@@ -171,12 +183,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
         }
         isConnected = true;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override

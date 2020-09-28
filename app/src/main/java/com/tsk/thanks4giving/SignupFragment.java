@@ -58,7 +58,7 @@ public class SignupFragment extends Fragment {
                 String mail = email.getText().toString();
                 name = fullname.getText().toString();
                 String pass = password.getText().toString();
-                //sign up new user
+                // Sign up new user
                 mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -73,7 +73,7 @@ public class SignupFragment extends Fragment {
                             User newUser = new User(name, userToken);
 
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("users").child(userToken).setValue(user);
+                            mDatabase.child("users").child(userToken).setValue(newUser);
 
                             //send name+photoUrl+token(id) to mainActivity to display after signup
                             EventBus.getDefault().post(new MessageEvent(name, userToken));
