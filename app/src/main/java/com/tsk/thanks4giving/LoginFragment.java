@@ -65,7 +65,7 @@ public class LoginFragment extends Fragment {
                             FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
                                 Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + ", Welcome back", Snackbar.LENGTH_SHORT).show();
-                                // Send name+photoUrl+token(id) to mainActivity to display after log in
+                                //Send name+photoUrl+token(id) to mainActivity to display after log in
                                 getActivity().onBackPressed(); // Close fragment
                             }
 

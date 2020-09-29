@@ -18,7 +18,7 @@
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_user_image"
+            android:id="@+id/edit_profile_user_image"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:src="@drawable/profile_man"
@@ -26,8 +26,18 @@
             app:civ_border_color="#FFF"
             app:civ_border_width="0dp"/>
 
-        <TextView
-            android:id="@+id/profile_user_name_tv"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change picture"
+            android:background="@drawable/bg"
+            android:textSize="15sp"
+            android:textColor="@color/colorWhite"
+            android:padding="10dp"
+            android:id="@+id/edit_profile_picture_btn"/>
+
+        <EditText
+            android:id="@+id/edit_profile_user_name_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -37,20 +47,8 @@
             android:padding="10dp"
             android:text="User Name" />
 
-
-        <TextView
-            android:id="@+id/profile_user_email_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/bg"
-            android:textSize="25sp"
-            android:textColor="@color/colorWhite"
-            android:padding="10dp"
-            android:text="User Email" />
-
-        <TextView
-            android:id="@+id/profile_user_age_tv"
+        <EditText
+            android:id="@+id/edit_profile_user_age_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -60,8 +58,8 @@
             android:padding="10dp"
             android:text="User age" />
 
-        <TextView
-            android:id="@+id/profile_user_address_tv"
+        <EditText
+            android:id="@+id/edit_profile_user_address_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -72,15 +70,15 @@
             android:text="User address" />
 
         <Button
-            android:id="@+id/edit_profile_btn"
+            android:id="@+id/edit_profile_save_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg"
-            android:text="Edit Profile"
+            android:text="Save"
             android:textColor="@color/colorWhite"
-            android:textSize="25sp" />
+            android:textSize="25sp"/>
 
     </LinearLayout>
 

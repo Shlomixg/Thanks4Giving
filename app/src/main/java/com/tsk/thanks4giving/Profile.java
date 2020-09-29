@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 public class Profile {
 
-    private String firstName;
-    private String lastName;
+    private String fullName;
     //private String email;
     private String profileImage;
     private int age;
@@ -13,9 +12,8 @@ public class Profile {
     private ArrayList<Post> postWatched;
     private ArrayList<Post> postPosted;
 
-    public Profile(String firstName, String lastName /*,String email*/, String profileImage, int age, String address, ArrayList<Post> postWatched, ArrayList<Post> postPosted) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Profile(String name /*,String email*/, String profileImage, int age, String address, ArrayList<Post> postWatched, ArrayList<Post> postPosted) {
+        this.fullName = name;
         //this.email = email;
         this.profileImage = profileImage;
         this.age = age;
@@ -26,12 +24,8 @@ public class Profile {
 
     /* Getters */
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public String getFullName() {
+        return fullName;
     }
 
    /* public String getEmail() {
@@ -60,12 +54,8 @@ public class Profile {
 
     /* Setters */
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
    /* public void setEmail(String email) {
