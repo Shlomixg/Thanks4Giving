@@ -5,32 +5,37 @@ import android.net.Uri;
 public class User {
 
     public String name;
-    public String tokenID;
+    public String userUid;
     public Uri profilePhoto;
 
-    public User(String name, String tokenID) {
+    public User(String name, String userUid, Uri profilePhoto) {
         this.name = name;
-        this.tokenID = tokenID;
+        this.userUid = userUid;
+        this.profilePhoto = profilePhoto;
     }
+
+    /* Getters */
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTokenID() {
-        return tokenID;
-    }
-
-    public void setTokenID(String tokenID) {
-        this.tokenID = tokenID;
+    public String getUserUid() {
+        return userUid;
     }
 
     public Uri getProfilePhoto() {
         return profilePhoto;
+    }
+
+    /* Setters */
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUserUid(String userUid) {
+        this.userUid = userUid;
     }
 
     public void setProfilePhoto(Uri profilePhoto) {

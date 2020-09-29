@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     static Uri photoURL;
     static String token;
 
+    TextView user_name_tv;
+    CircleImageView profile_pic_iv;
+
     boolean isConnected = false;
 
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -113,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        user_name_tv = findViewById(R.id.nav_tv_user_name);
+        profile_pic_iv = findViewById(R.id.nav_profile_image);
+
         // Setting the first fragment
         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
     }
@@ -123,8 +129,9 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) Toast.makeText(this, currentUser.toString(), Toast.LENGTH_SHORT).show();
-        // updateUI(currentUser);
+        // TODO: get user UI
+        if (currentUser!= null) Toast.makeText(this, currentUser.getDisplayName(), Toast.LENGTH_LONG).show();
+        // updateUserUI(null);
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
@@ -170,19 +177,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        if (event.action.equals("signup")) {
-            TextView userName = findViewById(R.id.nav_tv_user_name);
-            userName.setText("Welcome " + event.name);
-            Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
-        } else if (event.action.equals("login")) {
-            TextView userName = findViewById(R.id.nav_tv_user_name);
-            CircleImageView profilePic = findViewById(R.id.nav_profile_image);
-            userName.setText("Welcome " + event.name);
-            Glide.with(this).load(event.photoUrl).centerCrop().into(profilePic);
-            Toast.makeText(this, event.action + event.name, Toast.LENGTH_SHORT).show();
-        }
+    public void onMessageEvent(MessageUserEvent event) {
+        updateUserUI(event.user);
         isConnected = true;
+    }
+
+    public void updateUserUI(User user) {
+        if (user != null) {
+            user_name_tv.setText(String.format("%s", user.name));
+            Glide.with(this).load(user.profilePhoto).centerCrop().into(profile_pic_iv);
+            Toast.makeText(this, user.name, Toast.LENGTH_LONG).show();
+        } else {
+            user_name_tv.setText(String.format("%s", "Welcome guest"));
+            Glide.with(this).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
+            Toast.makeText(this, "Logged out", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -56,21 +59,24 @@ public class LoginFragment extends Fragment {
                 firebaseAuth.signInWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
                         if (task.isSuccessful()) {
-                            Log.d("log", "success");
+                            FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (fbUser != null) {
+                                String userUid = fbUser.getUid();
 
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            String name = user.getDisplayName();
-                            Log.d("log", " " + name);
-                            Uri photoUrl = user.getPhotoUrl();
-                            String userToken = user.getIdToken(true).toString();
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                // TODO: get user from DB (with the uid) and send it to mainActivity
+                                Toast.makeText(getContext(), "Login Success", Toast.LENGTH_LONG).show();
 
-                            // Send name+photoUrl+token(id) to mainActivity to display after log in
-                            EventBus.getDefault().post(new MessageEvent(name, photoUrl, userToken));
-                            getActivity().onBackPressed(); // Close fragment
-                        } else
+                                // Send name+photoUrl+token(id) to mainActivity to display after log in
+                                getActivity().onBackPressed(); // Close fragment
+                            }
+
+                        } else {
                             Log.d("log", "fail");
+                            Toast.makeText(getContext(), "failed to login", Toast.LENGTH_SHORT).show();
+                            // TODO: Add explanation why the login failed
+                        }
                     }
                 });
             }

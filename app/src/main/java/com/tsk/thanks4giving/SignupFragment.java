@@ -1,6 +1,7 @@
 package com.tsk.thanks4giving;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +32,6 @@ public class SignupFragment extends Fragment {
     EditText password;
     Button confirmBtn;
     FirebaseAuth mAuth;
-    String name;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -56,7 +57,7 @@ public class SignupFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String mail = email.getText().toString();
-                name = fullname.getText().toString();
+                String name = fullname.getText().toString();
                 String pass = password.getText().toString();
                 // Sign up new user
                 mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -65,21 +66,29 @@ public class SignupFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Log.d("log", "success");
 
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            String name = user.getDisplayName();
-                            Log.d("log", " " + name);
-                            String userToken = user.getIdToken(true).toString();
+                            FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+                            if (fbUser != null) {
+                                String name = fbUser.getDisplayName();
+                                String userUid = fbUser.getUid();
+                                Uri userPhoto = fbUser.getPhotoUrl();
+                                // TODO: Add more fields
 
-                            User newUser = new User(name, userToken);
+                                // Saving to DB
+                                User user = new User(name, userUid, userPhoto);
+                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                mDatabase.child("users").child(userUid).setValue(user);
 
-                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("users").child(userToken).setValue(newUser);
+                                // Send name+photoUrl+token(id) to mainActivity to display after signup
+                                EventBus.getDefault().post(new MessageUserEvent(user));
+                                getActivity().onBackPressed(); // Close fragment
+                            }
 
-                            //send name+photoUrl+token(id) to mainActivity to display after signup
-                            EventBus.getDefault().post(new MessageEvent(name, userToken));
-                            getActivity().onBackPressed(); //close fragment
-                        } else
-                            Log.d("log", "fail");
+                        } else {
+                            Log.d("log", "failed to sign up");
+                            Toast.makeText(getContext(), "failed to sign up", Toast.LENGTH_SHORT).show();
+                            // TODO: Add explanation why the sign up failed
+                        }
+
                     }
                 });
             }
