@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,21 +61,17 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            Log.d("log", "login success");
                             FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
-                                String userUid = fbUser.getUid();
-
-                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                                // TODO: get user from DB (with the uid) and send it to mainActivity
-                                Toast.makeText(getContext(), "Login Success", Toast.LENGTH_LONG).show();
-
+                                Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + ", Welcome back", Snackbar.LENGTH_SHORT).show();
                                 // Send name+photoUrl+token(id) to mainActivity to display after log in
                                 getActivity().onBackPressed(); // Close fragment
                             }
 
                         } else {
-                            Log.d("log", "fail");
-                            Toast.makeText(getContext(), "failed to login", Toast.LENGTH_SHORT).show();
+                            Log.d("log", "login failed");
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Login failed", Snackbar.LENGTH_SHORT).show();
                             // TODO: Add explanation why the login failed
                         }
                     }

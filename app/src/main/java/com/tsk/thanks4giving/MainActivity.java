@@ -10,17 +10,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,17 +45,17 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     NavigationView navigationView;
     ArrayList<Post> postList = new ArrayList<>();
-    static String displayName;
-    static Uri photoURL;
-    static String token;
 
     TextView user_name_tv;
     CircleImageView profile_pic_iv;
 
-    boolean isConnected = false;
+    FirebaseUser currentFBUser;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseAuth.AuthStateListener authStateListener;
 
-    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private FirebaseAuth mAuth;
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference users = db.getReference("users");
+    DatabaseReference posts = db. getReference("posts");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,23 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        mAuth = FirebaseAuth.getInstance();
-        // TODO: Check if the user connected
-        if (!isConnected) {
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.guest_main_menu);
-        } else {
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.main_menu);
-            // TODO: Change the profile name & picture
-        }
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        navigationView.setCheckedItem(item);
+                        setTitle(item.getTitle());
                         break;
                     case R.id.nav_user_sign_up:
                         setFragment(new SignupFragment(), SIGNUP_FRAG);
@@ -96,14 +89,19 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_user_login:
                         setFragment(new LoginFragment(), LOGIN_FRAG);
                         break;
+                    case R.id.nav_user_logout:
+                        mAuth.signOut();
+                        Snackbar.make(findViewById(android.R.id.content), "Logged out", Snackbar.LENGTH_SHORT).show();
+                        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        break;
                     default:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        navigationView.setCheckedItem(item);
+                        setTitle(item.getTitle());
                         Toast.makeText(MainActivity.this, item.getTitle(), Toast.LENGTH_SHORT).show();
                         break;
                 }
 
-                navigationView.setCheckedItem(item);
-                setTitle(item.getTitle());
                 drawerLayout.closeDrawers();
                 return true;
             }
@@ -116,8 +114,30 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        user_name_tv = findViewById(R.id.nav_tv_user_name);
-        profile_pic_iv = findViewById(R.id.nav_profile_image);
+        View header = navigationView.getHeaderView(0);
+        user_name_tv = header.findViewById(R.id.nav_tv_user_name);
+        profile_pic_iv = header.findViewById(R.id.nav_profile_image);
+
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser fbUser = mAuth.getCurrentUser();
+                navigationView.getMenu().clear();
+                if ( fbUser != null) { // Sign up or login
+                    navigationView.inflateMenu(R.menu.main_menu);
+                    invalidateOptionsMenu();
+
+                    user_name_tv.setText(fbUser.getDisplayName());
+                    Glide.with(getApplicationContext()).load(R.drawable.profile_woman).centerCrop().into(profile_pic_iv);
+                } else {
+                    navigationView.inflateMenu(R.menu.guest_main_menu);
+                    invalidateOptionsMenu();
+
+                    user_name_tv.setText("Guest");
+                    Glide.with(getApplicationContext()).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
+                }
+            }
+        };
 
         // Setting the first fragment
         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
@@ -127,11 +147,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        // TODO: get user UI
-        if (currentUser!= null) Toast.makeText(this, currentUser.getDisplayName(), Toast.LENGTH_LONG).show();
-        // updateUserUI(null);
+
+        mAuth.addAuthStateListener(authStateListener);
+        currentFBUser = mAuth.getCurrentUser();
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
@@ -145,9 +163,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: check if the user is connected
-        if (isConnected) {
+        if (currentFBUser != null) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        } else {
+            menu.clear();
         }
         return true;
     }
@@ -178,25 +197,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageUserEvent(MessageUserEvent event) {
-        updateUserUI(event.user);
-        isConnected = true;
-    }
 
-    public void updateUserUI(User user) {
-        if (user != null) {
-            user_name_tv.setText(String.format("%s", user.name));
-            Glide.with(this).load(user.profilePhoto).centerCrop().into(profile_pic_iv);
-            Toast.makeText(this, user.name, Toast.LENGTH_LONG).show();
-        } else {
-            user_name_tv.setText(String.format("%s", "Welcome guest"));
-            Glide.with(this).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
-            Toast.makeText(this, "Logged out", Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        mAuth.removeAuthStateListener(authStateListener);
     }
 }

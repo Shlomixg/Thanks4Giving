@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,12 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -57,34 +61,44 @@ public class SignupFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String mail = email.getText().toString();
-                String name = fullname.getText().toString();
                 String pass = password.getText().toString();
                 // Sign up new user
                 mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("log", "success");
+                            Log.d("log", "signup success");
 
-                            FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+                            final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
-                                String name = fbUser.getDisplayName();
+                                final String name = fullname.getText().toString();
                                 String userUid = fbUser.getUid();
-                                Uri userPhoto = fbUser.getPhotoUrl();
+                                Uri userPhoto = null; // TODO: add image view and take photo
                                 // TODO: Add more fields
 
+                                // Updating full name & photo
+                                fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(null).setDisplayName(name).build())
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                   @Override
+                                                                   public void onComplete(@NonNull Task<Void> task) {
+                                                                       NavigationView navigationView = getActivity().findViewById(R.id.navigation_view);
+                                                                       View header = navigationView.getHeaderView(0);
+                                                                       TextView user_name_tv = header.findViewById(R.id.nav_tv_user_name);
+                                                                       user_name_tv.setText(fbUser.getDisplayName());
+                                                                       setSnackbar(fbUser);
+                                                                       getActivity().onBackPressed(); // Close fragment
+                                                                   }
+                                                               }
+                                        );
+
                                 // Saving to DB
-                                User user = new User(name, userUid, userPhoto);
+                                User user = new User(name, userUid);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("users").child(userUid).setValue(user);
-
-                                // Send name+photoUrl+token(id) to mainActivity to display after signup
-                                EventBus.getDefault().post(new MessageUserEvent(user));
-                                getActivity().onBackPressed(); // Close fragment
                             }
                         } else {
-                            Log.d("log", "failed to sign up");
-                            Toast.makeText(getContext(), "failed to sign up", Toast.LENGTH_SHORT).show();
+                            Log.d("log", "sign up failed");
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Sign up failed", Snackbar.LENGTH_SHORT).show();
                             // TODO: Add explanation why the sign up failed
                         }
 
@@ -93,6 +107,10 @@ public class SignupFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    public void setSnackbar(FirebaseUser firebaseUser) {
+        Snackbar.make(getActivity().findViewById(android.R.id.content), "Hi " + firebaseUser.getDisplayName() + ", Sign up successful", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
