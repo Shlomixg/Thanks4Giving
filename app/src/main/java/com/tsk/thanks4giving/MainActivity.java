@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageUserEvent event) {
+    public void onMessageUserEvent(MessageUserEvent event) {
         updateUserUI(event.user);
         isConnected = true;
     }

@@ -82,7 +82,6 @@ public class SignupFragment extends Fragment {
                                 EventBus.getDefault().post(new MessageUserEvent(user));
                                 getActivity().onBackPressed(); // Close fragment
                             }
-
                         } else {
                             Log.d("log", "failed to sign up");
                             Toast.makeText(getContext(), "failed to sign up", Toast.LENGTH_SHORT).show();
