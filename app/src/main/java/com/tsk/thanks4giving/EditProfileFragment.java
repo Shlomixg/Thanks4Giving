@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -43,12 +45,15 @@ public class EditProfileFragment extends Fragment {
     static final int PICK_IMAGE = 3;
     CircleImageView userImage;
     EditText userName;
-    EditText userGender;
+    //EditText userGender;
+    String gender;
     EditText userAddress;
     Button saveBtn;
     Button changePicBtn;
     Button cameraBtn;
     Button galleryBtn;
+    RadioButton male;
+    RadioButton female;
     String TAG = "Profile Frag";
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -61,21 +66,42 @@ public class EditProfileFragment extends Fragment {
         super.onAttach(context);
     }
 
-    @Override
+    @Override 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
         userName = rootView.findViewById(R.id.edit_profile_user_name_et);
-        userGender = rootView.findViewById(R.id.edit_profile_user_gender_et);
+        //userGender = rootView.findViewById(R.id.edit_profile_user_gender_et);
         userAddress = rootView.findViewById(R.id.edit_profile_user_address_et);
         cameraBtn = rootView.findViewById(R.id.change_pic_camera);
         galleryBtn = rootView.findViewById(R.id.change_pic_gallery);
+
+        male = rootView.findViewById(R.id.radio_male);
+        male.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
+                if(imageUri == null)
+                Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                gender = "Male";
+            }
+        });
+        female = rootView.findViewById(R.id.radio_female);
+        female.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
+                if(imageUri == null)
+                Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                gender = "Female";
+            }
+        });
 
         changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
         changePicBtn.setOnClickListener(new View.OnClickListener() {
@@ -118,12 +144,17 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                if(imageUri==null)
-                    imageUri=Uri.parse(path);
+                if(imageUri==null) {
+                    String path = null;
+                    if(gender.equals("Male"))
+                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
+                    else if(gender.equals("Female"))
+                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
+                    imageUri = Uri.parse(path);
+                }
                 //TODO: update firebase database with new information from EditTexts
                 fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName.getText().toString()).setPhotoUri(imageUri).build());
-                ref.child(fbUser.getUid()).child("gender").setValue(userGender.getText().toString());
+                ref.child(fbUser.getUid()).child("gender").setValue(gender);
                 ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
 
                 FragmentManager fragmentManager = getFragmentManager();

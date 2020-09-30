@@ -80,7 +80,36 @@
             android:hint="User Name"
             android:textColorHint="@color/colorWhite"/>
 
-        <EditText
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg"
+                    android:padding="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="Male"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/radio_male"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg"
+                    android:padding="15dp"
+                    android:text="Female"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/radio_female"/>
+
+            </RadioGroup>
+
+       <!-- <EditText
             android:id="@+id/edit_profile_user_gender_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,7 +120,7 @@
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:hint="Gender"
-            android:textColorHint="@color/colorWhite"/>
+            android:textColorHint="@color/colorWhite"/>-->
 
         <EditText
             android:id="@+id/edit_profile_user_address_et"
@@ -103,7 +132,7 @@
             android:gravity="center"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:hint="User address"
+            android:hint="Address"
             android:textColorHint="@color/colorWhite"/>
 
         <Button
