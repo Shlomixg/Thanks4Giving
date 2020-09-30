@@ -122,12 +122,14 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser fbUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if ( fbUser != null) { // Sign up or login
+                    currentFBUser = fbUser;
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
 
                     user_name_tv.setText(fbUser.getDisplayName());
                     Glide.with(getApplicationContext()).load(R.drawable.profile_woman).centerCrop().into(profile_pic_iv);
                 } else {
+                    currentFBUser = null;
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
 
