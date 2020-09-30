@@ -6,21 +6,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
 
     private ArrayList<Post> list;
     private PostClickListener listener;
+    String TAG = "post profile";
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -85,7 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getPostImage())).centerCrop().into(holder.postImage);
         Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getProfileImage())).centerCrop().into(holder.profileImage);
         holder.like.setText("" + post.getLikes());
-        /*holder.comment.setOnClickListener(new View.OnClickListener() {
+        holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -96,25 +102,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             public void onClick(View v) {
 
             }
-        });*/
+        });
+        holder.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent,new PostProfileFragment() ,TAG).addToBackStack(null).commit();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    public void onItemMove(ArrayList<Post> list, int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(list, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(list, i, i - 1);
-            }
-        }
-        notifyItemMoved(fromPosition, toPosition);
     }
 
 }

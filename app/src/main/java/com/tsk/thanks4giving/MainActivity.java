@@ -60,12 +60,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
-        for (int i = 0; i < 10; i++) {
-            Post post = new Post(path, path, i + 100, null, null);
-            postList.add(post);
-        }
-
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
