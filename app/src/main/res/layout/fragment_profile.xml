@@ -50,7 +50,7 @@
             android:text="User Email" />
 
         <TextView
-            android:id="@+id/profile_user_age_tv"
+            android:id="@+id/profile_user_gender_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -58,7 +58,7 @@
             android:textSize="25sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User age" />
+            android:text="Gender"/>
 
         <TextView
             android:id="@+id/profile_user_address_tv"

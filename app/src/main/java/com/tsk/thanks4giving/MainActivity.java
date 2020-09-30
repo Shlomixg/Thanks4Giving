@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
     private void setFragment(Fragment fragment, String FRAG) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
         transaction.commit();

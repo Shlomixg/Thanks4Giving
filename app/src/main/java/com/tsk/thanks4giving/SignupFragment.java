@@ -55,7 +55,7 @@ public class SignupFragment extends Fragment {
         confirmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String mail = email.getText().toString();
+                final String mail = email.getText().toString();
                 String pass = password.getText().toString();
                 // Sign up new user
                 mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -67,9 +67,6 @@ public class SignupFragment extends Fragment {
                             final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
                                 final String name = fullname.getText().toString();
-                                String userUid = fbUser.getUid();
-                                Uri userPhoto = null; // TODO: add image view and take photo
-                                // TODO: Add more fields
 
                                 // Updating full name & photo
                                 fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(null).setDisplayName(name).build())
@@ -87,9 +84,10 @@ public class SignupFragment extends Fragment {
                                         );
 
                                 // Saving to DB
-                                User user = new User(name, userUid);
+                                String userToken = fbUser.getIdToken(false).toString();
+                                User user = new User(name, userToken, mail, null, null, null);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(userUid).setValue(user);
+                                mDatabase.child("users").child(fbUser.getUid()).setValue(user);
                             }
                         } else {
                             Log.d("log", "sign up failed");

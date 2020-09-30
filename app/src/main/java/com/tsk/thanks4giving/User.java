@@ -5,12 +5,18 @@ import android.net.Uri;
 public class User {
 
     public String name;
-    public String userUid;
+    public String token;
+    public String email;
+    public String gender;
+    public String address;
     public Uri profilePhoto;
 
-    public User(String name, String userUid) {
+    public User(String name, String token, String email, String gender, String Address, Uri profilePhoto){
         this.name = name;
-        this.userUid = userUid;
+        this.token = token;
+        this.email = email;
+        this.gender = gender;
+        address = Address;
         this.profilePhoto = profilePhoto;
     }
 
@@ -20,12 +26,20 @@ public class User {
         return name;
     }
 
-    public String getUserUid() {
-        return userUid;
-    }
-
     public Uri getProfilePhoto() {
         return profilePhoto;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     /* Setters */
@@ -34,11 +48,19 @@ public class User {
         this.name = name;
     }
 
-    public void setUserUid(String userUid) {
-        this.userUid = userUid;
-    }
-
     public void setProfilePhoto(Uri profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setAddress(String Address) {
+        address = Address;
     }
 }

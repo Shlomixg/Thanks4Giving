@@ -31,10 +31,41 @@
             android:layout_height="wrap_content"
             android:text="Change picture"
             android:background="@drawable/bg"
+            android:layout_margin="5dp"
             android:textSize="15sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:id="@+id/edit_profile_picture_btn"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:id="@+id/pic_btns"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/change_pic_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg"
+                android:drawableLeft="@drawable/ic_camera_alt"
+                android:padding="3dp"
+                android:text="Camera"
+                android:textColor="@color/colorWhite" />
+
+            <Button
+                android:id="@+id/change_pic_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg"
+                android:drawableLeft="@drawable/ic_insert_photo"
+                android:text="Gallery"
+                android:textColor="@color/colorWhite" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/edit_profile_user_name_et"
@@ -45,18 +76,22 @@
             android:textSize="25sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User Name" />
+            android:gravity="center"
+            android:hint="User Name"
+            android:textColorHint="@color/colorWhite"/>
 
         <EditText
-            android:id="@+id/edit_profile_user_age_et"
+            android:id="@+id/edit_profile_user_gender_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:background="@drawable/bg"
             android:textSize="25sp"
+            android:gravity="center"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User age" />
+            android:hint="Gender"
+            android:textColorHint="@color/colorWhite"/>
 
         <EditText
             android:id="@+id/edit_profile_user_address_et"
@@ -65,9 +100,11 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/bg"
             android:textSize="25sp"
+            android:gravity="center"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User address" />
+            android:hint="User address"
+            android:textColorHint="@color/colorWhite"/>
 
         <Button
             android:id="@+id/edit_profile_save_btn"

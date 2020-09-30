@@ -42,8 +42,8 @@ import java.util.Random;
 public class NewPostFragment extends Fragment implements LocationListener {
     final int WRITE_PERMISSION_REQUEST = 1;
     final int LOCATION_PERMISSION_REQUEST = 2;
-    static final int PICK_IMAGE = 1;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
+    static final int PICK_IMAGE = 3;
+    static final int REQUEST_IMAGE_CAPTURE = 4;
     EditText coordinateTv;
     EditText addressTv;
     Handler handler = new Handler();//##
@@ -146,7 +146,6 @@ public class NewPostFragment extends Fragment implements LocationListener {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-
             }
         });
         return rootView;
