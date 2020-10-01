@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -22,9 +23,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,16 +37,22 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-public class NewPostFragment extends Fragment implements LocationListener {
+public class NewPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
     final int WRITE_PERMISSION_REQUEST = 1;
     final int LOCATION_PERMISSION_REQUEST = 2;
-    static final int PICK_IMAGE = 3;
-    static final int REQUEST_IMAGE_CAPTURE = 4;
+    static final int PICK_IMAGE = 1;
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     EditText coordinateTv;
     EditText addressTv;
     Handler handler = new Handler();//##
@@ -51,6 +62,7 @@ public class NewPostFragment extends Fragment implements LocationListener {
     File file;
     Uri imageUri;
     ImageView image;
+    Spinner spinner;
 
 
     @Override
@@ -84,6 +96,43 @@ public class NewPostFragment extends Fragment implements LocationListener {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
         coordinateTv = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
+        spinner = rootView.findViewById(R.id.category_spinner);
+        String a[]=getResources().getStringArray(R.array.categories);
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getActivity(), R.layout.spinner_text, a) {
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    // Disable the second item from Spinner
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position==0) {
+                    // Set the disable item text color
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(R.layout.spinner_text);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(0, false);
+
         addressTv = rootView.findViewById(R.id.address_editText);//##
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
         btn_gps.setOnClickListener(new View.OnClickListener() {
@@ -130,10 +179,19 @@ public class NewPostFragment extends Fragment implements LocationListener {
         browse_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                if (Build.VERSION.SDK_INT >= 23) {
+
+                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
+
+
+                    } else {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                    }
+                }
             }
         });
         return rootView;
@@ -281,5 +339,25 @@ public class NewPostFragment extends Fragment implements LocationListener {
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
         }
+        if (requestCode==200 &&resultCode==getActivity().RESULT_OK)
+        {
+            Place place= Autocomplete.getPlaceFromIntent(data);
+            coordinateTv.setText(place.getAddress());
+        }
+        else if (resultCode== AutocompleteActivity.RESULT_ERROR)
+        {
+            Status status=Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getActivity().getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

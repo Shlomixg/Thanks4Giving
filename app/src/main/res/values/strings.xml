@@ -93,4 +93,13 @@
     </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="categories">
+        <item name="Choose Category">Choose Category</item>
+        <item name="Electronics">Electronics</item>
+        <item name="Furnitures">Furnitures</item>
+        <item name="Sport">Sport</item>
+        <item name="Food">Food</item>
+        <item name="Clothes">Clothes</item>
+        <item name="Games">Games</item>
+    </string-array>
 </resources>
