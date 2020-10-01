@@ -53,6 +53,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     final int LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
+    int flag=0;
     EditText coordinateTv;
     EditText addressTv;
     Handler handler = new Handler();//##
@@ -155,6 +156,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag=1;
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -179,6 +181,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         browse_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag=2;
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -322,9 +325,20 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 int result = r.nextInt(high - low) + low;
                 file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
                 imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                if (flag==1)
+                {
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+                else if (flag==2)
+                {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    startActivityForResult(Intent.createChooser(intent,"Select Image"),PICK_IMAGE);
+
+                }
             }
         }
     }
