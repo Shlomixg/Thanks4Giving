@@ -22,7 +22,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:src="@drawable/profile_man"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             app:civ_border_color="#FFF"
             app:civ_border_width="0dp"/>
 
@@ -41,7 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
             android:gravity="center"
             android:id="@+id/pic_btns"
             android:visibility="gone">
@@ -54,6 +53,7 @@
                 android:drawableLeft="@drawable/ic_camera_alt"
                 android:padding="3dp"
                 android:text="Camera"
+                android:layout_marginEnd="20dp"
                 android:textColor="@color/colorWhite" />
 
             <Button
@@ -71,9 +71,9 @@
             android:id="@+id/edit_profile_user_name_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:gravity="center"
@@ -83,7 +83,7 @@
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -93,7 +93,7 @@
                     android:padding="15dp"
                     android:layout_marginEnd="10dp"
                     android:text="Male"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textColor="@color/colorWhite"
                     android:id="@+id/radio_male"/>
 
@@ -103,32 +103,19 @@
                     android:background="@drawable/bg"
                     android:padding="15dp"
                     android:text="Female"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textColor="@color/colorWhite"
                     android:id="@+id/radio_female"/>
 
             </RadioGroup>
 
-       <!-- <EditText
-            android:id="@+id/edit_profile_user_gender_et"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/bg"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:textColor="@color/colorWhite"
-            android:padding="10dp"
-            android:hint="Gender"
-            android:textColorHint="@color/colorWhite"/>-->
-
         <EditText
             android:id="@+id/edit_profile_user_address_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:gravity="center"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
@@ -139,12 +126,12 @@
             android:id="@+id/edit_profile_save_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg"
             android:text="Save"
             android:textColor="@color/colorWhite"
-            android:textSize="25sp"/>
+            android:textSize="15sp"/>
 
     </LinearLayout>
 

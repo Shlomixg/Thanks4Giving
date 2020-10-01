@@ -26,14 +26,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -64,14 +62,6 @@ public class NewPostFragment extends Fragment implements LocationListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
-
-//        if(Build.VERSION.SDK_INT>=23) {
-//
-//            int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-//            if(hasLocationPermission!= PackageManager.PERMISSION_GRANTED) {
-//                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION_REQUEST);
-//            }
-//        }
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -130,8 +120,6 @@ public class NewPostFragment extends Fragment implements LocationListener {
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
                         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                        // camera_btn.setVisibility(View.GONE);
-                        // browse_btn.setVisibility(View.GONE);
                     }
 
                 }
@@ -198,7 +186,6 @@ public class NewPostFragment extends Fragment implements LocationListener {
 
         coordinateTv.setText(lat + " , " + lng);
 
-
         new Thread() {
             @Override
             public void run() {
@@ -215,14 +202,12 @@ public class NewPostFragment extends Fragment implements LocationListener {
                             addressTv.setText(bestAddress.getCountryName() + "," +
                                     bestAddress.getLocality() + "," + bestAddress.getThoroughfare() + " , "
                                     + bestAddress.getFeatureName());
-
                         }
                     });
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }.start();
     }

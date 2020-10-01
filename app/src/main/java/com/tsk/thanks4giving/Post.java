@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Post {
 
-    //for firebase usage
-    private int ID;
+    //for firebase usage, idToken of the user that posted
+    private String posterToken;
     // the item image
     private String postImage;
     // the profile pic of the person who posted it
@@ -18,7 +18,8 @@ public class Post {
     // list ID's watching this post
     private List<String> watching;
 
-    public Post(String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<String> watching) {
+    public Post(String posterToken, String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<String> watching) {
+        this.posterToken = posterToken;
         this.postImage = postImage;
         this.profileImage = profileImage;
         this.likes = likes;
@@ -26,59 +27,52 @@ public class Post {
         this.watching = watching;
     }
 
-    /* Getters */
+    public String getPosterToken() {
+        return posterToken;
+    }
+
+    public void setPosterToken(String posterToken) {
+        this.posterToken = posterToken;
+    }
 
     public String getPostImage() {
         return postImage;
+    }
+
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
     }
 
     public String getProfileImage() {
         return profileImage;
     }
 
-    public int getLikes() {
-        return likes;
-    }
-
-    public ArrayList<Comment> getComments() {
-        return comments;
-    }
-
-    public List<String> getWatching() {
-        return watching;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    /* Setters */
-
-    public void setPostImage(String postImage) {
-        this.postImage = postImage;
-    }
-
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public int getLikes() {
+        return likes;
     }
 
     public void setLikes(int likes) {
         this.likes = likes;
     }
 
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<String> getWatching() {
+        return watching;
     }
 
     public void setWatching(List<String> watching) {
         this.watching = watching;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    public void addToWatching(String id) {
-        watching.add(id);
-    }
 }

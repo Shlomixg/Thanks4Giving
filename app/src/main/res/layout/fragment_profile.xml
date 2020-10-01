@@ -22,7 +22,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:src="@drawable/profile_man"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             app:civ_border_color="#FFF"
             app:civ_border_width="0dp"/>
 
@@ -30,21 +30,20 @@
             android:id="@+id/profile_user_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:text="User Name" />
-
 
         <TextView
             android:id="@+id/profile_user_email_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:text="User Email" />
@@ -53,9 +52,9 @@
             android:id="@+id/profile_user_gender_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
             android:text="Gender"/>
@@ -64,23 +63,32 @@
             android:id="@+id/profile_user_address_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User address" />
+            android:text="Address" />
 
         <Button
             android:id="@+id/edit_profile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg"
             android:text="Edit Profile"
             android:textColor="@color/colorWhite"
-            android:textSize="25sp" />
+            android:textSize="15sp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/message_btn"
+            android:background="@drawable/bg"
+            android:text="Message"
+            android:textColor="@color/colorWhite"/>
 
     </LinearLayout>
 

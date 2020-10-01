@@ -2,14 +2,12 @@ package com.tsk.thanks4giving;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +15,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.File;
 import java.util.Random;
 
@@ -45,8 +39,7 @@ public class EditProfileFragment extends Fragment {
     static final int PICK_IMAGE = 3;
     CircleImageView userImage;
     EditText userName;
-    //EditText userGender;
-    String gender;
+    String gender = "Male";
     EditText userAddress;
     Button saveBtn;
     Button changePicBtn;
@@ -77,7 +70,6 @@ public class EditProfileFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
         userName = rootView.findViewById(R.id.edit_profile_user_name_et);
-        //userGender = rootView.findViewById(R.id.edit_profile_user_gender_et);
         userAddress = rootView.findViewById(R.id.edit_profile_user_address_et);
         cameraBtn = rootView.findViewById(R.id.change_pic_camera);
         galleryBtn = rootView.findViewById(R.id.change_pic_gallery);
@@ -152,10 +144,13 @@ public class EditProfileFragment extends Fragment {
                         path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
                     imageUri = Uri.parse(path);
                 }
-                //TODO: update firebase database with new information from EditTexts
-                fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName.getText().toString()).setPhotoUri(imageUri).build());
+                if (!userName.getText().toString().equals(""))
+                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName.getText().toString()).setPhotoUri(imageUri).build());
+                else
+                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
                 ref.child(fbUser.getUid()).child("gender").setValue(gender);
-                ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
+                if (!userAddress.getText().toString().equals(""))
+                    ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
 
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

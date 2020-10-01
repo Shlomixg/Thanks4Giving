@@ -76,6 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="5dp"
+        android:background="@drawable/bg"
         android:text="Confirm And Sign Up"
         android:textColor="@color/colorWhite" />
 

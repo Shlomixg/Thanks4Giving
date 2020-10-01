@@ -31,6 +31,7 @@ public class ProfileFragment extends Fragment {
     TextView userGender;
     TextView userAddress;
     Button editBtn;
+    Button msgBtn;
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
@@ -51,9 +52,10 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         userImage = rootView.findViewById(R.id.profile_user_image);
         userName = rootView.findViewById(R.id.profile_user_name_tv);
-        userEmail = rootView.findViewById(R.id.profile_user_email_tv);
+        userEmail = rootView.findViewById(R.id.profile_user_email_tv); //TODO: show only if user is same as profile user
         userGender = rootView.findViewById(R.id.profile_user_gender_tv);
         userAddress = rootView.findViewById(R.id.profile_user_address_tv);
+        msgBtn = rootView.findViewById(R.id.message_btn); //TODO: show only if user is not same as profile user
 
 
         //get information from firebase database and insert into TextViews
@@ -71,6 +73,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String gender = snapshot.getValue(String.class);
+                if (gender == null)
+                    gender= "Gender";
                 userGender.setText(gender);
             }
 
@@ -84,6 +88,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String Address = snapshot.getValue(String.class);
+                if (Address == null)
+                    Address = "Address";
                 userAddress.setText(Address);
             }
             @Override
@@ -91,7 +97,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        editBtn = rootView.findViewById(R.id.edit_profile_btn);
+        editBtn = rootView.findViewById(R.id.edit_profile_btn); //TODO: show only if user is same as profile user
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

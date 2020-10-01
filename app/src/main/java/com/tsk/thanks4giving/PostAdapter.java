@@ -6,20 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
@@ -106,8 +97,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: open profile based on if the user owns that profile or not, new fragment or same fragment????
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent,new PostProfileFragment() ,TAG).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent,new ProfileFragment() ,TAG).addToBackStack(null).commit();
             }
         });
     }
