@@ -22,6 +22,7 @@ public class RecyclerViewFragment extends Fragment {
     RecyclerView recycler;
     PostAdapter adapter;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -30,7 +31,7 @@ public class RecyclerViewFragment extends Fragment {
 
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
         for (int i = 0; i < 10; i++) {
-            Post post = new Post(path, path, i + 100, null, null);
+            Post post = new Post("post", path, path, i + 100, null, null);
             postList.add(post);
         }
 
