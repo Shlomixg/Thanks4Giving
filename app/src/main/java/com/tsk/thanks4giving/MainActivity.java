@@ -9,6 +9,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     final String SIGNUP_FRAG = "Signup Fragment";
     final String LOGIN_FRAG = "Login Fragment";
     final String PROFILE_FRAG = "Profile Fragment";
+    final String SETTINGS_FRAG = "Settings Fragment";
+
+    SharedPreferences sharedPrefs;
 
     DrawerLayout drawerLayout;
     Toolbar toolbar;
@@ -56,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Utils.loadPrefs(sharedPrefs);
 
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
@@ -82,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
                         mAuth.signOut();
                         Snackbar.make(findViewById(android.R.id.content), "Logged out", Snackbar.LENGTH_SHORT).show();
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                        break;
+                    case R.id.nav_settings:
+                        setFragment(new SettingsFragment(), SETTINGS_FRAG);
                         break;
                     default:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
@@ -171,7 +183,12 @@ public class MainActivity extends AppCompatActivity {
                 setFragment(new NewPostFragment(), NEW_POST_FRAG);
                 break;
             case R.id.my_profile:
-                setFragment(new ProfileFragment(), PROFILE_FRAG);
+                String currUserUid = currentFBUser.getUid();
+                Bundle bundle = new Bundle();
+                bundle.putString("userUid", currUserUid);
+                ProfileFragment fragment = new ProfileFragment();
+                fragment.setArguments(bundle);
+                setFragment(fragment, PROFILE_FRAG);
                 break;
         }
         return super.onOptionsItemSelected(item);

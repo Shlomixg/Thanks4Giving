@@ -11,7 +11,11 @@ public class User {
     public String address;
     public Uri profilePhoto;
 
-    public User(String name, String token, String email, String gender, String Address, Uri profilePhoto){
+    public User() {
+
+    }
+
+    public User(String name, String token, String email, String gender, String Address, Uri profilePhoto) {
         this.name = name;
         this.token = token;
         this.email = email;
@@ -30,6 +34,10 @@ public class User {
         return profilePhoto;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getToken() {
         return token;
     }
@@ -46,6 +54,10 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setProfilePhoto(Uri profilePhoto) {

@@ -22,7 +22,6 @@ public class RecyclerViewFragment extends Fragment {
     RecyclerView recycler;
     PostAdapter adapter;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -45,7 +44,7 @@ public class RecyclerViewFragment extends Fragment {
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.flContent, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
