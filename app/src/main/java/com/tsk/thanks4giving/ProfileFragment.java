@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -38,6 +40,7 @@ public class ProfileFragment extends Fragment {
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
+    LovelyProgressDialog progressDialog;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,6 +70,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        progressDialog = new LovelyProgressDialog(getContext()).setMessage("Wait").setCancelable(false).setTitle("Wait");
+        progressDialog.show();
     }
 
     @Override
@@ -101,6 +107,7 @@ public class ProfileFragment extends Fragment {
                     }
                     userGender.setText(user.gender);
                     userAddress.setText(user.address);
+                    progressDialog.dismiss();
                 }
             }
 

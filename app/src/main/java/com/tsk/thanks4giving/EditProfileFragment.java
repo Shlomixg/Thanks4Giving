@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,18 +23,22 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.File;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileFragment extends Fragment {
+
+    String TAG = "Profile Frag";
 
     final int WRITE_PERMISSION_REQUEST = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
@@ -48,7 +53,7 @@ public class EditProfileFragment extends Fragment {
     Button galleryBtn;
     RadioButton male;
     RadioButton female;
-    String TAG = "Profile Frag";
+
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref = mDatabase.child("users");
@@ -60,7 +65,7 @@ public class EditProfileFragment extends Fragment {
         super.onAttach(context);
     }
 
-    @Override 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -80,8 +85,8 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                if(imageUri == null)
-                Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                if (imageUri == null)
+                    Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
                 gender = getString(R.string.male);
             }
         });
@@ -90,8 +95,8 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
-                if(imageUri == null)
-                Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                if (imageUri == null)
+                    Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
                 gender = getString(R.string.female);
             }
         });
@@ -137,11 +142,11 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(imageUri==null) {
+                if (imageUri == null) {
                     String path = null;
-                    if(gender.equals("Male"))
+                    if (gender.equals("Male"))
                         path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                    else if(gender.equals("Female"))
+                    else if (gender.equals("Female"))
                         path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
                     imageUri = Uri.parse(path);
                 }
@@ -153,9 +158,7 @@ public class EditProfileFragment extends Fragment {
                 if (!userAddress.getText().toString().equals(""))
                     ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
 
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.flContent, new ProfileFragment(), TAG).addToBackStack(null).commit();
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
         return rootView;

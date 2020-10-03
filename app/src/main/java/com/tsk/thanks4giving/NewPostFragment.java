@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -62,7 +63,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     final int LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
-    int flag=0;
+    int flag = 0;
     EditText coordinateTv;
     EditText addressTv;
     Handler handler = new Handler();//##
@@ -75,12 +76,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     Spinner spinner;
     ImageButton confirm_btn; //%
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    String path,path2,token;
+    String path, path2, token;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseDatabase database=FirebaseDatabase.getInstance();
-
-
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -111,21 +110,21 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
-        confirm_btn=rootView.findViewById(R.id.confirm_btn);
+        confirm_btn = rootView.findViewById(R.id.confirm_btn);
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
                 path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
 
-                final DatabaseReference a=database.getReference();
+                final DatabaseReference a = database.getReference();
 
-                final Post post=new Post("",path2,path,0,null,null);
-                DatabaseReference reference=a.child("users").child(mAuth.getCurrentUser().getUid()).child("token");
+                final Post post = new Post("", path2, path, 0, null, null);
+                DatabaseReference reference = a.child("users").child(mAuth.getCurrentUser().getUid()).child("token");
                 reference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        token=snapshot.getValue(String.class);
+                        token = snapshot.getValue(String.class);
                         post.setPosterToken(token);
                         a.child("all_post").push().setValue(post);
                     }
@@ -142,32 +141,29 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         coordinateTv = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
         spinner = rootView.findViewById(R.id.category_spinner);
-        String a[]=getResources().getStringArray(R.array.categories);
+        String a[] = getResources().getStringArray(R.array.categories);
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 getActivity(), R.layout.spinner_text, a) {
             @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
+            public boolean isEnabled(int position) {
+                if (position == 0) {
                     // Disable the second item from Spinner
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
             }
+
             @Override
             public View getDropDownView(int position, View convertView,
                                         ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position==0) {
+                if (position == 0) {
                     // Set the disable item text color
                     tv.setTextColor(Color.GRAY);
-                }
-                else {
+                } else {
                     tv.setTextColor(Color.BLACK);
                 }
                 return view;
@@ -200,7 +196,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag=1;
+                flag = 1;
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -225,7 +221,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         browse_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag=2;
+                flag = 2;
                 if (Build.VERSION.SDK_INT >= 23) {
 
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -369,18 +365,15 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 int result = r.nextInt(high - low) + low;
                 file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
                 imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                if (flag==1)
-                {
+                if (flag == 1) {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                else if (flag==2)
-                {
+                } else if (flag == 2) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                    startActivityForResult(Intent.createChooser(intent,"Select Image"),PICK_IMAGE);
+                    startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
 
                 }
             }
@@ -397,15 +390,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
         }
-        if (requestCode==200 &&resultCode==getActivity().RESULT_OK)
-        {
-            Place place= Autocomplete.getPlaceFromIntent(data);
+        if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
             coordinateTv.setText(place.getAddress());
-        }
-        else if (resultCode== AutocompleteActivity.RESULT_ERROR)
-        {
-            Status status=Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getActivity().getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -418,6 +408,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
     private void setFragment(Fragment fragment, String FRAG) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
