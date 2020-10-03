@@ -1,17 +1,19 @@
 package com.tsk.thanks4giving;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
@@ -32,13 +35,33 @@ public class ProfileFragment extends Fragment {
     TextView userAddress;
     Button editBtn;
     Button msgBtn;
-    FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_USER_UID = "userUid";
+
+    private String mUserUid;
+
+    public ProfileFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param userUid UID of the user to show
+     * @return A new instance of fragment ProfileFragment.
+     */
+    public static ProfileFragment newInstance(String userUid) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_USER_UID, userUid);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -48,66 +71,59 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            mUserUid = getArguments().getString(ARG_USER_UID);
+        }
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         userImage = rootView.findViewById(R.id.profile_user_image);
         userName = rootView.findViewById(R.id.profile_user_name_tv);
-        userEmail = rootView.findViewById(R.id.profile_user_email_tv); //TODO: show only if user is same as profile user
+        userEmail = rootView.findViewById(R.id.profile_user_email_tv);
         userGender = rootView.findViewById(R.id.profile_user_gender_tv);
         userAddress = rootView.findViewById(R.id.profile_user_address_tv);
-        msgBtn = rootView.findViewById(R.id.message_btn); //TODO: show only if user is not same as profile user
+        msgBtn = rootView.findViewById(R.id.message_btn);
+        editBtn = rootView.findViewById(R.id.edit_profile_btn);
 
+        ref = mDatabase.child("users").child(mUserUid);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    userName.setText(user.name);
+                    userEmail.setText(user.email);
+                    if (user.profilePhoto != null) {
+                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
+                    } else {
+                        String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
+                        Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                    }
+                    userGender.setText(user.gender);
+                    userAddress.setText(user.address);
+                }
+            }
 
-        //get information from firebase database and insert into TextViews
-        if(fbUser.getPhotoUrl() != null)
-            Glide.with(getActivity()).load(fbUser.getPhotoUrl()).centerCrop().into(userImage);
-        else{
-            String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-            Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        if (mUserUid.equals(currentUser.getUid())) {
+            msgBtn.setVisibility(View.GONE);
+        } else {
+            editBtn.setVisibility(View.GONE);
+            userEmail.setVisibility(View.GONE);
         }
-        userName.setText(fbUser.getDisplayName());
-        userEmail.setText(fbUser.getEmail());
-
-        ref = mDatabase.child("users").child(fbUser.getUid()).child("gender");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String gender = snapshot.getValue(String.class);
-                if (gender == null)
-                    gender= "Gender";
-                userGender.setText(gender);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
-        ref = mDatabase.child("users").child(fbUser.getUid()).child("address");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String Address = snapshot.getValue(String.class);
-                if (Address == null)
-                    Address = "Address";
-                userAddress.setText(Address);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
-        editBtn = rootView.findViewById(R.id.edit_profile_btn); //TODO: show only if user is same as profile user
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.flContent,new EditProfileFragment() ,TAG).commit();
+                fragmentTransaction.replace(R.id.flContent, new EditProfileFragment(), TAG).addToBackStack(null).commit();
             }
         });
         return rootView;
     }
-
-
 }

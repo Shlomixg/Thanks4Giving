@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Themes -->
+    <string-array name="pref_themes">
+        <item>ברירת מחדל</item>
+        <item>בהירה</item>
+        <item>כהה</item>
+    </string-array>
+
+</resources>
