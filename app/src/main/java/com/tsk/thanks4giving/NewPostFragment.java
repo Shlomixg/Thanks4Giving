@@ -47,6 +47,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -78,8 +79,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     final String RECYCLER_FRAG = "Recycler View Fragment";
     String path, path2, token;
 
+    FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference posts = database.getReference("posts");
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -110,76 +113,49 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
-        confirm_btn = rootView.findViewById(R.id.confirm_btn);
-        confirm_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
-                path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
 
-                final DatabaseReference a = database.getReference();
-
-                final Post post = new Post("", path2, path, 0, null, null);
-                DatabaseReference reference = a.child("users").child(mAuth.getCurrentUser().getUid()).child("token");
-                reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        token = snapshot.getValue(String.class);
-                        post.setPosterToken(token);
-                        a.child("all_post").push().setValue(post);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-                setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
-
-            }
-        });
+        browse_btn = rootView.findViewById(R.id.gallery_btn);
+        camera_btn = rootView.findViewById(R.id.pic_btn);
+        addressTv = rootView.findViewById(R.id.address_editText);//##
+        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
         coordinateTv = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
         spinner = rootView.findViewById(R.id.category_spinner);
-        String a[] = getResources().getStringArray(R.array.categories);
+        confirm_btn = rootView.findViewById(R.id.confirm_btn);
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getActivity(), R.layout.spinner_text, a) {
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
-                    // Disable the second item from Spinner
-                    return false;
-                } else {
-                    return true;
-                }
-            }
+        currentFBUser = mAuth.getCurrentUser();
 
-            @Override
-            public View getDropDownView(int position, View convertView,
-                                        ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0) {
-                    // Set the disable item text color
-                    tv.setTextColor(Color.GRAY);
-                } else {
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
+        String[] a = getResources().getStringArray(R.array.categories);
+
+        final ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(getActivity(), R.layout.spinner_text, a) {
+                    @Override
+                    public boolean isEnabled(int position) {
+                        // Disable the second item from Spinner
+                        return position != 0;
+                    }
+
+                    @Override
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getDropDownView(position, convertView, parent);
+                        TextView tv = (TextView) view;
+                        if (position == 0) {
+                            // Set the disable item text color
+                            tv.setTextColor(Color.GRAY);
+                        } else {
+                            tv.setTextColor(Color.BLACK);
+                        }
+                        return view;
+                    }
+                };
         adapter.setDropDownViewResource(R.layout.spinner_text);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
         spinner.setSelection(0, false);
 
-        addressTv = rootView.findViewById(R.id.address_editText);//##
-        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
         btn_gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Toast.makeText(getContext(),"dddddddd",Toast.LENGTH_SHORT).show();
                 if (Build.VERSION.SDK_INT >= 23) {
                     int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
@@ -192,19 +168,16 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        camera_btn = rootView.findViewById(R.id.pic_btn);
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 flag = 1;
                 if (Build.VERSION.SDK_INT >= 23) {
-
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
                     } else {
                         Random r = new Random();
-                        int low = 10;
-                        int high = 1000000;
+                        int low = 10, high = 1000000;
                         int result = r.nextInt(high - low) + low;
                         file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
                         imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
@@ -212,12 +185,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
                         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                     }
-
                 }
-
             }
         });
-        browse_btn = rootView.findViewById(R.id.gallery_btn);
+
         browse_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,47 +208,24 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 }
             }
         });
+
+        confirm_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
+                path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
+
+                String uid = currentFBUser.getUid();
+                // TODO: Add title & desc to post
+                final Post post = new Post(uid, "Title", "Description", 1, "TEST", path2);
+                posts.push().setValue(post);
+
+                // TODO: Update the posts list at user
+
+                setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+            }
+        });
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override
@@ -374,7 +322,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                     startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-
                 }
             }
         }
@@ -415,6 +362,5 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
         transaction.commit();
-
     }
 }

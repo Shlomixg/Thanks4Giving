@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,8 +41,6 @@ public class ProfileFragment extends Fragment {
     DatabaseReference ref;
     LovelyProgressDialog progressDialog;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_USER_UID = "userUid";
 
     private String mUserUid;
@@ -53,9 +50,6 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
      * @param userUid UID of the user to show
      * @return A new instance of fragment ProfileFragment.
      */

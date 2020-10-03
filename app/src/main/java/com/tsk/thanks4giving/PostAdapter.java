@@ -1,23 +1,36 @@
 package com.tsk.thanks4giving;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
 
     private ArrayList<Post> list;
     private PostClickListener listener;
-    String TAG = "post profile";
+    final String PROFILE_FRAG = "Profile Fragment";
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference users = database.getReference().child("users");
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -76,30 +89,58 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         return holder;
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull PostCardHolder holder, int position) {
-        Post post = list.get(position);
-        //Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getPostImage())).centerCrop().into(holder.postImage);
-        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getProfileImage())).centerCrop().into(holder.profileImage);
-        holder.like.setText("" + post.getLikes());
+    public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
+        final Post post = list.get(position);
+        DatabaseReference ref = users.child(post.userUid);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    if (user.profilePhoto != null) {
+                        Glide.with(holder.itemView.getContext()).load(user.profilePhoto).centerCrop().into(holder.profileImage);
+                    } else {
+                        Glide.with(holder.itemView.getContext()).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.postImage)).centerCrop().into(holder.postImage);
+        int likes = (post.likes != null ) ? post.likes.size() : 0;
+        holder.like.setText("" + likes);
+
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
+
         holder.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
+
         holder.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: open profile based on if the user owns that profile or not
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent,new ProfileFragment() ,TAG).addToBackStack(null).commit();
+                Bundle bundle = new Bundle();
+                bundle.putString("userUid", post.userUid);
+                ProfileFragment fragment = new ProfileFragment();
+                fragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
             }
         });
     }
@@ -108,5 +149,4 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     public int getItemCount() {
         return list.size();
     }
-
 }

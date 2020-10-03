@@ -84,14 +84,15 @@ public class SignupFragment extends Fragment {
                                         );
 
                                 // Saving to DB
-                                String userToken = fbUser.getIdToken(false).toString();
-                                User user = new User(name, userToken, mail, getString(R.string.gender), getString(R.string.address), null);
+                                String userUid = fbUser.getUid();
+                                User user = new User(userUid, name, mail, getString(R.string.gender), getString(R.string.address),null);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("users").child(fbUser.getUid()).setValue(user);
                             }
                         } else {
-                            Log.d("log", "sign up failed");
                             String error = task.getException().getMessage();
+                            Log.d("Signup Log", "--- Sign up failed");
+                            Log.d("Signup Log", "--- Error: " + error);
                             Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                         }
                     }

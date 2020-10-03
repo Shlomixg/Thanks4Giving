@@ -4,8 +4,8 @@ import android.net.Uri;
 
 public class User {
 
+    public String uid;
     public String name;
-    public String token;
     public String email;
     public String gender;
     public String address;
@@ -15,12 +15,12 @@ public class User {
 
     }
 
-    public User(String name, String token, String email, String gender, String Address, Uri profilePhoto) {
+    public User(String uid, String name, String email, String gender, String address, Uri profilePhoto) {
+        this.uid = uid;
         this.name = name;
-        this.token = token;
         this.email = email;
         this.gender = gender;
-        address = Address;
+        this.address = address;
         this.profilePhoto = profilePhoto;
     }
 
@@ -38,8 +38,8 @@ public class User {
         return email;
     }
 
-    public String getToken() {
-        return token;
+    public String getUid() {
+        return uid;
     }
 
     public String getGender() {
@@ -64,8 +64,8 @@ public class User {
         this.profilePhoto = profilePhoto;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public void setGender(String gender) {
