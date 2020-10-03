@@ -1,5 +1,6 @@
 package com.tsk.thanks4giving;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,34 +25,38 @@ public class RecyclerViewFragment extends Fragment {
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
-    FirebaseDatabase database=FirebaseDatabase.getInstance();
-    final DatabaseReference a=database.getReference();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference a = database.getReference();
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         DatabaseReference reference2 = a.child("all_post");
         reference2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
+                progressDialog.setTitle(getString(R.string.loading));
+                progressDialog.show();
+
                 postList.clear();
                 for (DataSnapshot ds:snapshot.getChildren())
                 {
-                    Post pos = new Post(ds.child("posterToken").getValue(String.class)
+                    Post pos = ds.getValue(Post.class);
+                    /*Post pos = new Post(ds.child("posterToken").getValue(String.class)
                             ,ds.child("postImage").getValue(String.class)
                             ,ds.child("profileImage").getValue(String.class)
                             ,ds.child("likes").getValue(Integer.class)
                             ,ds.child("comments").getValue(ArrayList.class)
-                            ,ds.child("watching").getValue(ArrayList.class));
+                            ,ds.child("watching").getValue(ArrayList.class));*/
                     postList.add(pos);
                 }
                 // adapter=new PostAdapter(postList);
                 recycler.setAdapter(adapter);
+                progressDialog.dismiss();
             }
 
             @Override
@@ -72,16 +77,12 @@ public class RecyclerViewFragment extends Fragment {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.flContent, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
-
             @Override
             public void onLongClickListener(int pos, View v) {
             }
         });
 
         recycler.setAdapter(adapter);
-
         return rootView;
     }
-
-
 }

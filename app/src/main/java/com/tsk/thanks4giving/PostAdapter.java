@@ -79,7 +79,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     @Override
     public void onBindViewHolder(@NonNull PostCardHolder holder, int position) {
         Post post = list.get(position);
-        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getPostImage())).centerCrop().into(holder.postImage);
+        //Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getPostImage())).centerCrop().into(holder.postImage);
         Glide.with(holder.itemView.getContext()).load(Uri.parse(post.getProfileImage())).centerCrop().into(holder.profileImage);
         holder.like.setText("" + post.getLikes());
         holder.comment.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +97,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: open profile based on if the user owns that profile or not, new fragment or same fragment????
+                //TODO: open profile based on if the user owns that profile or not
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent,new ProfileFragment() ,TAG).addToBackStack(null).commit();
             }

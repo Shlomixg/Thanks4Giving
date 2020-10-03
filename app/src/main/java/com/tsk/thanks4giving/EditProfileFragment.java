@@ -153,7 +153,7 @@ public class EditProfileFragment extends Fragment {
                 if (!userAddress.getText().toString().equals(""))
                     ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
 
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.flContent, new ProfileFragment(), TAG).addToBackStack(null).commit();
             }

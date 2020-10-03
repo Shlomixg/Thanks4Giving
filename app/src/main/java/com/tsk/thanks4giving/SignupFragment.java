@@ -91,10 +91,9 @@ public class SignupFragment extends Fragment {
                             }
                         } else {
                             Log.d("log", "sign up failed");
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail), Snackbar.LENGTH_SHORT).show();
-                            // TODO: Add explanation why the sign up failed
+                            String error = task.getException().getMessage();
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                         }
-
                     }
                 });
             }

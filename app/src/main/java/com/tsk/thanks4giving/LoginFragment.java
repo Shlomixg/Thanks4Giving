@@ -63,8 +63,8 @@ public class LoginFragment extends Fragment {
 
                         } else {
                             Log.d("log", "login failed");
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.login_fail), Snackbar.LENGTH_SHORT).show();
-                            // TODO: Add explanation why the login failed
+                            String error = task.getException().getMessage();
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.login_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
