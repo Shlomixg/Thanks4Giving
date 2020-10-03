@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
@@ -53,11 +56,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class NewPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
     final int WRITE_PERMISSION_REQUEST = 1;
@@ -83,6 +91,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference posts = database.getReference("posts");
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -93,6 +103,24 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        //        riversRef.putFile(file)
+//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        // Get a URL to the uploaded content
+//                        Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        // Handle unsuccessful uploads
+//                        // ...
+//                    }
+//                });
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -213,7 +241,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             @Override
             public void onClick(View v) {
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
-                path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
+                // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
+                uploadPicture();
 
                 String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
@@ -334,8 +363,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
             imageUri = data.getData();
             image.setImageURI(imageUri);
+            uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
+            uploadPicture();
         }
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
@@ -356,11 +387,50 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
     }
 
+
     private void setFragment(Fragment fragment, String FRAG) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
         transaction.commit();
+
+    }
+
+    private void uploadPicture() {
+        final String randomKey = UUID.randomUUID().toString();
+        StorageReference riversRef = storageReference.child("images/" + randomKey);
+
+        riversRef.putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        try {
+                            downloadFile(randomKey);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                    }
+                });
+    }
+
+    private void downloadFile(String randomKey) throws IOException {
+        StorageReference imageRef = storageReference.child("images").child(randomKey);
+        imageRef.getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show();
+                        path2 = uri.toString();
+                    }
+                });
     }
 }

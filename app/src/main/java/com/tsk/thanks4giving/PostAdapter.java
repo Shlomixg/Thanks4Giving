@@ -89,7 +89,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         return holder;
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
         final Post post = list.get(position);
