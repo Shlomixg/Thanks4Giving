@@ -9,10 +9,10 @@ public class Post {
     public String desc;
     public int status;
     public String category;
-    public String postImage; // the item image
-    public ArrayList<String> likes; // list of the users which liked the post
-    public ArrayList<Comment> comments; // list of Comment objects
-    public ArrayList<String> watching;// list ID's watching this post
+    public String postImage; // Item image
+    public ArrayList<String> likes; // List of users which liked the post
+    public ArrayList<Comment> comments; // List of Comment objects
+    public ArrayList<String> watching;// List ID's watching this post
 
     public Post() {
 

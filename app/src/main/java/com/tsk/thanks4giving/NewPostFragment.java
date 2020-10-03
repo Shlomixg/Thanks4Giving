@@ -29,7 +29,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,13 +50,9 @@ import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -85,7 +80,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     Spinner spinner;
     ImageButton confirm_btn; //%
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    String path, path2, token;
+    String path, path2;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -225,8 +220,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
                     if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-
-
                     } else {
                         Intent intent = new Intent();
                         intent.setType("image/*");
@@ -246,7 +239,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
                 String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
-                final Post post = new Post(uid, "Title", "Description", 1, "TEST", path2);
+                final Post post = new Post(uid, "Title", "Description", 1, "TEST", imageUri.toString());
                 posts.push().setValue(post);
 
                 // TODO: Update the posts list at user
@@ -394,7 +387,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
         transaction.commit();
-
     }
 
     private void uploadPicture() {

@@ -59,7 +59,7 @@ public class PostFragment extends Fragment {
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
-        ImageButton waze=rootView.findViewById(R.id.waze);
+        ImageButton waze = rootView.findViewById(R.id.waze);
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +70,7 @@ public class PostFragment extends Fragment {
             }
         });
 
-        ImageButton whastsapp=rootView.findViewById(R.id.whatsapp);
+        ImageButton whastsapp = rootView.findViewById(R.id.whatsapp);
         whastsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +88,7 @@ public class PostFragment extends Fragment {
 
             }
         });
-        ImageButton facebook=rootView.findViewById(R.id.facebook);
+        ImageButton facebook = rootView.findViewById(R.id.facebook);
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,47 +139,12 @@ public class PostFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     public Uri SaveImage(Bitmap finalBitmap) {
         Random r = new Random();
         int low = 10;
         int high = 1000000;
-        int result = r.nextInt(high-low) + low;
-        File file=new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),result+".jpg"); //eran
+        int result = r.nextInt(high - low) + low;
+        File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), result + ".jpg"); //eran
         try {
             FileOutputStream out = new FileOutputStream(file);
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
@@ -189,20 +154,22 @@ public class PostFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Uri imageUri= FileProvider.getUriForFile(getActivity(),getActivity().getPackageName()+".provider",file);
-        Toast.makeText(getContext(),imageUri.toString(),Toast.LENGTH_SHORT).show();
+        Uri imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+        Toast.makeText(getContext(), imageUri.toString(), Toast.LENGTH_SHORT).show();
         return imageUri;
     }
+
     public static Bitmap loadBitmapFromView(View v, int width, int height) {
         Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.draw(c);
         return b;
     }
+
     private void cordinatesToWaze(Location location) {
-        double latitude=location.getLatitude();
-        double longitude=location.getLongitude();
-        String url = "https://www.waze.com/ul?ll="+latitude+"%2C"+longitude+"&navigate=yes";
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
         //String url = "https://www.waze.com/ul?ll=32.03140520%2C34.74392110&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 

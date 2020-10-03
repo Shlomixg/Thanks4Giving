@@ -2,22 +2,22 @@ package com.tsk.thanks4giving;
 
 public class Comment {
 
-    private String Token;
+    private String uid;
     private String userName;
     private String text;
 
-    public Comment(String token, String userName, String text) {
-        Token = token;
+    public Comment(String uid, String userName, String text) {
+        this.uid = uid;
         this.userName = userName;
         this.text = text;
     }
 
-    public String getToken() {
-        return Token;
+    public String getUid() {
+        return uid;
     }
 
-    public void setToken(String token) {
-        Token = token;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getUserName() {

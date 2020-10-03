@@ -47,7 +47,7 @@ public class RecyclerViewFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 progressDialog.show();
-                
+
                 postList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post pos = ds.getValue(Post.class);

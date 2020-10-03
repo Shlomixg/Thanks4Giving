@@ -1,7 +1,6 @@
 package com.tsk.thanks4giving;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -85,7 +86,7 @@ public class SignupFragment extends Fragment {
 
                                 // Saving to DB
                                 String userUid = fbUser.getUid();
-                                User user = new User(userUid, name, mail, getString(R.string.gender), getString(R.string.address),null);
+                                User user = new User(userUid, name, mail, getString(R.string.gender), getString(R.string.address), null);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("users").child(fbUser.getUid()).setValue(user);
                             }
@@ -103,7 +104,7 @@ public class SignupFragment extends Fragment {
     }
 
     public void setSnackbar(FirebaseUser firebaseUser) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content),getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
