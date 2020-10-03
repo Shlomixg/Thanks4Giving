@@ -12,9 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Sign-up"
+        android:text="@string/sign_up"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="25sp" />
+        android:textSize="25sp"/>
 
     <EditText
         android:id="@+id/email_input"
@@ -27,11 +27,11 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/bg"
         android:gravity="center"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 
 
     <EditText
@@ -45,7 +45,7 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/bg"
         android:gravity="center"
-        android:hint="Full Name"
+        android:hint="@string/full_name"
         android:inputType="textPersonName"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
@@ -63,11 +63,11 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/bg"
         android:gravity="center"
-        android:hint="Password (6 digits or more)"
+        android:hint="@string/password_hint"
         android:inputType="number|numberPassword"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 
 
     <Button
@@ -77,7 +77,7 @@
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:background="@drawable/bg"
-        android:text="Confirm And Sign Up"
+        android:text="@string/confirm_and_sign_up"
         android:textColor="@color/colorWhite" />
 
 </LinearLayout>

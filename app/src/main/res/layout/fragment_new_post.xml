@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Post new item"
+        android:text="@string/post_new_item"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +41,7 @@
         android:layout_margin="5dp"
         android:background="@drawable/bg"
         android:gravity="center"
-        android:hint="Description"
+        android:hint="@string/description"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         android:textSize="20sp"
@@ -56,7 +56,7 @@
         android:layout_margin="5dp"
         android:background="@drawable/bg"
         android:gravity="center"
-        android:hint="Address"
+        android:hint="@string/address"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         android:textSize="20sp"
@@ -73,7 +73,7 @@
         android:background="@drawable/bg"
         android:drawableLeft="@drawable/ic_location_on"
         android:padding="3dp"
-        android:text="Get Address with GPS location"
+        android:text="@string/get_address_with_gps_location"
         android:textColor="@color/colorWhite"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +110,7 @@
             android:background="@drawable/bg"
             android:drawableLeft="@drawable/ic_camera_alt"
             android:padding="3dp"
-            android:text="Take Picture"
+            android:text="@string/take_picture"
             android:textColor="@color/colorWhite" />
 
         <Button
@@ -121,7 +121,7 @@
             android:background="@drawable/bg"
             android:drawableLeft="@drawable/ic_insert_photo"
             android:padding="3dp"
-            android:text="Picture from gallery"
+            android:text="@string/picture_from_gallery"
             android:textColor="@color/colorWhite" />
 
     </LinearLayout>

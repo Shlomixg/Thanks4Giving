@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_user_logout:
                         mAuth.signOut();
-                        Snackbar.make(findViewById(android.R.id.content), "Logged out", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(findViewById(android.R.id.content), getString(R.string.logged_out), Snackbar.LENGTH_SHORT).show();
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
                         break;
                     case R.id.nav_settings:
@@ -136,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
 
-                    user_name_tv.setText("Guest");
+                    user_name_tv.setText(getString(R.string.guest));
                     Glide.with(getApplicationContext()).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
                 }
             }

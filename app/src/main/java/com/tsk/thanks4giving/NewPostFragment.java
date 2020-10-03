@@ -115,8 +115,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                path="android.resource://com.tsk.thanks4giving/"+R.drawable.profile_man; //here
-                path2="android.resource://com.tsk.thanks4giving/"+R.drawable.tv; //here
+                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
+                path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
 
                 final DatabaseReference a=database.getReference();
 

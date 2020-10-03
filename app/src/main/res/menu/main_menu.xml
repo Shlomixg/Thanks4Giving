@@ -9,15 +9,15 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_home"
-            android:title="Gallery" />
+            android:title="@string/gallery" />
         <item
             android:id="@+id/nav_tools"
             android:icon="@drawable/ic_home"
-            android:title="Tools" />
+            android:title="@string/tools" />
     </group>
 
     <group
@@ -26,11 +26,11 @@
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_menu_share"
-            android:title="Share" />
+            android:title="@string/share" />
         <item
             android:id="@+id/nav_send"
             android:icon="@drawable/ic_menu_share"
-            android:title="Send" />
+            android:title="@string/send" />
     </group>
 
     <group
@@ -39,7 +39,7 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
     </group>
 
     <group
@@ -48,6 +48,6 @@
         <item
             android:id="@+id/nav_user_logout"
             android:icon="@drawable/ic_logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
     </group>
 </menu>

@@ -35,7 +35,7 @@
             android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User Name" />
+            android:text="@string/user_name"/>
 
         <TextView
             android:id="@+id/profile_user_email_tv"
@@ -46,7 +46,7 @@
             android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="User Email" />
+            android:text="@string/email"/>
 
         <TextView
             android:id="@+id/profile_user_gender_tv"
@@ -57,7 +57,7 @@
             android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="Gender"/>
+            android:text="@string/gender"/>
 
         <TextView
             android:id="@+id/profile_user_address_tv"
@@ -68,7 +68,7 @@
             android:textSize="20sp"
             android:textColor="@color/colorWhite"
             android:padding="10dp"
-            android:text="Address" />
+            android:text="@string/address"/>
 
         <Button
             android:id="@+id/edit_profile_btn"
@@ -77,7 +77,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg"
-            android:text="Edit Profile"
+            android:text="@string/edit_profile"
             android:textColor="@color/colorWhite"
             android:textSize="15sp"/>
 
@@ -87,7 +87,7 @@
             android:layout_gravity="center"
             android:id="@+id/message_btn"
             android:background="@drawable/bg"
-            android:text="Message"
+            android:text="@string/message"
             android:textColor="@color/colorWhite"/>
 
     </LinearLayout>

@@ -85,13 +85,13 @@ public class SignupFragment extends Fragment {
 
                                 // Saving to DB
                                 String userToken = fbUser.getIdToken(false).toString();
-                                User user = new User(name, userToken, mail, "Gender", "Some Address", null);
+                                User user = new User(name, userToken, mail, getString(R.string.gender), getString(R.string.address), null);
                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("users").child(fbUser.getUid()).setValue(user);
                             }
                         } else {
                             Log.d("log", "sign up failed");
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Sign up failed", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail), Snackbar.LENGTH_SHORT).show();
                             // TODO: Add explanation why the sign up failed
                         }
 
@@ -103,7 +103,7 @@ public class SignupFragment extends Fragment {
     }
 
     public void setSnackbar(FirebaseUser firebaseUser) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content), "Hi " + firebaseUser.getDisplayName() + ", Sign up successful", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getActivity().findViewById(android.R.id.content),getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

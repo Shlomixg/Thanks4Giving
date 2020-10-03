@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Thanks4Giving</string>
-    <item name="open" type="string">פתח</item>
-    <item name="close" type="string">סגור</item>
-
-    <string-array name="categories">
-        <item name="Choose Category">בחר קטגוריה</item>
-        <item name="Electronics">Electronics</item>
-        <item name="Furnitures">Furnitures</item>
-        <item name="Sport">Sport</item>
-        <item name="Food">Food</item>
-        <item name="Clothes">Clothes</item>
-        <item name="Games">Games</item>
-    </string-array>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-    <string name="pref_theme_title">Theme</string>
-    <string name="pref_theme_summary">Select Theme</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="open">פתח</string>
+    <string name="close">סגור</string>
+    <string name="large_text">[...]</string>
+    <string name="hello_blank_fragment">שלום פרגמנט ריק</string>
+    <string name="change_picture">החלף תמונה</string>
+    <string name="camera">מצלמה</string>
+    <string name="gallery">גלריה</string>
+    <string name="user_name">שם משתמש</string>
+    <string name="male">זכר</string>
+    <string name="female">נקבה</string>
+    <string name="address">כתובת</string>
+    <string name="save">שמירה</string>
+    <string name="log_in">התחברות</string>
+    <string name="email">אימייל</string>
+    <string name="password">סיסמה</string>
+    <string name="login">התחבר</string>
+    <string name="post_new_item">פרסם פריט חדש</string>
+    <string name="description">תיאור</string>
+    <string name="get_address_with_gps_location">קבל כתובת באמצעות מיקום</string>
+    <string name="take_picture">צלם תמונה</string>
+    <string name="picture_from_gallery">תמונה מהגלריה</string>
+    <string name="share">שיתוף:</string>
+    <string name="comment">תגובה...</string>
+    <string name="post_comment_btn">פרסם</string>
+    <string name="gender">מין</string>
+    <string name="edit_profile">עריכת פרופיל</string>
+    <string name="message">שלח הודעה</string>
+    <string name="sign_up">הרשמה</string>
+    <string name="full_name">שם מלא</string>
+    <string name="password_hint">סיסמה (6 תווים לפחות)</string>
+    <string name="confirm_and_sign_up">אישור והרשמה</string>
+    <string name="welcome_guest">ברוך הבא אורח</string>
+    <string name="need_permissions">יש צורך בהרשאות לפתיחת מצלמה או גלריה</string>
+    <string name="wellcome_back">, טוב שחזרת</string>
+    <string name="login_fail">התחברות נכשלה</string>
+    <string name="logged_out">התנתקת</string>
+    <string name="guest">אורח</string>
+    <string name="signup_fail">הרשמה נכשלה</string>
+    <string name="hi">"היי "</string>
+    <string name="signup_success">, הרשמה הצליחה</string>
+    <string name="home">בית</string>
+    <string name="tools">כלים</string>
+    <string name="send">שלח</string>
+    <string name="settings">הגדרות</string>
+    <string name="logout">התנתק</string>
+    <string name="new_post">פוסט חדש</string>
+    <string name="my_profile">הפרופיל שלי</string>
 </resources>

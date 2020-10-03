@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_user_sign_up"
             android:icon="@drawable/ic_signup"
-            android:title="Sign up" />
+            android:title="@string/sign_up" />
         <item
             android:id="@+id/nav_user_login"
             android:icon="@drawable/ic_login"
-            android:title="Log in" />
+            android:title="@string/log_in" />
 
     </group>
 
@@ -21,15 +21,15 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_home"
-            android:title="Gallery" />
+            android:title="@string/gallery" />
         <item
             android:id="@+id/nav_tools"
             android:icon="@drawable/ic_home"
-            android:title="Tools" />
+            android:title="@string/tools" />
     </group>
 
     <group
@@ -38,11 +38,11 @@
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_menu_share"
-            android:title="Share" />
+            android:title="@string/share" />
         <item
             android:id="@+id/nav_send"
             android:icon="@drawable/ic_menu_share"
-            android:title="Send" />
+            android:title="@string/send" />
     </group>
 
     <group
@@ -51,7 +51,7 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
     </group>
 
 </menu>

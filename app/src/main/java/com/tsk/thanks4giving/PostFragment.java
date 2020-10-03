@@ -63,18 +63,18 @@ public class PostFragment extends Fragment {
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                location=new Location("dummyProvider");
+                location = new Location("dummyProvider");
                 location.setLatitude(32.03140520);
                 location.setLongitude(34.74392110);
                 cordinatesToWaze(location);
-
             }
         });
+
         ImageButton whastsapp=rootView.findViewById(R.id.whatsapp);
         whastsapp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageView = (ImageView)rootView.findViewById(R.id.BigPostImage);
+                imageView = rootView.findViewById(R.id.BigPostImage);
                 imageView.setImageResource(R.drawable.tv);
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
@@ -96,7 +96,7 @@ public class PostFragment extends Fragment {
                 // String urlToShare = "https://stackoverflow.com/questions/7545254";
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/*");
-                imageView = (ImageView)rootView.findViewById(R.id.BigPostImage);
+                imageView = rootView.findViewById(R.id.BigPostImage);
                 imageView.setImageResource(R.drawable.tv);
                 Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
 

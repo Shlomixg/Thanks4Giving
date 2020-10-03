@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -81,7 +82,7 @@ public class EditProfileFragment extends Fragment {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
                 if(imageUri == null)
                 Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
-                gender = "Male";
+                gender = getString(R.string.male);
             }
         });
         female = rootView.findViewById(R.id.radio_female);
@@ -91,7 +92,7 @@ public class EditProfileFragment extends Fragment {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
                 if(imageUri == null)
                 Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
-                gender = "Female";
+                gender = getString(R.string.female);
             }
         });
 
@@ -154,7 +155,7 @@ public class EditProfileFragment extends Fragment {
 
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.flContent, new ProfileFragment(), TAG).commit();
+                fragmentTransaction.replace(R.id.flContent, new ProfileFragment(), TAG).addToBackStack(null).commit();
             }
         });
         return rootView;
@@ -165,7 +166,7 @@ public class EditProfileFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), "Need permissions to open camera or gallery", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show();
                 cameraBtn.setVisibility(View.GONE);
                 galleryBtn.setVisibility(View.GONE);
             } else {
@@ -189,11 +190,11 @@ public class EditProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
+            assert data != null;
             imageUri = data.getData();
             userImage.setImageURI(imageUri);
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
         }
     }
-
 }

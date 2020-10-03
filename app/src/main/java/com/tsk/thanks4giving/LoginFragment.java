@@ -56,14 +56,14 @@ public class LoginFragment extends Fragment {
                             Log.d("log", "login success");
                             FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
-                                Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + ", Welcome back", Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + getString(R.string.wellcome_back), Snackbar.LENGTH_SHORT).show();
                                 //Send name+photoUrl+token(id) to mainActivity to display after log in
                                 getActivity().onBackPressed(); // Close fragment
                             }
 
                         } else {
                             Log.d("log", "login failed");
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Login failed", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.login_fail), Snackbar.LENGTH_SHORT).show();
                             // TODO: Add explanation why the login failed
                         }
                     }
