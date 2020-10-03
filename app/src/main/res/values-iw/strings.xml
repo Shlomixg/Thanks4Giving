@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Thanks4Giving</string>
     <string name="open">פתח</string>
     <string name="close">סגור</string>
-    <string name="large_text">[...]</string>
     <string name="hello_blank_fragment">שלום פרגמנט ריק</string>
     <string name="change_picture">החלף תמונה</string>
     <string name="camera">מצלמה</string>
@@ -22,7 +20,7 @@
     <string name="get_address_with_gps_location">קבל כתובת באמצעות מיקום</string>
     <string name="take_picture">צלם תמונה</string>
     <string name="picture_from_gallery">תמונה מהגלריה</string>
-    <string name="share">שיתוף:</string>
+    <string name="share">שיתוף</string>
     <string name="comment">תגובה...</string>
     <string name="post_comment_btn">פרסם</string>
     <string name="gender">מין</string>
@@ -39,7 +37,7 @@
     <string name="logged_out">התנתקת</string>
     <string name="guest">אורח</string>
     <string name="signup_fail">הרשמה נכשלה</string>
-    <string name="hi">"היי "</string>
+    <string name="hi">"היי  "</string>
     <string name="signup_success">, הרשמה הצליחה</string>
     <string name="home">בית</string>
     <string name="tools">כלים</string>

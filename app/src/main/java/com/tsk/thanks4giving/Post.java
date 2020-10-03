@@ -18,6 +18,8 @@ public class Post {
     // list ID's watching this post
     private List<String> watching;
 
+    public Post() {}
+
     public Post(String posterToken, String postImage, String profileImage, int likes, ArrayList<Comment> comments, List<String> watching) {
         this.posterToken = posterToken;
         this.postImage = postImage;
