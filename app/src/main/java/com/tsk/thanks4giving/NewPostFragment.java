@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,11 +38,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +73,13 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     Uri imageUri;
     ImageView image;
     Spinner spinner;
+    ImageButton confirm_btn; //%
+    final String RECYCLER_FRAG = "Recycler View Fragment";
+    String path,path2,token;
+
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase database=FirebaseDatabase.getInstance();
+
 
 
     @Override
@@ -95,6 +111,34 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
+        confirm_btn=rootView.findViewById(R.id.confirm_btn);
+        confirm_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                path="android.resource://com.tsk.thanks4giving/"+R.drawable.profile_man; //here
+                path2="android.resource://com.tsk.thanks4giving/"+R.drawable.tv; //here
+
+                final DatabaseReference a=database.getReference();
+
+                final Post post=new Post("",path2,path,0,null,null);
+                DatabaseReference reference=a.child("users").child(mAuth.getCurrentUser().getUid()).child("token");
+                reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        token=snapshot.getValue(String.class);
+                        post.setPosterToken(token);
+                        a.child("all_post").push().setValue(post);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+
+            }
+        });
         coordinateTv = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
         spinner = rootView.findViewById(R.id.category_spinner);
@@ -372,6 +416,14 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+    private void setFragment(Fragment fragment, String FRAG) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.flContent, fragment, FRAG);
+        if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
+        transaction.commit();
 
     }
 }

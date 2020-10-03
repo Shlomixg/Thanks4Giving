@@ -13,6 +13,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 public class RecyclerViewFragment extends Fragment {
@@ -21,6 +27,8 @@ public class RecyclerViewFragment extends Fragment {
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
+    FirebaseDatabase database=FirebaseDatabase.getInstance();
+    final DatabaseReference a=database.getReference();
 
 
     @Nullable
@@ -30,12 +38,37 @@ public class RecyclerViewFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
-        for (int i = 0; i < 10; i++) {
-            Post post = new Post("post", path, path, i + 100, null, null);
-            postList.add(post);
-        }
-
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        DatabaseReference reference2=a.child("all_post");
+        reference2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds:snapshot.getChildren())
+                {
+
+                    Post pos= new Post(ds.child("posterToken").getValue(String.class)
+                            ,ds.child("postImage").getValue(String.class)
+                            ,ds.child("profileImage").getValue(String.class)
+                            ,ds.child("likes").getValue(Integer.class)
+                            ,ds.child("comments").getValue(ArrayList.class)
+                            ,ds.child("watching").getValue(ArrayList.class));
+                    postList.add(pos);
+
+
+                }
+
+                // adapter=new PostAdapter(postList);
+                recycler.setAdapter(adapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         recycler = rootView.findViewById(R.id.recycler);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
