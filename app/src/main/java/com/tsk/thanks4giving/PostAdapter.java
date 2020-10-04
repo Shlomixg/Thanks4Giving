@@ -28,6 +28,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     private ArrayList<Post> list;
     private PostClickListener listener;
     final String PROFILE_FRAG = "Profile Fragment";
+    String postId;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
@@ -94,6 +95,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         final Post post = list.get(position);
         DatabaseReference ref = users.child(post.userUid);
 
+        //postId = post.getPostID();
+
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -106,10 +109,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
@@ -120,7 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //TODO remove comment button?
             }
         });
 

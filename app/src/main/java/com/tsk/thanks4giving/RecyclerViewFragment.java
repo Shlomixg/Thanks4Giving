@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,13 +12,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class RecyclerViewFragment extends Fragment {
@@ -37,7 +34,7 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
-        String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home";
+        String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home"; //TODO ???
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
         progressDialog.setTitle(getString(R.string.loading));
@@ -45,9 +42,7 @@ public class RecyclerViewFragment extends Fragment {
         posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 progressDialog.show();
-
                 postList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post pos = ds.getValue(Post.class);
@@ -60,10 +55,9 @@ public class RecyclerViewFragment extends Fragment {
                     postList.add(pos);
                 }
                 // adapter=new PostAdapter(postList);
-                recycler.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -73,6 +67,7 @@ public class RecyclerViewFragment extends Fragment {
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PostAdapter(postList);
+        recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
         adapter.setListener(new PostAdapter.PostClickListener() {
@@ -82,7 +77,6 @@ public class RecyclerViewFragment extends Fragment {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.flContent, new PostFragment(), POST_FRAG).addToBackStack(null).commit();
             }
-
             @Override
             public void onLongClickListener(int pos, View v) {
             }

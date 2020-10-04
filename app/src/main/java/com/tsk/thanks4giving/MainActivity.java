@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
         // Setting the first fragment
         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
     }

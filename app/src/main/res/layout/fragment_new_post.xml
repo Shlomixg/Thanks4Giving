@@ -25,14 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingClass,MissingConstraints" />-->
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:textAlignment="center"
 
-        />
 
     <EditText
         android:id="@+id/condition_editText"
@@ -78,19 +71,33 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_editText" />
+        app:layout_constraintTop_toBottomOf="@id/address_editText"/>
+
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg"
+        android:padding="5dp"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
 
     <ImageView
         android:id="@+id/newPostImage"
         android:layout_width="300dp"
-        android:layout_height="350dp"
+        android:layout_height="300dp"
         android:layout_margin="5dp"
         android:contentDescription="Item Photo"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gpsLocation_btn" />
+        app:layout_constraintTop_toBottomOf="@id/category_spinner"/>
 
     <LinearLayout
         android:id="@+id/picBtnsLayout"

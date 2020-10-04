@@ -126,7 +126,6 @@
         <item name="Electronics">Electronics</item>
         <item name="Furniture">Furniture</item>
         <item name="Sport">Sport</item>
-        <item name="Food">Food</item>
         <item name="Clothes">Clothes</item>
         <item name="Games">Games</item>
     </string-array>
@@ -156,4 +155,6 @@
     <string name="pref_theme_title" translatable="false">Pref Theme Title</string>
     <string name="pref_theme_summary" translatable="false">Pref Theme Summary</string>
     <string name="loading">Loading data...</string>
+    <string name="location_permission">The application must have location permissions</string>
+    <string name="attention">Attention</string>
 </resources>

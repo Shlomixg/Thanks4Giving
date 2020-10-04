@@ -46,4 +46,15 @@
     <string name="logout">התנתק</string>
     <string name="new_post">פוסט חדש</string>
     <string name="my_profile">הפרופיל שלי</string>
+    <string name="loading">טוען מידע...</string>
+    <string name="location_permission">האפליקציה צריכה לקבל הרשאות גישה למיקום</string>
+    <string name="attention">שים לב</string>
+    <string-array name="categories">
+        <item name="Choose Category">בחר קטגוריה</item>
+        <item name="Electronics">אלקטרוניקה</item>
+        <item name="Furniture">רהיטים</item>
+        <item name="Sport">ספורט</item>
+        <item name="Clothes">בגדים</item>
+        <item name="Games">משחקים</item>
+    </string-array>
 </resources>

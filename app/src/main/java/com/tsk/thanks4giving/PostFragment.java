@@ -23,10 +23,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -39,6 +48,12 @@ public class PostFragment extends Fragment {
     EditText comment;
     Location location;
     ImageView imageView;
+    CommentAdapter adapter;
+
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    ArrayList<Comment> commentList = new ArrayList<>();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference comments = database.getReference().child("comments");
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -59,6 +74,40 @@ public class PostFragment extends Fragment {
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uid = mAuth.getCurrentUser().getUid();
+                String userName = mAuth.getCurrentUser().getDisplayName();
+                String text = comment.getText().toString();
+                Comment newComment = new Comment(uid,userName,text);
+                comments.push().setValue(newComment);
+            }
+        });
+
+        comments.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                commentList.clear();
+                for (DataSnapshot snap : snapshot.getChildren())
+                {
+                    Comment comment1 = snap.getValue(Comment.class);
+                    commentList.add(comment1);
+                }
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        commentsRecycler.setHasFixedSize(true);
+        commentsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new CommentAdapter(commentList);
+        commentsRecycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
         ImageButton waze = rootView.findViewById(R.id.waze);
         waze.setOnClickListener(new View.OnClickListener() {
             @Override

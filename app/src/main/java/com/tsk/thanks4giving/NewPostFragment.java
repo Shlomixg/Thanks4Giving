@@ -68,7 +68,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     static final int PICK_IMAGE = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     int flag = 0;
-    EditText coordinateTv;
+    EditText descriptionET;
     EditText addressTv;
     Handler handler = new Handler();//##
     Geocoder geocoder; //##
@@ -88,11 +88,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     DatabaseReference posts = database.getReference("posts");
     private FirebaseStorage storage;
     private StorageReference storageReference;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,7 +136,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         camera_btn = rootView.findViewById(R.id.pic_btn);
         addressTv = rootView.findViewById(R.id.address_editText);//##
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
-        coordinateTv = rootView.findViewById(R.id.condition_editText);//##
+        descriptionET = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
         spinner = rootView.findViewById(R.id.category_spinner);
         confirm_btn = rootView.findViewById(R.id.confirm_btn);
@@ -236,11 +231,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
                 // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
                 uploadPicture();
-
                 String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
-                final Post post = new Post(uid, "Title", "Description", 1, "TEST", imageUri.toString());
-                posts.push().setValue(post);
+                String postID = posts.push().getKey();
+                final Post post = new Post(postID, uid, "Title", descriptionET.getText().toString(), 1, spinner.getSelectedItem().toString(), imageUri.toString());
+                posts.child(postID).setValue(post);
 
                 // TODO: Update the posts list at user
 
@@ -255,27 +250,21 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final double lat = location.getLatitude();
         final double lng = location.getLongitude();
 
-        coordinateTv.setText(lat + " , " + lng);
+        //descriptionET.setText(lat + " , " + lng);
 
         new Thread() {
             @Override
             public void run() {
                 super.run();
-
                 try {
                     List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
                     final Address bestAddress = addresses.get(0);
-
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-
-                            addressTv.setText(bestAddress.getCountryName() + "," +
-                                    bestAddress.getLocality() + "," + bestAddress.getThoroughfare() + " , "
-                                    + bestAddress.getFeatureName());
+                            addressTv.setText(bestAddress.getCountryName() + "," + bestAddress.getLocality() + "," + bestAddress.getThoroughfare() + " , " + bestAddress.getFeatureName());
                         }
                     });
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -284,28 +273,13 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Attention").setMessage("The application must have location permission in order for it to work!")
-                        .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
+                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -313,7 +287,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                                 startActivity(intent);
                             }
                         })
-                        .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // finish();
@@ -323,7 +297,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         }
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), "Can't choose an image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
                 camera_btn.setVisibility(View.GONE);
                 browse_btn.setVisibility(View.GONE);
             } else {
@@ -363,23 +337,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         }
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
-            coordinateTv.setText(place.getAddress());
+            descriptionET.setText(place.getAddress());
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
 
     private void setFragment(Fragment fragment, String FRAG) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -420,9 +383,39 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show(); // for testing
                         path2 = uri.toString();
                     }
                 });
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
     }
 }

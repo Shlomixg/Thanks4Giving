@@ -4,11 +4,12 @@ import java.util.ArrayList;
 
 public class Post {
 
+    public String postID;
     public String userUid; // UID of the user that posted
-    public String title;
-    public String desc;
-    public int status;
-    public String category;
+    public String title; //TODO  ???
+    public String desc; //description for the item
+    public int status; // 1 = available 0 = not available
+    public String category; //items general category
     public String postImage; // Item image
     public ArrayList<String> likes; // List of users which liked the post
     public ArrayList<Comment> comments; // List of Comment objects
@@ -18,7 +19,8 @@ public class Post {
 
     }
 
-    public Post(String userUid, String title, String desc, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String title, String desc, int status, String category, String postImage) {
+        this.postID = postid;
         this.userUid = userUid;
         this.status = status;
         this.title = title;
@@ -31,6 +33,18 @@ public class Post {
     }
 
     /* Getters */
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public String getPostID() {
+        return postID;
+    }
 
     public String getUserUid() {
         return userUid;
@@ -61,6 +75,18 @@ public class Post {
     }
 
     /* Setters */
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
 
     public void setUserUid(String userUid) {
         this.userUid = userUid;
