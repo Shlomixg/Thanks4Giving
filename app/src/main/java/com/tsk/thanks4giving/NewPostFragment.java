@@ -234,7 +234,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 String postID = posts.push().getKey();
-                final Post post = new Post(postID, uid, "Title", descriptionET.getText().toString(), 1, spinner.getSelectedItem().toString(), imageUri.toString());
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(), 1, spinner.getSelectedItem().toString(), imageUri.toString());
                 posts.child(postID).setValue(post);
 
                 // TODO: Update the posts list at user

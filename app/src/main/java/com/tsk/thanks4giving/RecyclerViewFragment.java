@@ -76,8 +76,8 @@ public class RecyclerViewFragment extends Fragment {
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
-                Post current = postList.get(pos);
-                EventBus.getDefault().post(new MessageEvent(current));
+                String postId = postList.get(pos).getPostID();
+                MainActivity.setPostClickedID(postId);
 
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();

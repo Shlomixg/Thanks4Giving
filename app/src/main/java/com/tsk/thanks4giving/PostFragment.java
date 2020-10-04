@@ -46,7 +46,7 @@ import java.util.Random;
 
 public class PostFragment extends Fragment {
 
-    TextView postTitle;
+    TextView description;
     ImageView postImage;
     RecyclerView commentsRecycler;
     Button commentBtn;
@@ -54,8 +54,8 @@ public class PostFragment extends Fragment {
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
-    Post currentPost;
-    //String postID;
+    //Post currentPost;
+    String postID = MainActivity.getPostClickedID();
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
@@ -77,7 +77,7 @@ public class PostFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
-        postTitle = rootView.findViewById(R.id.post_title);
+        description = rootView.findViewById(R.id.post_title);
         postImage = rootView.findViewById(R.id.post_img);
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
@@ -89,11 +89,11 @@ public class PostFragment extends Fragment {
                 String userName = mAuth.getCurrentUser().getDisplayName();
                 String text = comment.getText().toString();
                 Comment newComment = new Comment(uid,userName,text);
-                comments.child(currentPost.getPostID()).push().setValue(newComment);
+                comments.child(postID).push().setValue(newComment);
             }
         });
 
-        comments.child(currentPost.getPostID()).addValueEventListener(new ValueEventListener() {
+        comments.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
@@ -225,23 +225,5 @@ public class PostFragment extends Fragment {
         //String url = "https://www.waze.com/ul?ll=32.03140520%2C34.74392110&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        currentPost = event.post;
-        Log.d("post", "Post fragment onMessageEvent " + currentPost.getPostID());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
     }
 }

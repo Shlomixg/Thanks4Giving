@@ -28,9 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     final String SETTINGS_FRAG = "Settings Fragment";
 
     SharedPreferences sharedPrefs;
-
+    private static String postClickedID;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -207,5 +204,14 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         EventBus.getDefault().unregister(this);
         mAuth.removeAuthStateListener(authStateListener);
+    }
+
+    public static void setPostClickedID(String id){
+        postClickedID = id;
+    }
+
+    public static String getPostClickedID()
+    {
+        return postClickedID;
     }
 }

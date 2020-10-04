@@ -6,7 +6,6 @@ public class Post {
 
     public String postID;
     public String userUid; // UID of the user that posted
-    public String title; //TODO  ???
     public String desc; //description for the item
     public int status; // 1 = available 0 = not available
     public String category; //items general category
@@ -19,11 +18,10 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String title, String desc, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String desc, int status, String category, String postImage) {
         this.postID = postid;
         this.userUid = userUid;
         this.status = status;
-        this.title = title;
         this.desc = desc;
         this.category = category;
         this.postImage = postImage;
@@ -33,10 +31,6 @@ public class Post {
     }
 
     /* Getters */
-
-    public String getTitle() {
-        return title;
-    }
 
     public String getDesc() {
         return desc;
@@ -75,10 +69,6 @@ public class Post {
     }
 
     /* Setters */
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public void setDesc(String desc) {
         this.desc = desc;
