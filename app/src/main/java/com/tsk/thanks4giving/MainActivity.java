@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
 
         mAuth.addAuthStateListener(authStateListener);
         currentFBUser = mAuth.getCurrentUser();
@@ -200,11 +200,6 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else
             super.onBackPressed();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageUserEvent(MessageUserEvent event) {
-
     }
 
     @Override

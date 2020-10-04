@@ -17,6 +17,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 public class RecyclerViewFragment extends Fragment {
@@ -73,6 +76,9 @@ public class RecyclerViewFragment extends Fragment {
         adapter.setListener(new PostAdapter.PostClickListener() {
             @Override
             public void onClickListener(int pos, View v) {
+                Post current = postList.get(pos);
+                EventBus.getDefault().post(new MessageEvent(current));
+
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.flContent, new PostFragment(), POST_FRAG).addToBackStack(null).commit();

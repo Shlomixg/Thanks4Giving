@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -49,11 +54,14 @@ public class PostFragment extends Fragment {
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
+    Post currentPost;
+    //String postID;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference comments = database.getReference().child("comments");
+    //final DatabaseReference posts = database.getReference().child("posts");
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -67,7 +75,7 @@ public class PostFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
         postTitle = rootView.findViewById(R.id.post_title);
         postImage = rootView.findViewById(R.id.post_img);
@@ -81,11 +89,11 @@ public class PostFragment extends Fragment {
                 String userName = mAuth.getCurrentUser().getDisplayName();
                 String text = comment.getText().toString();
                 Comment newComment = new Comment(uid,userName,text);
-                comments.push().setValue(newComment);
+                comments.child(currentPost.getPostID()).push().setValue(newComment);
             }
         });
 
-        comments.addValueEventListener(new ValueEventListener() {
+        comments.child(currentPost.getPostID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
@@ -133,15 +141,12 @@ public class PostFragment extends Fragment {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:TV 32 inch\nFind Item id:751 in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 sendIntent.setPackage("com.whatsapp");
                 startActivity(sendIntent);
-
-
             }
         });
         ImageButton facebook = rootView.findViewById(R.id.facebook);
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // String urlToShare = "https://stackoverflow.com/questions/7545254";
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/*");
@@ -175,9 +180,7 @@ public class PostFragment extends Fragment {
 //                    intent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
 //
 //                }
-
                 startActivity(intent);
-
             }
         });
         return rootView;
@@ -222,5 +225,23 @@ public class PostFragment extends Fragment {
         //String url = "https://www.waze.com/ul?ll=32.03140520%2C34.74392110&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        currentPost = event.post;
+        Log.d("post", "Post fragment onMessageEvent " + currentPost.getPostID());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 }

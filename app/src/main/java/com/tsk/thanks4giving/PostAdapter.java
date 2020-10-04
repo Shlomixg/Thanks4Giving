@@ -28,7 +28,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     private ArrayList<Post> list;
     private PostClickListener listener;
     final String PROFILE_FRAG = "Profile Fragment";
-    String postId;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
@@ -94,8 +93,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
         final Post post = list.get(position);
         DatabaseReference ref = users.child(post.userUid);
-
-        //postId = post.getPostID();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
