@@ -9,7 +9,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,25 +18,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -55,7 +48,7 @@ public class PostFragment extends Fragment {
     ImageView imageView;
     CommentAdapter adapter;
     //Post currentPost;
-    String postID = MainActivity.getPostClickedID();
+    String postID;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
@@ -71,6 +64,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postID = MainActivity.getPostClickedID();
     }
 
     @Nullable
@@ -85,11 +79,18 @@ public class PostFragment extends Fragment {
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uid = mAuth.getCurrentUser().getUid();
-                String userName = mAuth.getCurrentUser().getDisplayName();
-                String text = comment.getText().toString();
-                Comment newComment = new Comment(uid,userName,text);
-                comments.child(postID).push().setValue(newComment);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null && !comment.getText().toString().equals("")) {
+                    String uid = mAuth.getCurrentUser().getUid();
+                    String userName = mAuth.getCurrentUser().getDisplayName();
+                    String text = comment.getText().toString();
+                    Comment newComment = new Comment(uid, userName, text);
+                    comments.child(postID).push().setValue(newComment);
+                    comment.setText("");
+                }
+                else if(FirebaseAuth.getInstance().getCurrentUser() == null)
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
+                else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment.getText().toString().equals(""))
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
             }
         });
 

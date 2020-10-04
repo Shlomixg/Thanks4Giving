@@ -57,4 +57,6 @@
         <item name="Clothes">בגדים</item>
         <item name="Games">משחקים</item>
     </string-array>
+    <string name="must_be_logged">צריך להיות מחובר על מנת להשתמש במאפיין זה</string>
+    <string name="no_empty_comment">לא ניתן לפרסם תגובה ריקה</string>
 </resources>

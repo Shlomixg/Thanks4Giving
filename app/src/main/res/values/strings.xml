@@ -157,4 +157,6 @@
     <string name="loading">Loading data...</string>
     <string name="location_permission">The application must have location permissions</string>
     <string name="attention">Attention</string>
+    <string name="must_be_logged">Must be logged in to use this feature</string>
+    <string name="no_empty_comment">Cannot post empty comment</string>
 </resources>
