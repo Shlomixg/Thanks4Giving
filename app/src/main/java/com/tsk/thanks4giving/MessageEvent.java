@@ -1,13 +1,14 @@
 package com.tsk.thanks4giving;
 
+import android.location.Location;
 import android.util.Log;
 
 public class MessageEvent {
 
-    public Post post;
+    public Location location;
 
-    public MessageEvent(Post post) {
-        Log.d("post","Message event constructor " + post.getPostID());
-        this.post = post;
+    public MessageEvent(Location loc) {
+        Log.d("ddd","Message event constructor");
+        this.location = loc;
     }
 }

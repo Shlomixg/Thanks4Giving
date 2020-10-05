@@ -48,7 +48,6 @@ public class LoginFragment extends Fragment {
                                 Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + getString(R.string.wellcome_back), Snackbar.LENGTH_SHORT).show();
                                 getActivity().onBackPressed(); // Close fragment
                             }
-
                         } else {
                             String error = task.getException().getMessage();
                             Log.d("Login Log", "--- Login failed");

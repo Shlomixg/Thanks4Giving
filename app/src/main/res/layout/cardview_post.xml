@@ -59,15 +59,21 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:background="@drawable/ic_thumb_up" />
+                android:background="@drawable/ic_thumb_up"/>
 
-            <Button
+            <TextView
+                android:id="@+id/like_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+            <!--<Button
                 android:id="@+id/comment_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
-                android:background="@drawable/ic_chat_bubble" />
+                android:background="@drawable/ic_chat_bubble" />-->
 
             <Button
                 android:id="@+id/watch_btn"

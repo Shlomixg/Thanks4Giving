@@ -3,12 +3,10 @@ package com.tsk.thanks4giving;
 import android.app.ProgressDialog;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +15,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,13 +22,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class RecyclerViewFragment extends Fragment {
 
     final String POST_FRAG = "Post Fragment";
-    ArrayList<Post> postList = new ArrayList<>();
+    public ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -128,8 +129,8 @@ public class RecyclerViewFragment extends Fragment {
                     Location location = new Location("dummyProvider");
                     location.setLatitude(32.0627896);
                     location.setLongitude(34.7714756);
-                    String coordinates=pos.getCoordinates();
-                    String a[]=coordinates.split(",");
+                    String coordinates = pos.getCoordinates();
+                    String a[] = coordinates.split(",");
                     Location location2= new Location("dummyProvider");
                     location2.setLatitude(Double.parseDouble(a[0]));
                     location2.setLongitude(Double.parseDouble(a[1]));
@@ -157,13 +158,13 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onClickListener(int pos, View v) {
                 String postId = postList.get(pos).getPostID();
-                MainActivity.setPostClickedID(postId);
+                //MainActivity.setPostClickedID(postId);
 
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                Bundle bundle=new Bundle();
+                Bundle bundle = new Bundle();
                 bundle.putString("PostId",postId);
-                PostFragment postFragment=new PostFragment();
+                PostFragment postFragment = new PostFragment();
                 postFragment.setArguments(bundle);
                 transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
           }
@@ -174,5 +175,23 @@ public class RecyclerViewFragment extends Fragment {
 
         recycler.setAdapter(adapter);
         return rootView;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Log.d("ddd","event reached fragment");
+        //TODO refresh posts list with new location
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

@@ -103,7 +103,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
         List<String> providers = manager.getProviders(false);
@@ -252,7 +251,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final double lat = location.getLatitude();
         final double lng = location.getLongitude();
         coordinates=lat+","+lng;
-        //descriptionET.setText(lat + " , " + lng);
 
         new Thread() {
             @Override

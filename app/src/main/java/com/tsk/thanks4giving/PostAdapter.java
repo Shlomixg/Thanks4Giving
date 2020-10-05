@@ -2,17 +2,24 @@ package com.tsk.thanks4giving;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,9 +35,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     private ArrayList<Post> list;
     private PostClickListener listener;
     final String PROFILE_FRAG = "Profile Fragment";
+    Post post;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
+    final DatabaseReference postLikes = database.getReference().child("likes");
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -51,7 +60,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         ImageView postImage;
         CircleImageView profileImage;
         Button like;
-        Button comment;
+        TextView likeText;
+        //Button comment;
         Button watch;
 
         public PostCardHolder(@NonNull View itemView) {
@@ -59,7 +69,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             postImage = itemView.findViewById(R.id.post_img);
             profileImage = itemView.findViewById(R.id.profile_img);
             like = itemView.findViewById(R.id.like_img);
-            comment = itemView.findViewById(R.id.comment_btn);
+            likeText = itemView.findViewById(R.id.like_text);
             watch = itemView.findViewById(R.id.watch_btn);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -91,9 +101,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
     @Override
     public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
-        final Post post = list.get(position);
-        DatabaseReference ref = users.child(post.userUid);
-
+        post = list.get(position);
+        final DatabaseReference ref = users.child(post.userUid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -112,13 +121,35 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         });
 
         Glide.with(holder.itemView.getContext()).load(post.getPostImage()).centerCrop().into(holder.postImage);
-        int likes = (post.likes != null) ? post.likes.size() : 0;
-        holder.like.setText("" + likes);
-
-        holder.comment.setOnClickListener(new View.OnClickListener() {
+/*        int likes = (post.likes != null) ? post.likes.size() : 0;
+        holder.likeText.setText("" + likes);*/
+/*holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO remove comment button?
+            }
+        });*/
+        postLikes.child(post.postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                holder.likeText.setText("" + size);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                    postLikes.child(post.postID).child(userId).setValue(username);
+                }
+                /*else if(FirebaseAuth.getInstance().getCurrentUser() == null)
+                   //TODO Snackbar.make(getActivity.findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();*/
             }
         });
 

@@ -9,11 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -32,17 +30,6 @@ public class SignupFragment extends Fragment {
     EditText password;
     Button confirmBtn;
     FirebaseAuth mAuth;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +70,6 @@ public class SignupFragment extends Fragment {
                                                                    }
                                                                }
                                         );
-
                                 // Saving to DB
                                 String userUid = fbUser.getUid();
                                 User user = new User(userUid, name, mail, getString(R.string.gender), getString(R.string.address), null);
@@ -102,9 +88,17 @@ public class SignupFragment extends Fragment {
         });
         return rootView;
     }
-
     public void setSnackbar(FirebaseUser firebaseUser) {
         Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
+    }
+/*  @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -145,5 +139,5 @@ public class SignupFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-    }
+    }*/
 }

@@ -49,25 +49,13 @@ public class PostFragment extends Fragment {
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
-    String postID;
+    //String postID;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference posts = database.getReference().child("posts");
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        postID = MainActivity.getPostClickedID();
-    }
 
     @Nullable
     @Override
@@ -78,8 +66,9 @@ public class PostFragment extends Fragment {
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
-        Bundle bundle=this.getArguments();
-        final String data=bundle.getString("PostId");
+        Bundle bundle = this.getArguments();
+        final String data = bundle.getString("PostId");
+
         posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -96,9 +85,7 @@ public class PostFragment extends Fragment {
                                 .load(pos.getPostImage())
                                 .centerCrop()
                                 .into(postImage);
-
                         description.setText(pos.getDesc());
-
                     }
                 }
             }
@@ -116,7 +103,7 @@ public class PostFragment extends Fragment {
                     String userName = mAuth.getCurrentUser().getDisplayName();
                     String text = comment.getText().toString();
                     Comment newComment = new Comment(uid, userName, text);
-                    comments.child(postID).push().setValue(newComment);
+                    comments.child(data).push().setValue(newComment);
                     comment.setText("");
                 }
                 else if(FirebaseAuth.getInstance().getCurrentUser() == null)
@@ -126,7 +113,7 @@ public class PostFragment extends Fragment {
             }
         });
 
-        comments.child(postID).addValueEventListener(new ValueEventListener() {
+        comments.child(data).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
@@ -185,15 +172,12 @@ public class PostFragment extends Fragment {
                 imageView = rootView.findViewById(R.id.BigPostImage);
                 imageView.setImageResource(R.drawable.tv);
                 Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
-
                 //sendIntent.setType("image/*");
-
                 intent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
                 //intent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:TV 32 inch\nFind Item id:751 in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 intent.putExtra(Intent.EXTRA_TEXT, "http://www.one.co.il");
 
 // intent.putExtra(Intent.EXTRA_SUBJECT, "Foo bar"); // NB: has no effect!
-
 // See if official Facebook app is found
                 boolean facebookAppFound = false;
                 List<ResolveInfo> matches = getActivity().getPackageManager().queryIntentActivities(intent, 0);
@@ -204,7 +188,6 @@ public class PostFragment extends Fragment {
                         break;
                     }
                 }
-//
 //// As fallback, launch sharer.php in a browser
 //                if (!facebookAppFound) {
 //                    String sharerUrl = "https://www.facebook.com/sharer/sharer.php?u=" ;
@@ -218,11 +201,6 @@ public class PostFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     public Uri SaveImage(Bitmap finalBitmap) {
         Random r = new Random();
         int low = 10;
@@ -234,7 +212,6 @@ public class PostFragment extends Fragment {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
-//
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,6 +232,21 @@ public class PostFragment extends Fragment {
         double longitude = location.getLongitude();
         String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //postID = MainActivity.getPostClickedID();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 }

@@ -12,8 +12,13 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,11 +36,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "job scheduler";
     final String NEW_POST_FRAG = "New Post Fragment";
     final String RECYCLER_FRAG = "Recycler View Fragment";
     final String SIGNUP_FRAG = "Signup Fragment";
@@ -44,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     final String SETTINGS_FRAG = "Settings Fragment";
 
     SharedPreferences sharedPrefs;
-    private static String postClickedID;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        scheduleJob();
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
@@ -194,9 +201,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else
+        else
             super.onBackPressed();
     }
 
@@ -206,12 +213,17 @@ public class MainActivity extends AppCompatActivity {
         mAuth.removeAuthStateListener(authStateListener);
     }
 
-    public static void setPostClickedID(String id){
-        postClickedID = id;
-    }
-
-    public static String getPostClickedID()
-    {
-        return postClickedID;
+    public void scheduleJob() {
+        ComponentName componentName = new ComponentName(this, LocationJobService.class);
+        JobInfo info = new JobInfo.Builder(123, componentName)
+                .setRequiresCharging(false)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setRequiresDeviceIdle(false)
+                .setPersisted(false).setPeriodic(60000).build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(JobScheduler.class);
+        int resultCode = scheduler.schedule(info);
+        if (resultCode == JobScheduler.RESULT_SUCCESS)
+            Log.d("ddd", "Job scheduled");
+        else Log.d("ddd", "Job scheduling failed");
     }
 }
