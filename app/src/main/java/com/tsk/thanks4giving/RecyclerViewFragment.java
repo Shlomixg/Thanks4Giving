@@ -41,7 +41,6 @@ public class RecyclerViewFragment extends Fragment {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference posts = database.getReference().child("posts");
     Query query;
-
     SwipeRefreshLayout refreshLayout;
     BubbleSeekBar bubbleSeekBar;
 
@@ -51,9 +50,7 @@ public class RecyclerViewFragment extends Fragment {
     private String mUserUid;
     private int mItemsStatus;
 
-    public RecyclerViewFragment() {
-        // Required empty public constructor
-    }
+    public RecyclerViewFragment() {}
 
     public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
         RecyclerViewFragment fragment = new RecyclerViewFragment();
@@ -121,17 +118,12 @@ public class RecyclerViewFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                bubbleSeekBar.setProgress((float) (100.0));
-
                 refreshLayout.setRefreshing(false);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            Post pos = ds.getValue(Post.class);
-                            postList.add(pos);
-                        }
+                        filterLocation(snapshot);
                         Collections.reverse(postList);
                         // adapter=new PostAdapter(postList);
                         adapter.notifyDataSetChanged();
@@ -154,20 +146,7 @@ public class RecyclerViewFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressDialog.show();
                 postList.clear();
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post pos = ds.getValue(Post.class);
-                    Location location = new Location("dummyProvider");
-                    location.setLatitude(32.0627896);
-                    location.setLongitude(34.7714756);
-                    String coordinates = pos.getCoordinates();
-                    String a[] = coordinates.split(",");
-                    Location location2 = new Location("dummyProvider");
-                    location2.setLatitude(Double.parseDouble(a[0]));
-                    location2.setLongitude(Double.parseDouble(a[1]));
-                    if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                        postList.add(pos);
-
-                }
+                filterLocation(snapshot);
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
@@ -223,5 +202,21 @@ public class RecyclerViewFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    public void filterLocation(DataSnapshot snapshot){
+        for (DataSnapshot ds : snapshot.getChildren()) {
+            Post pos = ds.getValue(Post.class);
+            Location location = new Location("dummyProvider");
+            location.setLatitude(32.0627896);
+            location.setLongitude(34.7714756);
+            String coordinates = pos.getCoordinates();
+            String a[] = coordinates.split(",");
+            Location location2 = new Location("dummyProvider");
+            location2.setLatitude(Double.parseDouble(a[0]));
+            location2.setLongitude(Double.parseDouble(a[1]));
+            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
+                postList.add(pos);
+        }
     }
 }
