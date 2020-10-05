@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +33,7 @@ public class ProfileFragment extends Fragment {
     CircleImageView userImage;
     TextView userName;
     TextView userEmail;
-    TextView userGender;
+    com.google.android.material.textfield.TextInputEditText userGender;
     TextView userAddress;
     Button editBtn;
     Button msgBtn;
@@ -40,6 +41,7 @@ public class ProfileFragment extends Fragment {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
     LovelyProgressDialog progressDialog;
+    MaterialCardView activeItemsCard, deliveredItemsCard;
 
     private static final String ARG_USER_UID = "userUid";
 
@@ -64,7 +66,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         progressDialog = new LovelyProgressDialog(getContext()).setMessage("Wait").setCancelable(false).setTitle("Wait");
         progressDialog.show();
     }
@@ -75,7 +76,6 @@ public class ProfileFragment extends Fragment {
             mUserUid = getArguments().getString(ARG_USER_UID);
         }
 
-
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         userImage = rootView.findViewById(R.id.profile_user_image);
@@ -83,8 +83,10 @@ public class ProfileFragment extends Fragment {
         userEmail = rootView.findViewById(R.id.profile_user_email_tv);
         userGender = rootView.findViewById(R.id.profile_user_gender_tv);
         userAddress = rootView.findViewById(R.id.profile_user_address_tv);
-        msgBtn = rootView.findViewById(R.id.message_btn);
+        msgBtn = rootView.findViewById(R.id.profile_message_btn);
         editBtn = rootView.findViewById(R.id.edit_profile_btn);
+        activeItemsCard = rootView.findViewById(R.id.active_items_card);
+        deliveredItemsCard = rootView.findViewById(R.id.delivered_items_card);
 
         ref = mDatabase.child("users").child(mUserUid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -102,6 +104,7 @@ public class ProfileFragment extends Fragment {
                     }
                     userGender.setText(user.gender);
                     userAddress.setText(user.address);
+
                     progressDialog.dismiss();
                 }
             }
@@ -126,6 +129,32 @@ public class ProfileFragment extends Fragment {
                 fragmentTransaction.replace(R.id.flContent, new EditProfileFragment(), TAG).addToBackStack(null).commit();
             }
         });
+
+        activeItemsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUserPosts(mUserUid, 1);
+            }
+        });
+
+        deliveredItemsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUserPosts(mUserUid, 0);
+            }
+        });
+
         return rootView;
+    }
+
+    public void showUserPosts(String mUserUid, int status) {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString("userUid", mUserUid);
+        bundle.putInt("itemsStatus", status);
+        RecyclerViewFragment rvFragment = new RecyclerViewFragment();
+        rvFragment.setArguments(bundle);
+        transaction.replace(R.id.flContent, rvFragment, "USER_POSTS_FRAG").addToBackStack(null).commit();
     }
 }

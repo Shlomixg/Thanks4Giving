@@ -2,6 +2,8 @@ package com.tsk.thanks4giving;
 
 import android.net.Uri;
 
+import java.util.ArrayList;
+
 public class User {
 
     public String uid;
@@ -10,6 +12,7 @@ public class User {
     public String gender;
     public String address;
     public Uri profilePhoto;
+    public ArrayList<String> postsUid;
 
     public User() {
 
@@ -22,6 +25,7 @@ public class User {
         this.gender = gender;
         this.address = address;
         this.profilePhoto = profilePhoto;
+        this.postsUid = new ArrayList<String>();
     }
 
     /* Getters */
@@ -50,6 +54,10 @@ public class User {
         return address;
     }
 
+    public ArrayList<String> getPostsUid() {
+        return postsUid;
+    }
+
     /* Setters */
 
     public void setName(String name) {
@@ -74,5 +82,9 @@ public class User {
 
     public void setAddress(String Address) {
         address = Address;
+    }
+
+    public void setPostsUid(ArrayList<String> postsUid) {
+        this.postsUid = postsUid;
     }
 }

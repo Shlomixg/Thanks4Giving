@@ -1,7 +1,6 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -25,8 +23,11 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.Random;
@@ -41,44 +42,62 @@ public class EditProfileFragment extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 2;
     static final int PICK_IMAGE = 3;
     CircleImageView userImage;
-    EditText userName;
     String gender = "Male";
-    EditText userAddress;
     Button saveBtn;
     Button changePicBtn;
     Button cameraBtn;
     Button galleryBtn;
-    RadioButton male;
-    RadioButton female;
+    RadioButton rbMale, rbFemale;
     File file;
     Uri imageUri;
 
+    com.google.android.material.textfield.TextInputEditText userName, userAddress;
+
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference ref = mDatabase.child("users");
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    DatabaseReference ref;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
-        userName = rootView.findViewById(R.id.edit_profile_user_name_et);
+        userName = rootView.findViewById(R.id.edit_profile_name_et);
         userAddress = rootView.findViewById(R.id.edit_profile_user_address_et);
         cameraBtn = rootView.findViewById(R.id.change_pic_camera);
         galleryBtn = rootView.findViewById(R.id.change_pic_gallery);
+        saveBtn = rootView.findViewById(R.id.edit_profile_save_btn);
+        changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
+        rbMale = rootView.findViewById(R.id.radio_male);
+        rbFemale = rootView.findViewById(R.id.radio_female);
 
-        male = rootView.findViewById(R.id.radio_male);
-        male.setOnClickListener(new View.OnClickListener() {
+        ref = mDatabase.child("users").child(fbUser.getUid());
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    userName.setText(user.name);
+                    userAddress.setText(user.address);
+                    if (user.profilePhoto != null) {
+                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
+                    }
+                    if (user.gender == "Female") {
+
+                    } else {
+                        rbFemale.setChecked(false);
+                        rbMale.setChecked(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        rbMale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
@@ -87,8 +106,8 @@ public class EditProfileFragment extends Fragment {
                 gender = getString(R.string.male);
             }
         });
-        female = rootView.findViewById(R.id.radio_female);
-        female.setOnClickListener(new View.OnClickListener() {
+
+        rbFemale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
@@ -98,7 +117,6 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
         changePicBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +153,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        saveBtn = rootView.findViewById(R.id.edit_profile_save_btn);
+
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

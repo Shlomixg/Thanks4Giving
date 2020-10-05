@@ -35,7 +35,11 @@ import android.widget.Toast;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -62,6 +66,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -93,6 +98,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference posts = database.getReference("posts");
+    DatabaseReference users = database.getReference("users");
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
@@ -127,14 +133,14 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
         addressTv = rootView.findViewById(R.id.address_editText);//##
-        Places.initialize(getActivity().getApplicationContext(),"AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         addressTv.setFocusable(false);
         addressTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Place.Field> fieldList= Arrays.asList(Place.Field.ADDRESS,Place.Field.LAT_LNG,Place.Field.NAME);
-                Intent intent=new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fieldList).build(getActivity());
-                startActivityForResult(intent,200);
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
+                startActivityForResult(intent, 200);
             }
         });
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
@@ -233,12 +239,29 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
                 // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
                 uploadPicture();
-                String uid = currentFBUser.getUid();
+                final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
-                String postID = posts.push().getKey();
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(),addressTv.getText().toString(),coordinates, 1, spinner.getSelectedItem().toString(), path2);
+                final String postID = posts.push().getKey();
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
+                users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.getValue(User.class);
+                        if (user != null) {
+                            if (user.postsUid == null) {
+                                user.postsUid = new ArrayList<String>();
+                            }
+                            user.postsUid.add(postID);
+                            users.child(uid).setValue(user);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 // TODO: Update the posts list at user
 
                 setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
@@ -251,7 +274,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     public void onLocationChanged(Location location) {
         final double lat = location.getLatitude();
         final double lng = location.getLongitude();
-        coordinates=lat+","+lng;
+        coordinates = lat + "," + lng;
         //descriptionET.setText(lat + " , " + lng);
 
         new Thread() {
@@ -264,7 +287,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            addressTv.setText(bestAddress.getThoroughfare()+","+bestAddress.getFeatureName()+","+ bestAddress.getLocality()+","+bestAddress.getCountryName());
+                            addressTv.setText(bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName());
                         }
                     });
                 } catch (IOException e) {
@@ -340,8 +363,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             addressTv.setText(place.getAddress());
-           String temp=String.valueOf(place.getLatLng());
-            coordinates=temp.substring(temp.indexOf("(")+1,temp.indexOf(")"));
+            String temp = String.valueOf(place.getLatLng());
+            coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
@@ -357,7 +380,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     }
 
     private void uploadPicture() {
-        final LovelyProgressDialog progressDialog=new LovelyProgressDialog(getActivity());
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getActivity());
         progressDialog.setTitle("Uploading Image...");
         progressDialog.show();
         final String randomKey = UUID.randomUUID().toString();
@@ -384,9 +407,9 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                double progress=(100.00*snapshot.getBytesTransferred()/snapshot.getTotalByteCount());
-                progressDialog.setMessage("Progress "+(int)progress+" %");
-                if ((int)progress==100)
+                double progress = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                progressDialog.setMessage("Progress " + (int) progress + " %");
+                if ((int) progress == 100)
                     progressDialog.dismiss();
             }
         });
@@ -427,10 +450,5 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public void onProviderDisabled(String provider) {
 
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
     }
 }
