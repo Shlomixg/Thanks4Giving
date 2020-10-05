@@ -10,8 +10,9 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -42,16 +44,12 @@ public class EditProfileFragment extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 2;
     static final int PICK_IMAGE = 3;
     CircleImageView userImage;
-    String gender = "Male";
-    Button saveBtn;
-    Button changePicBtn;
-    Button cameraBtn;
-    Button galleryBtn;
-    RadioButton rbMale, rbFemale;
+    TextInputEditText fullname_et, address_et, email_et, password_et;
+    Button saveBtn, changePicBtn, cameraBtn, galleryBtn, cancelBtn;
+    AutoCompleteTextView genderEditTextExposedDropdown;
+
     File file;
     Uri imageUri;
-
-    com.google.android.material.textfield.TextInputEditText userName, userAddress;
 
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -62,14 +60,20 @@ public class EditProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
-        userName = rootView.findViewById(R.id.edit_profile_name_et);
-        userAddress = rootView.findViewById(R.id.edit_profile_user_address_et);
+        fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
+        address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
+        email_et = rootView.findViewById(R.id.edit_profile_email_et);
+        genderEditTextExposedDropdown = rootView.findViewById(R.id.edit_profile_gender_dropdown);
         cameraBtn = rootView.findViewById(R.id.change_pic_camera);
         galleryBtn = rootView.findViewById(R.id.change_pic_gallery);
         saveBtn = rootView.findViewById(R.id.edit_profile_save_btn);
+        cancelBtn = rootView.findViewById(R.id.edit_profile_cancel_btn);
         changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
-        rbMale = rootView.findViewById(R.id.radio_male);
-        rbFemale = rootView.findViewById(R.id.radio_female);
+
+        String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
+        genderEditTextExposedDropdown.setAdapter(adapter);
 
         ref = mDatabase.child("users").child(fbUser.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -77,16 +81,12 @@ public class EditProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    userName.setText(user.name);
-                    userAddress.setText(user.address);
+                    fullname_et.setText(user.name);
+                    address_et.setText(user.address);
+                    email_et.setText(user.email);
+                    genderEditTextExposedDropdown.setText(user.gender, false);
                     if (user.profilePhoto != null) {
                         Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
-                    }
-                    if (user.gender == "Female") {
-
-                    } else {
-                        rbFemale.setChecked(false);
-                        rbMale.setChecked(true);
                     }
                 }
             }
@@ -94,26 +94,6 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
-
-        rbMale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                if (imageUri == null)
-                    Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
-                gender = getString(R.string.male);
-            }
-        });
-
-        rbFemale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
-                if (imageUri == null)
-                    Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
-                gender = getString(R.string.female);
             }
         });
 
@@ -153,25 +133,32 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String gender = genderEditTextExposedDropdown.getText().toString();
                 if (imageUri == null) {
                     String path = null;
-                    if (gender.equals("Male"))
-                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                    else if (gender.equals("Female"))
+                    if (gender.equals("Female"))
                         path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
+                    else
+                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
                     imageUri = Uri.parse(path);
                 }
-                if (!userName.getText().toString().equals(""))
-                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName.getText().toString()).setPhotoUri(imageUri).build());
+                if (!fullname_et.getText().toString().equals(""))
+                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(fullname_et.getText().toString()).setPhotoUri(imageUri).build());
                 else
                     fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
                 ref.child(fbUser.getUid()).child("gender").setValue(gender);
-                if (!userAddress.getText().toString().equals(""))
-                    ref.child(fbUser.getUid()).child("address").setValue(userAddress.getText().toString());
+                if (!address_et.getText().toString().equals(""))
+                    ref.child(fbUser.getUid()).child("address").setValue(address_et.getText().toString());
 
                 getActivity().getSupportFragmentManager().popBackStack();
             }

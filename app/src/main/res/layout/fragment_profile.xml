@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ProfileFragment">
 
     <LinearLayout
+        android:id="@+id/profile_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
+        android:background="#fece2f"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/profile_header"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="180dp"
             android:background="#fece2f"
             android:padding="20dp">
 
@@ -23,215 +25,194 @@
                 android:id="@+id/profile_user_image"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_centerVertical="true"
                 android:src="@drawable/profile_man"
                 app:civ_border_color="#FFF"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/profile_user_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/profile_user_image"
+                android:drawableStart="@drawable/ic_name"
+                android:drawablePadding="8dp"
                 android:includeFontPadding="false"
                 android:text="@string/user_name"
                 android:textColor="#000"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@id/profile_user_image"
+                app:layout_constraintTop_toTopOf="@id/profile_user_image" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/profile_user_email_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/profile_user_name_tv"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/profile_user_image"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="8dp"
                 android:includeFontPadding="false"
-                android:text="@string/email"
+                android:text="@string/sign_email_hint"
                 android:textColor="#000"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/profile_user_address_tv"
+                app:layout_constraintStart_toEndOf="@id/profile_user_image"
+                app:layout_constraintTop_toBottomOf="@id/profile_user_name_tv" />
 
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-100dp"
-            android:padding="20dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/active_items_card"
-                android:layout_width="0dp"
-                android:layout_height="125dp"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#fece2f"
-                app:cardElevation="10dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_add" />
-
-                    <TextView
-                        android:id="@+id/active_items_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:includeFontPadding="false"
-                        android:text="123"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/active_items_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/active_items_label"
-                        android:layout_centerHorizontal="true"
-                        android:includeFontPadding="false"
-                        android:text="Active Items"
-                        android:textSize="20sp" />
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/delivered_items_card"
-                android:layout_width="0dp"
-                android:layout_height="125dp"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#fece2f"
-                app:cardElevation="10dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_add" />
-
-                    <TextView
-                        android:id="@+id/delivered_items_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:includeFontPadding="false"
-                        android:text="123"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/delivered_items_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/delivered_items_label"
-                        android:layout_centerHorizontal="true"
-                        android:includeFontPadding="false"
-                        android:text="Delivered Items"
-                        android:textSize="20sp" />
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/profile_user_gender_tf"
-                android:layout_width="match_parent"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_user_address_tv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:hint="@string/gender">
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_address_location"
+                android:drawablePadding="8dp"
+                android:includeFontPadding="false"
+                android:text="@string/sign_email_hint"
+                android:textColor="#000"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/profile_user_gender_tv"
+                app:layout_constraintStart_toEndOf="@id/profile_user_image"
+                app:layout_constraintTop_toBottomOf="@id/profile_user_email_tv" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/profile_user_gender_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_login"
-                    android:drawablePadding="10dp"
-                    android:enabled="false"
-                    android:textColor="#000" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/profile_user_address_tf"
-                android:layout_width="match_parent"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_user_gender_tv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:hint="@string/address">
+                android:layout_marginStart="10dp"
+                android:drawableStart="@drawable/ic_gender"
+                android:drawablePadding="8dp"
+                android:includeFontPadding="false"
+                android:text="@string/sign_email_hint"
+                android:textColor="#000"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profile_user_image"
+                app:layout_constraintTop_toBottomOf="@id/profile_user_address_tv" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/profile_user_address_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_login"
-                    android:drawablePadding="10dp"
-                    android:enabled="false"
-                    android:textColor="#000" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/profile_user_age_tf"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:hint="Age">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/profile_user_age_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_login"
-                    android:drawablePadding="10dp"
-                    android:enabled="false"
-                    android:textColor="#000" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_profile_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:background="#fece2f"
-                android:gravity="center"
-                android:text="@string/edit_profile_btn"
-                android:textColor="@color/colorWhite"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/profile_message_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:background="#fece2f"
-                android:gravity="center"
-                android:text="@string/profile_send_message_btn"
-                android:textColor="@color/colorWhite"
-                android:textSize="16sp" />
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
-</ScrollView>
+    <LinearLayout
+        android:id="@+id/items_cards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-100dp"
+        android:layout_below="@+id/profile_header"
+        android:padding="20dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/active_items_card"
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#fece2f"
+            app:cardElevation="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_add" />
+
+                <TextView
+                    android:id="@+id/active_items_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:includeFontPadding="false"
+                    android:text="123"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/active_items_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/active_items_label"
+                    android:layout_centerHorizontal="true"
+                    android:includeFontPadding="false"
+                    android:text="Active Items"
+                    android:textSize="20sp" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/delivered_items_card"
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#fece2f"
+            app:cardElevation="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/ic_add" />
+
+                <TextView
+                    android:id="@+id/delivered_items_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:includeFontPadding="false"
+                    android:text="123"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/delivered_items_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/delivered_items_label"
+                    android:layout_centerHorizontal="true"
+                    android:includeFontPadding="false"
+                    android:text="Delivered Items"
+                    android:textSize="20sp" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+    <!--
+    android:text="@string/profile_send_message_btn"
+    android:text="@string/profile_edit_btn"
+    -->
+    <FrameLayout
+        android:id="@+id/flProfileContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/items_cards"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/profile_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_send_message"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        />
+
+</RelativeLayout>

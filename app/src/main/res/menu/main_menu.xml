@@ -25,11 +25,11 @@
         android:checkableBehavior="all">
         <item
             android:id="@+id/nav_share"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_share"
             android:title="@string/share" />
         <item
             android:id="@+id/nav_send"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_share"
             android:title="@string/send" />
     </group>
 

@@ -8,14 +8,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,18 +32,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment {
 
     String TAG = "Edit Profile Frag";
-    CircleImageView userImage;
-    TextView userName;
-    TextView userEmail;
-    com.google.android.material.textfield.TextInputEditText userGender;
-    TextView userAddress;
-    Button editBtn;
-    Button msgBtn;
+    boolean isCurrentUser = false;
+
+    CircleImageView profile_civ;
+    TextView name_tv, email_tv, gender_tv, address_tv;
+    FloatingActionButton fab;
+    MaterialCardView active_items_card, delivered_items_card;
+    LovelyProgressDialog progressDialog;
+
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
-    LovelyProgressDialog progressDialog;
-    MaterialCardView activeItemsCard, deliveredItemsCard;
 
     private static final String ARG_USER_UID = "userUid";
 
@@ -78,15 +79,54 @@ public class ProfileFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        userImage = rootView.findViewById(R.id.profile_user_image);
-        userName = rootView.findViewById(R.id.profile_user_name_tv);
-        userEmail = rootView.findViewById(R.id.profile_user_email_tv);
-        userGender = rootView.findViewById(R.id.profile_user_gender_tv);
-        userAddress = rootView.findViewById(R.id.profile_user_address_tv);
-        msgBtn = rootView.findViewById(R.id.profile_message_btn);
-        editBtn = rootView.findViewById(R.id.edit_profile_btn);
-        activeItemsCard = rootView.findViewById(R.id.active_items_card);
-        deliveredItemsCard = rootView.findViewById(R.id.delivered_items_card);
+        profile_civ = rootView.findViewById(R.id.profile_user_image);
+        name_tv = rootView.findViewById(R.id.profile_user_name_tv);
+        email_tv = rootView.findViewById(R.id.profile_user_email_tv);
+        gender_tv = rootView.findViewById(R.id.profile_user_gender_tv);
+        address_tv = rootView.findViewById(R.id.profile_user_address_tv);
+        active_items_card = rootView.findViewById(R.id.active_items_card);
+        delivered_items_card = rootView.findViewById(R.id.delivered_items_card);
+        fab = rootView.findViewById(R.id.profile_fab);
+
+        if (currentUser == null) {
+            fab.setVisibility(View.GONE);
+            email_tv.setVisibility(View.GONE);
+            address_tv.setVisibility(View.GONE);
+        } else if (mUserUid.equals(currentUser.getUid())) {
+            isCurrentUser = true;
+            fab.setImageResource(R.drawable.ic_edit);
+        } else {
+            email_tv.setVisibility(View.GONE);
+            address_tv.setVisibility(View.GONE);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCurrentUser) {
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.flContent, new EditProfileFragment(), TAG).addToBackStack(null).commit();
+                } else {
+                    // TODO: Send Message
+                    Toast.makeText(getContext(), "TODO: Send Message", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        active_items_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUserPosts(mUserUid, 1);
+            }
+        });
+
+        delivered_items_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showUserPosts(mUserUid, 0);
+            }
+        });
 
         ref = mDatabase.child("users").child(mUserUid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -94,16 +134,16 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    userName.setText(user.name);
-                    userEmail.setText(user.email);
                     if (user.profilePhoto != null) {
-                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
+                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(profile_civ);
                     } else {
                         String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                        Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(userImage);
+                        Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(profile_civ);
                     }
-                    userGender.setText(user.gender);
-                    userAddress.setText(user.address);
+                    name_tv.setText(user.name);
+                    email_tv.setText(user.email);
+                    address_tv.setText(user.address);
+                    gender_tv.setText(user.gender);
 
                     progressDialog.dismiss();
                 }
@@ -111,36 +151,9 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        if (mUserUid.equals(currentUser.getUid())) {
-            msgBtn.setVisibility(View.GONE);
-        } else {
-            editBtn.setVisibility(View.GONE);
-            userEmail.setVisibility(View.GONE);
-        }
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.flContent, new EditProfileFragment(), TAG).addToBackStack(null).commit();
-            }
-        });
-
-        activeItemsCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showUserPosts(mUserUid, 1);
-            }
-        });
-
-        deliveredItemsCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showUserPosts(mUserUid, 0);
+                Log.d("Profile Log", "--- Profile display failed");
+                Log.d("Profile Log", "--- Error: " + error);
+                progressDialog.dismiss();
             }
         });
 
@@ -155,6 +168,6 @@ public class ProfileFragment extends Fragment {
         bundle.putInt("itemsStatus", status);
         RecyclerViewFragment rvFragment = new RecyclerViewFragment();
         rvFragment.setArguments(bundle);
-        transaction.replace(R.id.flContent, rvFragment, "USER_POSTS_FRAG").addToBackStack(null).commit();
+        transaction.replace(R.id.flProfileContent, rvFragment, "USER_POSTS_FRAG").commit();
     }
 }

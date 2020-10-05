@@ -102,7 +102,7 @@
     <string name="address">Enter your Address</string>
     <string name="save">Save</string>
     <string name="log_in">Log-in</string>
-    <string name="email">Email</string>
+    <string name="sign_email_hint">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="post_new_item">Post new item</string>
@@ -114,11 +114,11 @@
     <string name="comment">Comment...</string>
     <string name="post_comment_btn">Post</string>
     <string name="gender">Gender</string>
-    <string name="edit_profile_btn">Edit Profile</string>
+    <string name="profile_edit_btn">Edit Profile</string>
     <string name="profile_send_message_btn">Send message</string>
     <string name="sign_up">Sign-up</string>
     <string name="full_name">Full Name</string>
-    <string name="password_hint">Password (6 digits or more)</string>
+    <string name="sign_password_hint">Password (6 digits or more)</string>
     <string name="confirm_and_sign_up">Confirm And Sign Up</string>
     <string name="welcome_guest">Welcome guest</string>
     <string-array name="categories">
