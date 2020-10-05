@@ -36,7 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     final String SETTINGS_FRAG = "Settings Fragment";
 
     SharedPreferences sharedPrefs;
+    private static String postClickedID;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;

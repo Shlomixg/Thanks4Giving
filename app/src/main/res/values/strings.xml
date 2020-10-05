@@ -114,8 +114,8 @@
     <string name="comment">Comment...</string>
     <string name="post_comment_btn">Post</string>
     <string name="gender">Gender</string>
-    <string name="edit_profile">Edit Profile</string>
-    <string name="message">Send message</string>
+    <string name="edit_profile_btn">Edit Profile</string>
+    <string name="profile_send_message_btn">Send message</string>
     <string name="sign_up">Sign-up</string>
     <string name="full_name">Full Name</string>
     <string name="password_hint">Password (6 digits or more)</string>

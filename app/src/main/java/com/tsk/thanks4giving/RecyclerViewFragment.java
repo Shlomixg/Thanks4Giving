@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,10 +16,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
 
@@ -32,24 +35,52 @@ import java.util.Collections;
 public class RecyclerViewFragment extends Fragment {
 
     final String POST_FRAG = "Post Fragment";
-    public ArrayList<Post> postList = new ArrayList<>();
+    ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference posts = database.getReference().child("posts");
+    Query query;
+
     SwipeRefreshLayout refreshLayout;
     BubbleSeekBar bubbleSeekBar;
+
+    private static final String ARG_USER_UID = "userUid";
+    private static final String ARG_STATUS = "itemsStatus";
+
+    private String mUserUid;
+    private int mItemsStatus;
+
+    public RecyclerViewFragment() {
+        // Required empty public constructor
+    }
+
+    public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
+        RecyclerViewFragment fragment = new RecyclerViewFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_USER_UID, userUid);
+        args.putString(ARG_STATUS, itemsStatus);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        query = posts;
+        if (getArguments() != null) {
+            mUserUid = getArguments().getString(ARG_USER_UID);
+            mItemsStatus = getArguments().getInt(ARG_STATUS);
+            query = posts.orderByChild("userUid").equalTo(mUserUid);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
-        bubbleSeekBar=(BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
-        bubbleSeekBar.setProgress((float)(100.0));
+        bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
+        bubbleSeekBar.setProgress((float) (100.0));
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(final BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-                posts.addListenerForSingleValueEvent(new ValueEventListener() {
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
@@ -58,13 +89,12 @@ public class RecyclerViewFragment extends Fragment {
                             Location location = new Location("dummyProvider");
                             location.setLatitude(32.0627896);
                             location.setLongitude(34.7714756);
-                            String coordinates=pos.getCoordinates();
-                            String a[]=coordinates.split(",");
-                            Location location2= new Location("dummyProvider");
+                            String coordinates = pos.getCoordinates();
+                            String a[] = coordinates.split(",");
+                            Location location2 = new Location("dummyProvider");
                             location2.setLatitude(Double.parseDouble(a[0]));
                             location2.setLongitude(Double.parseDouble(a[1]));
-
-                            if (location.distanceTo(location2)<=bubbleSeekBar.getProgress()*1000)
+                            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
                                 postList.add(pos);
                         }
                         Collections.reverse(postList);
@@ -87,14 +117,14 @@ public class RecyclerViewFragment extends Fragment {
             }
         });
 
-        refreshLayout=rootView.findViewById(R.id.refresh);
+        refreshLayout = rootView.findViewById(R.id.refresh);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                bubbleSeekBar.setProgress((float)(100.0));
+                bubbleSeekBar.setProgress((float) (100.0));
 
                 refreshLayout.setRefreshing(false);
-                posts.addListenerForSingleValueEvent(new ValueEventListener() {
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
@@ -119,7 +149,7 @@ public class RecyclerViewFragment extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
         progressDialog.setTitle(getString(R.string.loading));
 
-        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressDialog.show();
@@ -131,10 +161,10 @@ public class RecyclerViewFragment extends Fragment {
                     location.setLongitude(34.7714756);
                     String coordinates = pos.getCoordinates();
                     String a[] = coordinates.split(",");
-                    Location location2= new Location("dummyProvider");
+                    Location location2 = new Location("dummyProvider");
                     location2.setLatitude(Double.parseDouble(a[0]));
                     location2.setLongitude(Double.parseDouble(a[1]));
-                    if (location.distanceTo(location2)<=bubbleSeekBar.getProgress()*1000)
+                    if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
                         postList.add(pos);
 
                 }

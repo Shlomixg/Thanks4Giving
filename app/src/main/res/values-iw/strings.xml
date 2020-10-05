@@ -24,8 +24,8 @@
     <string name="comment">תגובה...</string>
     <string name="post_comment_btn">פרסם</string>
     <string name="gender">מין</string>
-    <string name="edit_profile">עריכת פרופיל</string>
-    <string name="message">שלח הודעה</string>
+    <string name="edit_profile_btn">עריכת פרופיל</string>
+    <string name="profile_send_message_btn">שלח הודעה</string>
     <string name="sign_up">הרשמה</string>
     <string name="full_name">שם מלא</string>
     <string name="password_hint">סיסמה (6 תווים לפחות)</string>
