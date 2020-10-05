@@ -33,6 +33,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -53,11 +56,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -80,7 +85,9 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     Spinner spinner;
     ImageButton confirm_btn; //%
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    String path, path2;
+    String path;
+    String path2;
+    String coordinates;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -96,21 +103,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        //        riversRef.putFile(file)
-//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        // Get a URL to the uploaded content
-//                        Task<Uri> downloadUrl = taskSnapshot.getStorage().getDownloadUrl();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception exception) {
-//                        // Handle unsuccessful uploads
-//                        // ...
-//                    }
-//                });
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -135,6 +127,16 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
         addressTv = rootView.findViewById(R.id.address_editText);//##
+        Places.initialize(getActivity().getApplicationContext(),"AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        addressTv.setFocusable(false);
+        addressTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Place.Field> fieldList= Arrays.asList(Place.Field.ADDRESS,Place.Field.LAT_LNG,Place.Field.NAME);
+                Intent intent=new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fieldList).build(getActivity());
+                startActivityForResult(intent,200);
+            }
+        });
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
         descriptionET = rootView.findViewById(R.id.condition_editText);//##
         image = rootView.findViewById(R.id.newPostImage);
@@ -234,7 +236,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 String postID = posts.push().getKey();
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), 1, spinner.getSelectedItem().toString(), imageUri.toString());
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(),addressTv.getText().toString(),coordinates, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
 
                 // TODO: Update the posts list at user
@@ -249,7 +251,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     public void onLocationChanged(Location location) {
         final double lat = location.getLatitude();
         final double lng = location.getLongitude();
-
+        coordinates=lat+","+lng;
         //descriptionET.setText(lat + " , " + lng);
 
         new Thread() {
@@ -262,7 +264,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            addressTv.setText(bestAddress.getCountryName() + "," + bestAddress.getLocality() + "," + bestAddress.getThoroughfare() + " , " + bestAddress.getFeatureName());
+                            addressTv.setText(bestAddress.getThoroughfare()+","+bestAddress.getFeatureName()+","+ bestAddress.getLocality()+","+bestAddress.getCountryName());
                         }
                     });
                 } catch (IOException e) {
@@ -337,7 +339,9 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         }
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
-            descriptionET.setText(place.getAddress());
+            addressTv.setText(place.getAddress());
+           String temp=String.valueOf(place.getLatLng());
+            coordinates=temp.substring(temp.indexOf("(")+1,temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
@@ -353,6 +357,9 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     }
 
     private void uploadPicture() {
+        final LovelyProgressDialog progressDialog=new LovelyProgressDialog(getActivity());
+        progressDialog.setTitle("Uploading Image...");
+        progressDialog.show();
         final String randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("images/" + randomKey);
 
@@ -374,7 +381,15 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                         // Handle unsuccessful uploads
                         // ...
                     }
-                });
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress=(100.00*snapshot.getBytesTransferred()/snapshot.getTotalByteCount());
+                progressDialog.setMessage("Progress "+(int)progress+" %");
+                if ((int)progress==100)
+                    progressDialog.dismiss();
+            }
+        });
     }
 
     private void downloadFile(String randomKey) throws IOException {

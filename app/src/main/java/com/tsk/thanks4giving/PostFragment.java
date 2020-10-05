@@ -24,6 +24,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -47,14 +49,14 @@ public class PostFragment extends Fragment {
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
-    //Post currentPost;
     String postID;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference comments = database.getReference().child("comments");
-    //final DatabaseReference posts = database.getReference().child("posts");
+    final DatabaseReference posts = database.getReference().child("posts");
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -72,10 +74,40 @@ public class PostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
         description = rootView.findViewById(R.id.post_title);
-        postImage = rootView.findViewById(R.id.post_img);
+        postImage = rootView.findViewById(R.id.BigPostImage);
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
+        Bundle bundle=this.getArguments();
+        final String data=bundle.getString("PostId");
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post pos = ds.getValue(Post.class);
+                    if (pos.getPostID().equals(data))
+                    {
+                        String coordinates=pos.getCoordinates();
+                        String a[]=coordinates.split(",");
+                        location = new Location("dummyProvider");
+                        location.setLatitude(Double.parseDouble(a[0]));
+                        location.setLongitude(Double.parseDouble(a[1]));
+                        Glide.with(PostFragment.this)
+                                .load(pos.getPostImage())
+                                .centerCrop()
+                                .into(postImage);
+
+                        description.setText(pos.getDesc());
+
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        Toast.makeText(getContext(), data, Toast.LENGTH_SHORT).show();
+
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,9 +153,8 @@ public class PostFragment extends Fragment {
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                location = new Location("dummyProvider");
-                location.setLatitude(32.03140520);
-                location.setLongitude(34.74392110);
+//                location.setLatitude(32.03140520);
+//                location.setLongitude(34.74392110);
                 cordinatesToWaze(location);
             }
         });
@@ -223,7 +254,6 @@ public class PostFragment extends Fragment {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
-        //String url = "https://www.waze.com/ul?ll=32.03140520%2C34.74392110&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 
     }

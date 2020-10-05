@@ -99,7 +99,7 @@
     <string name="user_name">User Name</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
-    <string name="address">Address</string>
+    <string name="address">Enter your Address</string>
     <string name="save">Save</string>
     <string name="log_in">Log-in</string>
     <string name="email">Email</string>

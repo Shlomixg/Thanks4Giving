@@ -7,6 +7,8 @@ public class Post {
     public String postID;
     public String userUid; // UID of the user that posted
     public String desc; //description for the item
+    public String address;
+    public String coordinates;
     public int status; // 1 = available 0 = not available
     public String category; //items general category
     public String postImage; // Item image
@@ -18,11 +20,13 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String desc, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String desc,String address ,String coordinates, int status, String category, String postImage) {
         this.postID = postid;
         this.userUid = userUid;
         this.status = status;
         this.desc = desc;
+        this.address=address;
+        this.coordinates=coordinates;
         this.category = category;
         this.postImage = postImage;
         this.likes = new ArrayList<String>();
@@ -104,5 +108,20 @@ public class Post {
 
     public void setWatching(ArrayList<String> watching) {
         this.watching = watching;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
     }
 }

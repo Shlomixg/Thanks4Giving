@@ -111,7 +111,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        Glide.with(holder.itemView.getContext()).load(Uri.parse(post.postImage)).centerCrop().into(holder.postImage);
+        Glide.with(holder.itemView.getContext()).load(post.getPostImage()).centerCrop().into(holder.postImage);
         int likes = (post.likes != null) ? post.likes.size() : 0;
         holder.like.setText("" + likes);
 

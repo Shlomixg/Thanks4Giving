@@ -75,6 +75,7 @@ public class ProfileFragment extends Fragment {
             mUserUid = getArguments().getString(ARG_USER_UID);
         }
 
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         userImage = rootView.findViewById(R.id.profile_user_image);
