@@ -72,6 +72,16 @@
             tools:ignore="MissingConstraints"
             android:background="@null"/>
 
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@drawable/maps"
+            tools:layout_editor_absoluteX="3dp"
+            tools:layout_editor_absoluteY="70dp"
+            android:padding="2dp"
+            android:id="@+id/googlemaps"
+            tools:ignore="MissingConstraints"
+            android:background="@null"/>
     </LinearLayout>
 
     <ImageView
