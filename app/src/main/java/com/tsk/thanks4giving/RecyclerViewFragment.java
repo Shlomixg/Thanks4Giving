@@ -50,7 +50,8 @@ public class RecyclerViewFragment extends Fragment {
     private String mUserUid;
     private int mItemsStatus;
 
-    public RecyclerViewFragment() {}
+    public RecyclerViewFragment() {
+    }
 
     public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
         RecyclerViewFragment fragment = new RecyclerViewFragment();
@@ -97,6 +98,7 @@ public class RecyclerViewFragment extends Fragment {
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
@@ -128,6 +130,7 @@ public class RecyclerViewFragment extends Fragment {
                         // adapter=new PostAdapter(postList);
                         adapter.notifyDataSetChanged();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
@@ -151,6 +154,7 @@ public class RecyclerViewFragment extends Fragment {
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -172,11 +176,12 @@ public class RecyclerViewFragment extends Fragment {
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();
-                bundle.putString("PostId",postId);
+                bundle.putString("PostId", postId);
                 PostFragment postFragment = new PostFragment();
                 postFragment.setArguments(bundle);
                 transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
-          }
+            }
+
             @Override
             public void onLongClickListener(int pos, View v) {
             }
@@ -188,7 +193,7 @@ public class RecyclerViewFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-        Log.d("ddd","event reached fragment");
+        Log.d("ddd", "event reached fragment");
         //TODO refresh posts list with new location
     }
 
@@ -204,7 +209,7 @@ public class RecyclerViewFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 
-    public void filterLocation(DataSnapshot snapshot){
+    public void filterLocation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post pos = ds.getValue(Post.class);
             Location location = new Location("dummyProvider");

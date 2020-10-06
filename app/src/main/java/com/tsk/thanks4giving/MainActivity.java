@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -164,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         /*Fragment fragmentA = fragmentManager.findFragmentByTag(FRAG);
         if (fragmentA == null)*/
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.flContent, fragment, FRAG);
-            if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
-            transaction.commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.flContent, fragment, FRAG);
+        if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @Override

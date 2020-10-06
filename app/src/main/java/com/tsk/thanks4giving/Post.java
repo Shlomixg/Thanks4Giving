@@ -21,14 +21,14 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String desc, String address, String coordinates,String locationMethod, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod, int status, String category, String postImage) {
         this.postID = postid;
         this.userUid = userUid;
         this.status = status;
         this.desc = desc;
         this.address = address;
         this.coordinates = coordinates;
-        this.locationMethod=locationMethod;
+        this.locationMethod = locationMethod;
         this.category = category;
         this.postImage = postImage;
         this.likes = new ArrayList<String>();

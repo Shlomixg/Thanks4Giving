@@ -8,7 +8,7 @@ public class MessageEvent {
     public Location location;
 
     public MessageEvent(Location loc) {
-        Log.d("ddd","Message event constructor");
+        Log.d("ddd", "Message event constructor");
         this.location = loc;
     }
 }

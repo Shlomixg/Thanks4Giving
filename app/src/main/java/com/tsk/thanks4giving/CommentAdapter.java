@@ -62,10 +62,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
         return list.size();
     }
 
-    public class CommentCardHolder extends RecyclerView.ViewHolder
-    {
+    public class CommentCardHolder extends RecyclerView.ViewHolder {
         TextView profileName;
         TextView message;
+
         public CommentCardHolder(@NonNull View itemView) {
             super(itemView);
             profileName = itemView.findViewById(R.id.comment_profile_name);

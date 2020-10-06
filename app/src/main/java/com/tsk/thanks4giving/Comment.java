@@ -12,7 +12,8 @@ public class Comment {
         this.text = text;
     }
 
-    public Comment () {}
+    public Comment() {
+    }
 
     public String getUid() {
         return uid;
