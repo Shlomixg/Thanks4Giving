@@ -78,6 +78,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     static final int PICK_IMAGE = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     int flag = 0;
+    int flag_location=0;
     EditText descriptionET;
     EditText addressTv;
     Handler handler = new Handler();//##
@@ -93,6 +94,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     String path;
     String path2;
     String coordinates;
+    String location_method;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -137,6 +139,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         addressTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag_location=1;
                 List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
                 Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
                 startActivityForResult(intent, 200);
@@ -181,6 +184,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         btn_gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag_location=0;
                 if (Build.VERSION.SDK_INT >= 23) {
                     int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
@@ -241,7 +245,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 final String postID = posts.push().getKey();
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, 1, spinner.getSelectedItem().toString(), path2);
+                if (flag_location==0)
+                    location_method="GPS";
+                else
+                    location_method="Google";
+
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates,location_method, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
                 users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

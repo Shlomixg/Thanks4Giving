@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -49,6 +52,9 @@ public class PostFragment extends Fragment {
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
+    Geocoder geocoder; //##
+    String data;
+
     //String postID;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -67,7 +73,7 @@ public class PostFragment extends Fragment {
         comment = rootView.findViewById(R.id.post_comment_et);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
         Bundle bundle = this.getArguments();
-        final String data = bundle.getString("PostId");
+        data = bundle.getString("PostId");
 
         posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -135,14 +141,24 @@ public class PostFragment extends Fragment {
         adapter = new CommentAdapter(commentList);
         commentsRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
+        ImageButton googlemaps = rootView.findViewById(R.id.googlemaps);
+        googlemaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    cordinatesToMaps();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         ImageButton waze = rootView.findViewById(R.id.waze);
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                location.setLatitude(32.03140520);
 //                location.setLongitude(34.74392110);
-                cordinatesToWaze(location);
+                cordinatesToWaze();
             }
         });
 
@@ -201,6 +217,48 @@ public class PostFragment extends Fragment {
         return rootView;
     }
 
+    private void cordinatesToMaps() throws IOException {
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post pos = ds.getValue(Post.class);
+                    if (pos.getPostID().equals(data))
+                    {
+                        if (pos.getLocationMethod().equals("GPS"))
+                        {
+                            List<Address> addresses = null;
+                            try {
+                                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            final Address bestAddress = addresses.get(0);
+                            String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        }
+                        else
+                        {
+                            String url = "https://www.google.com/maps/search/?api=1&query=" + pos.getAddress();
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
+//                            String a[]=coordinates.split(",");
+//                            location = new Location("dummyProvider");
+//                            location.setLatitude(Double.parseDouble(a[0]));
+//                            location.setLongitude(Double.parseDouble(a[1]));
+                        }
+
+
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+    }
+
     public Uri SaveImage(Bitmap finalBitmap) {
         Random r = new Random();
         int low = 10;
@@ -227,11 +285,31 @@ public class PostFragment extends Fragment {
         return b;
     }
 
-    private void cordinatesToWaze(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    private void cordinatesToWaze() {
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post pos = ds.getValue(Post.class);
+                    if (pos.getPostID().equals(data))
+                    {
+//
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+//
+
+
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+
     }
 
     @Override
@@ -242,6 +320,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        geocoder = new Geocoder(getContext());
         //postID = MainActivity.getPostClickedID();
     }
 
