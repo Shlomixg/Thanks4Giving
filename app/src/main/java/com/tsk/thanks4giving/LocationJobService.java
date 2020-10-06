@@ -16,55 +16,47 @@ import org.greenrobot.eventbus.EventBus;
 
 public class LocationJobService extends JobService {
 
-    String CO;
+    Location location = new Location("dummyProvider");
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        int id = params.getJobId();
-        Log.d("ddd","job " + id + " started");
-        getCoordinates();
-        String a[] = CO.split(",");
-        Location location = new Location("dummyProvider");
-        location.setLatitude(Double.parseDouble(a[1]));
-        location.setLongitude(Double.parseDouble(a[0]));
-        EventBus.getDefault().post(new MessageEvent(location));
-        return true;
-    }
-
-    private void getCoordinates() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("ddd","thread running");
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                LocationListener locationListener = new MyLocationListener();
-                if (Build.VERSION.SDK_INT >= 23) {
-                    int hasLocationPermission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-                    if (hasLocationPermission == PackageManager.PERMISSION_GRANTED)
-                    {
-                        Log.d("ddd","has permission");
-                        assert locationManager != null;
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-                    }
-                    else Log.d("ddd","has no permission");
-                }
+        Log.d("ddd","job started");
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener();
+        if (Build.VERSION.SDK_INT >= 23) {
+            int hasLocationPermission = ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            if (hasLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                Log.d("ddd", "getting location");
+                assert locationManager != null;
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
             }
-        }).start();
+            else Log.d("ddd", "no location permission");
+        } else {
+            assert locationManager != null;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        }
+        jobFinished(params,true);
+        return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d("ddd","Job canceled before finishing");
+        Log.d("ddd","job on stop");
         return true;
     }
 
     private class MyLocationListener implements LocationListener {
+
         @Override
         public void onLocationChanged(Location loc) {
-            Log.d("ddd","location listener activated");
             String longitude = "" + loc.getLongitude();
+            Log.d("ddd",longitude);
             String latitude = "" + loc.getLatitude();
-            CO = longitude+latitude;
+            Log.d("ddd",latitude);
+            location.setLongitude(Double.parseDouble(longitude));
+            location.setLatitude(Double.parseDouble(latitude));
+            EventBus.getDefault().post(new MessageEvent(location));
+            Log.d("ddd","Sent message event");
         }
 
         @Override
@@ -77,5 +69,4 @@ public class LocationJobService extends JobService {
         public void onProviderDisabled(String provider) {
         }
     }
-
 }

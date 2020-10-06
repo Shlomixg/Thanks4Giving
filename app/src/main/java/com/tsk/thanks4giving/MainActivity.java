@@ -17,6 +17,7 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -218,13 +219,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void scheduleJob() {
         ComponentName componentName = new ComponentName(this, LocationJobService.class);
-        JobInfo info = new JobInfo.Builder(123, componentName)
-                .setRequiresCharging(false)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setRequiresDeviceIdle(false)
-                .setPersisted(false).setPeriodic(60000).build();
-        JobScheduler scheduler = (JobScheduler) getSystemService(JobScheduler.class);
-        int resultCode = scheduler.schedule(info);
+        JobInfo jobInfo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            jobInfo = new JobInfo.Builder(123, componentName)
+                    .setPeriodic(5*60*1000,5*60*1000)
+                    .setPersisted(false)
+                    .build();
+        } else {
+            jobInfo = new JobInfo.Builder(123, componentName)
+                    .setPeriodic(5*60*1000)
+                    .setPersisted(false)
+                    .build();
+        }
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode = scheduler.schedule(jobInfo);
         if (resultCode == JobScheduler.RESULT_SUCCESS)
             Log.d("ddd", "Job scheduled");
         else Log.d("ddd", "Job scheduling failed");

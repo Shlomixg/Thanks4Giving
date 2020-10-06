@@ -121,14 +121,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         });
 
         Glide.with(holder.itemView.getContext()).load(post.getPostImage()).centerCrop().into(holder.postImage);
-/*        int likes = (post.likes != null) ? post.likes.size() : 0;
-        holder.likeText.setText("" + likes);*/
-/*holder.comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO remove comment button?
-            }
-        });*/
+
         postLikes.child(post.postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
