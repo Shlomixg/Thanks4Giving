@@ -171,8 +171,6 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onClickListener(int pos, View v) {
                 String postId = postList.get(pos).getPostID();
-                //MainActivity.setPostClickedID(postId);
-
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();

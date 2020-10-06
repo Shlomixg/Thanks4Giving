@@ -40,6 +40,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
     final DatabaseReference postLikes = database.getReference().child("likes");
+    final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    final String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -125,8 +127,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         postLikes.child(post.postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int size = (int) snapshot.getChildrenCount();
-                holder.likeText.setText("" + size);
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+                    int size = (int) snapshot.getChildrenCount();
+                    holder.likeText.setText("" + size);
+                    if (snapshot.hasChild(userId))
+                        holder.like.setBackgroundResource(R.drawable.ic_baseline_thumb_down_24);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -137,12 +143,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             @Override
             public void onClick(View v) {
                 if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                    postLikes.child(post.postID).child(userId).setValue(username);
+                    postLikes.child(post.postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.hasChild(userId))
+                            {
+                                postLikes.child(post.postID).child(userId).removeValue();
+                                holder.like.setBackgroundResource(R.drawable.ic_baseline_thumb_down_24);
+                            }
+                            else {
+                                postLikes.child(post.postID).child(userId).setValue(username);
+                                holder.like.setBackgroundResource(R.drawable.ic_thumb_up);
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
-                /*else if(FirebaseAuth.getInstance().getCurrentUser() == null)
-                   //TODO Snackbar.make(getActivity.findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();*/
+                /*else if(userId == null)
+                   Snackbar.make(.findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();*/
             }
         });
 
