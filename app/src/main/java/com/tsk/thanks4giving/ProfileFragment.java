@@ -67,8 +67,13 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // progressDialog = new LovelyProgressDialog(getContext()).setMessage("Wait").setCancelable(false).setTitle("Wait");
-        // progressDialog.show();
+         progressDialog = new LovelyProgressDialog(getContext())
+                 .setTopColorRes(R.color.colorPrimary)
+                 .setCancelable(false)
+                 .setIcon(R.drawable.ic_like)
+                 .setTitle("Loading data...") // TODO: Move to strings
+                 .setMessage("Please wait");
+        progressDialog.show();
     }
 
     @Override
@@ -146,7 +151,7 @@ public class ProfileFragment extends Fragment {
                     address_tv.setText(user.address);
                     gender_tv.setText(user.gender);
 
-                    // progressDialog.dismiss();
+                    progressDialog.dismiss();
                 }
             }
 

@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         /*Fragment fragmentA = fragmentManager.findFragmentByTag(FRAG);
         if (fragmentA == null)*/
+        // TODO: Remove if current fragment is same
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
