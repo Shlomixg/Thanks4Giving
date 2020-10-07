@@ -154,7 +154,7 @@
     <string name="attachment_title" translatable="false">Attachment Title</string>
     <string name="pref_theme_title" translatable="false">Pref Theme Title</string>
     <string name="pref_theme_summary" translatable="false">Pref Theme Summary</string>
-    <string name="loading">Loading data...</string>
+    <string name="loading">Loading data…</string>
     <string name="location_permission">The application must have location permissions</string>
     <string name="attention">Attention</string>
     <string name="must_be_logged">Must be logged in to use this feature</string>
