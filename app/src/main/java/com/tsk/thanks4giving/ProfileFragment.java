@@ -67,8 +67,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        progressDialog = new LovelyProgressDialog(getContext()).setMessage("Wait").setCancelable(false).setTitle("Wait");
-        progressDialog.show();
+        // progressDialog = new LovelyProgressDialog(getContext()).setMessage("Wait").setCancelable(false).setTitle("Wait");
+        // progressDialog.show();
     }
 
     @Override
@@ -76,6 +76,7 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mUserUid = getArguments().getString(ARG_USER_UID);
         }
+        Toast.makeText(getContext(), "UID: " + mUserUid, Toast.LENGTH_SHORT).show();
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -145,7 +146,7 @@ public class ProfileFragment extends Fragment {
                     address_tv.setText(user.address);
                     gender_tv.setText(user.gender);
 
-                    progressDialog.dismiss();
+                    // progressDialog.dismiss();
                 }
             }
 

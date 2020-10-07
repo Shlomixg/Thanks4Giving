@@ -1,25 +1,27 @@
 package com.tsk.thanks4giving;
 
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
+import com.tsk.thanks4giving.R;
+
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,8 +42,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
     final DatabaseReference postLikes = database.getReference().child("likes");
-    final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    final String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+    final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    Drawable like, like_fill;
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -61,10 +63,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         ImageView postImage;
         CircleImageView profileImage;
-        Button like;
+        MaterialButton like, watch;
         TextView likeText;
-        //Button comment;
-        Button watch;
+
 
         public PostCardHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,43 +98,50 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     @Override
     public PostCardHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_post, parent, false);
-        PostCardHolder holder = new PostCardHolder(v);
-        return holder;
+        return new PostCardHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
         post = list.get(position);
-        final DatabaseReference ref = users.child(post.userUid);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        like = ResourcesCompat.getDrawable(holder.like.getResources(), R.drawable.ic_like, null);
+        like_fill = ResourcesCompat.getDrawable(holder.like.getResources(), R.drawable.ic_like_fill, null);
+        final DatabaseReference postRef = users.child(post.userUid);
+        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
                     if (user.profilePhoto != null) {
                         Glide.with(holder.itemView.getContext()).load(user.profilePhoto).centerCrop().into(holder.profileImage);
+                    } else if (user.gender.equals("Female")) {
+                        Glide.with(holder.itemView.getContext()).load(R.drawable.profile_woman).centerCrop().into(holder.profileImage);
                     } else {
                         Glide.with(holder.itemView.getContext()).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 
-        Glide.with(holder.itemView.getContext()).load(post.getPostImage()).centerCrop().into(holder.postImage);
+        Glide.with(holder.itemView.getContext())
+                .load(post.getPostImage())
+                .centerCrop()
+                .into(holder.postImage);
 
         postLikes.child(post.postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-                    int size = (int) snapshot.getChildrenCount();
-                    holder.likeText.setText("" + size);
-                    if (snapshot.hasChild(userId))
-                        holder.like.setBackgroundResource(R.drawable.ic_baseline_thumb_down_24);
-                }
+                // TODO: Improve - show even to not logged users
+                int size = (int) snapshot.getChildrenCount();
+                holder.likeText.setText("" + size);
+                if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
+                    holder.like.setIcon(like_fill);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -141,36 +149,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            public void onClick(final View v) {
+                if (currentUser != null) {
                     postLikes.child(post.postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(snapshot.hasChild(userId))
-                            {
-                                postLikes.child(post.postID).child(userId).removeValue();
-                                holder.like.setBackgroundResource(R.drawable.ic_baseline_thumb_down_24);
-                            }
-                            else {
-                                postLikes.child(post.postID).child(userId).setValue(username);
-                                holder.like.setBackgroundResource(R.drawable.ic_thumb_up);
+                            String userUid = currentUser.getUid();
+                            String userName = currentUser.getDisplayName();
+                            if (snapshot.hasChild(userUid)) {
+                                postLikes.child(post.postID).child(userUid).removeValue();
+                                holder.like.setIcon(like);
+                            } else {
+                                postLikes.child(post.postID).child(userUid).setValue(userName);
+                                holder.like.setIcon(like_fill);
                             }
                         }
+
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                            // TODO: Error handling
                         }
                     });
+                } else {
+                    Log.d("Log like", "Not logged in!");
+                    Snackbar.make(v, R.string.must_be_logged, Snackbar.LENGTH_SHORT).show();
                 }
-                /*else if(userId == null)
-                   Snackbar.make(.findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();*/
             }
         });
 
         holder.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // TODO: Add watch to get notifications
             }
         });
 
