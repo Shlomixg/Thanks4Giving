@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -11,88 +11,173 @@
     app:cardElevation="10dp"
     app:cardUseCompatPadding="true"
     app:contentPadding="5dp">
+    -->
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/post_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardElevation="10dp">
 
     <LinearLayout
-        android:id="@+id/song_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="#5F9791"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/name_poster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_margin="5dp"
-            android:fontFamily="casual"
-            android:gravity="center"
-            android:text="Product Description"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
+        <!-- Media -->
         <ImageView
-            android:id="@+id/post_img"
-            android:layout_width="300dp"
+            android:id="@+id/post_item_img"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp" />
-
+            android:contentDescription="TODO"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_img"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="1dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/like_img"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:background="@android:color/transparent"
-                android:backgroundTint="@null"
-                android:padding="0dp"
-                app:icon="@drawable/ic_like"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@null" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/post_profile_img"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="1dp" />
 
+                <TextView
+                    android:id="@+id/post_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    />
+
+            </LinearLayout>
+
+            <!-- Title, secondary and supporting text -->
             <TextView
-                android:id="@+id/like_text"
+                android:id="@+id/post_item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:textAppearance="?attr/textAppearanceHeadline6" />
 
-            <!--<Button
-                android:id="@+id/comment_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:background="@drawable/ic_chat_bubble" />-->
+            <TextView
+                android:id="@+id/post_item_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
 
-            <Button
-                android:id="@+id/watch_btn"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:background="@drawable/ic_remove_red_eye" />
+            <TextView
+                android:id="@+id/post_item_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Item description - bla bla more bla bla bla many bla bla's. so much. just some text here with many dots: ..... that's enough. bye."
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
 
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/post_like_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@null"
+                    android:padding="0dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:icon="@drawable/ic_like"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"
+                    app:iconTint="@null" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/post_comment_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@null"
+                    android:padding="0dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:icon="@drawable/ic_comment"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"
+                    app:iconTint="@null" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/post_follow_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@null"
+                    android:padding="0dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    app:icon="@drawable/ic_bookmark"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"
+                    app:iconTint="@null" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

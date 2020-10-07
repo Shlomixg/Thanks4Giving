@@ -1,13 +1,12 @@
 package com.tsk.thanks4giving;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.tsk.thanks4giving.R;
 
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,8 +41,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
     final DatabaseReference postLikes = database.getReference().child("likes");
+    final DatabaseReference postComments = database.getReference().child("comments");
+    final DatabaseReference postFollows = database.getReference().child("follows");
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    Drawable like, like_fill;
+    Drawable like, like_fill, follow, follow_fill;
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -63,17 +64,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         ImageView postImage;
         CircleImageView profileImage;
-        MaterialButton like, watch;
-        TextView likeText;
-
+        MaterialButton like, comment, follow;
+        TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV;
 
         public PostCardHolder(@NonNull View itemView) {
             super(itemView);
-            postImage = itemView.findViewById(R.id.post_img);
-            profileImage = itemView.findViewById(R.id.profile_img);
-            like = itemView.findViewById(R.id.like_img);
-            likeText = itemView.findViewById(R.id.like_text);
-            watch = itemView.findViewById(R.id.watch_btn);
+            postImage = itemView.findViewById(R.id.post_item_img);
+            profileImage = itemView.findViewById(R.id.post_profile_img);
+            userNameTV = itemView.findViewById(R.id.post_user_name);
+            itemTitleTV = itemView.findViewById(R.id.post_item_title);
+            itemCategoryTV = itemView.findViewById(R.id.post_item_category);
+            itemDescTV = itemView.findViewById(R.id.post_item_desc);
+            like = itemView.findViewById(R.id.post_like_btn);
+            comment = itemView.findViewById(R.id.post_comment_btn);
+            follow = itemView.findViewById(R.id.post_follow_btn);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,22 +106,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final PostCardHolder holder, final int position) {
+        final Context context = holder.itemView.getContext();
+
+        like = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like, null);
+        like_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like_fill, null);
+        follow = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_bookmark, null);
+        follow_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_bookmark_fill, null);
+
         post = list.get(position);
-        like = ResourcesCompat.getDrawable(holder.like.getResources(), R.drawable.ic_like, null);
-        like_fill = ResourcesCompat.getDrawable(holder.like.getResources(), R.drawable.ic_like_fill, null);
+        final String postID = post.postID, userID = post.userUid;
+
         final DatabaseReference postRef = users.child(post.userUid);
         postRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
+                    holder.userNameTV.setText(user.name);
                     if (user.profilePhoto != null) {
-                        Glide.with(holder.itemView.getContext()).load(user.profilePhoto).centerCrop().into(holder.profileImage);
+                        Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profileImage);
                     } else if (user.gender.equals("Female")) {
-                        Glide.with(holder.itemView.getContext()).load(R.drawable.profile_woman).centerCrop().into(holder.profileImage);
+                        Glide.with(context).load(R.drawable.profile_woman).centerCrop().into(holder.profileImage);
                     } else {
-                        Glide.with(holder.itemView.getContext()).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
+                        Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
                     }
                 }
             }
@@ -127,17 +139,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        Glide.with(holder.itemView.getContext())
+        Glide.with(context)
                 .load(post.getPostImage())
-                .centerCrop()
+                .fitCenter()
                 .into(holder.postImage);
 
-        postLikes.child(post.postID).addValueEventListener(new ValueEventListener() {
+        holder.itemTitleTV.setText("Item Title");
+        holder.itemCategoryTV.setText(post.category);
+        holder.itemDescTV.setText(post.desc);
+
+        postLikes.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // TODO: Improve - show even to not logged users
                 int size = (int) snapshot.getChildrenCount();
-                holder.likeText.setText("" + size);
+                holder.like.setText("" + size);
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
                     holder.like.setIcon(like_fill);
             }
@@ -147,20 +162,58 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
+        postComments.child(postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                holder.comment.setText("" + size);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        postFollows.child(postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                holder.follow.setText("" + size);
+                if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
+                    holder.follow.setIcon(follow_fill);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        holder.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) context;
+                Bundle bundle = new Bundle();
+                bundle.putString("userUid", userID);
+                ProfileFragment fragment = new ProfileFragment();
+                fragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+            }
+        });
+
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 if (currentUser != null) {
-                    postLikes.child(post.postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    final String currUserUid = currentUser.getUid(),
+                            currUserName = currentUser.getDisplayName();
+                    postLikes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            String userUid = currentUser.getUid();
-                            String userName = currentUser.getDisplayName();
-                            if (snapshot.hasChild(userUid)) {
-                                postLikes.child(post.postID).child(userUid).removeValue();
+                            if (snapshot.hasChild(currUserUid)) {
+                                postLikes.child(postID).child(currUserUid).removeValue();
                                 holder.like.setIcon(like);
                             } else {
-                                postLikes.child(post.postID).child(userUid).setValue(userName);
+                                postLikes.child(postID).child(currUserUid).setValue(currUserName);
                                 holder.like.setIcon(like_fill);
                             }
                         }
@@ -177,22 +230,50 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        holder.watch.setOnClickListener(new View.OnClickListener() {
+        holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // TODO: Add watch to get notifications
+            public void onClick(final View v) {
+                postComments.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // TODO: Open comments section
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // TODO: Error handling
+                    }
+                });
             }
         });
 
-        holder.profileImage.setOnClickListener(new View.OnClickListener() {
+        holder.follow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                Bundle bundle = new Bundle();
-                bundle.putString("userUid", post.userUid);
-                ProfileFragment fragment = new ProfileFragment();
-                fragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+            public void onClick(final View v) {
+                if (currentUser != null) {
+                    final String currUserUid = currentUser.getUid(),
+                            currUserName = currentUser.getDisplayName();
+                    postFollows.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.hasChild(currUserUid)) {
+                                postFollows.child(postID).child(currUserUid).removeValue();
+                                holder.follow.setIcon(follow);
+                            } else {
+                                postFollows.child(postID).child(currUserUid).setValue(currUserName);
+                                holder.follow.setIcon(follow_fill);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            // TODO: Error handling
+                        }
+                    });
+                } else {
+                    Log.d("Log Follow", "Not logged in!");
+                    Snackbar.make(v, R.string.must_be_logged, Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
     }
