@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -35,6 +37,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.watermark.androidwm.WatermarkBuilder;
+import com.watermark.androidwm.bean.WatermarkText;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -91,6 +96,7 @@ public class PostFragment extends Fragment {
                                 .load(pos.getPostImage())
                                 .centerCrop()
                                 .into(postImage);
+
                         description.setText(pos.getDesc());
                     }
                 }
@@ -167,53 +173,38 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 imageView = rootView.findViewById(R.id.BigPostImage);
-                imageView.setImageResource(R.drawable.tv);
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setType("image/*");
                 Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:TV 32 inch\nFind Item id:751 in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
-                sendIntent.setPackage("com.whatsapp");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:"+description.getText().toString()+"\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 startActivity(sendIntent);
             }
         });
-        ImageButton facebook = rootView.findViewById(R.id.facebook);
-        facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // String urlToShare = "https://stackoverflow.com/questions/7545254";
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/*");
-                imageView = rootView.findViewById(R.id.BigPostImage);
-                imageView.setImageResource(R.drawable.tv);
-                Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
-                //sendIntent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                //intent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:TV 32 inch\nFind Item id:751 in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
-                intent.putExtra(Intent.EXTRA_TEXT, "http://www.one.co.il");
-
-// intent.putExtra(Intent.EXTRA_SUBJECT, "Foo bar"); // NB: has no effect!
-// See if official Facebook app is found
-                boolean facebookAppFound = false;
-                List<ResolveInfo> matches = getActivity().getPackageManager().queryIntentActivities(intent, 0);
-                for (ResolveInfo info : matches) {
-                    if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
-                        intent.setPackage(info.activityInfo.packageName);
-                        facebookAppFound = true;
-                        break;
-                    }
-                }
-//// As fallback, launch sharer.php in a browser
-//                if (!facebookAppFound) {
-//                    String sharerUrl = "https://www.facebook.com/sharer/sharer.php?u=" ;
-//                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(sharerUrl));
-//                    intent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//
+//        ImageButton facebook = rootView.findViewById(R.id.facebook);
+//        facebook.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+//                intent.setType("image/*");
+//                imageView = rootView.findViewById(R.id.BigPostImage);
+//                imageView.setImageResource(R.drawable.tv);
+//                Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
+//                intent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
+//                intent.putExtra(Intent.EXTRA_TEXT, "http://www.one.co.il");
+//                boolean facebookAppFound = false;
+//                List<ResolveInfo> matches = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+//                for (ResolveInfo info : matches) {
+//                    if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
+//                        intent.setPackage(info.activityInfo.packageName);
+//                        facebookAppFound = true;
+//                        break;
+//                    }
 //                }
-                startActivity(intent);
-            }
-        });
+//                startActivity(intent);
+//            }
+//        });
         return rootView;
     }
 
@@ -234,7 +225,7 @@ public class PostFragment extends Fragment {
                                 e.printStackTrace();
                             }
                             final Address bestAddress = addresses.get(0);
-                            String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
+                            String url = "https://www.google.com/maps/search/?api=1&query=" +bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                         }
                         else

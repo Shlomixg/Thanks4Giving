@@ -45,10 +45,11 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:padding="2dp"
-            android:src="@drawable/whatsapp"
+            android:src="@drawable/ic_baseline_share_24"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="91dp"
-            tools:layout_editor_absoluteY="72dp" />
+            tools:layout_editor_absoluteY="72dp"
+            />
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -61,16 +62,6 @@
             tools:ignore="MissingConstraints"
             android:background="@null"/>
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/facebook2"
-            tools:layout_editor_absoluteX="3dp"
-            tools:layout_editor_absoluteY="70dp"
-            android:padding="2dp"
-            android:id="@+id/facebook"
-            tools:ignore="MissingConstraints"
-            android:background="@null"/>
 
         <ImageButton
             android:layout_width="75dp"
@@ -92,7 +83,7 @@
         android:layout_margin="5dp"
         android:contentDescription="Item Photo"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground" />
+         />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/post_comments_recycler"
