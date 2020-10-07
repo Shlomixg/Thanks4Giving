@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -96,6 +97,7 @@ public class PostFragment extends Fragment {
                                 .load(pos.getPostImage())
                                 .centerCrop()
                                 .into(postImage);
+
 
                         description.setText(pos.getDesc());
                     }
@@ -318,5 +320,20 @@ public class PostFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+    private Bitmap addWaterMark(Bitmap src) {
+        int w = src.getWidth();
+        int h = src.getHeight();
+        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(src, 0, 0, null);
+
+        Bitmap waterMark = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_share_24);
+        //  canvas.drawBitmap(waterMark, 0, 0, null);
+        int startX= (canvas.getWidth()-waterMark.getWidth())/2;//for horisontal position
+        int startY=(canvas.getHeight()-waterMark.getHeight())/2;//for vertical position
+        canvas.drawBitmap(waterMark,startX,startY,null);
+
+        return result;
     }
 }

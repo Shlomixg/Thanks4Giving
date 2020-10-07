@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     TextView user_name_tv;
     CircleImageView profile_pic_iv;
+    FirebaseUser fbUser;
 
     FirebaseUser currentFBUser;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -132,16 +133,40 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser fbUser = mAuth.getCurrentUser();
+                 fbUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if (fbUser != null) { // Sign up or login
                     currentFBUser = fbUser;
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
-
                     user_name_tv.setText(fbUser.getDisplayName());
-                    Glide.with(getApplicationContext()).load(R.drawable.profile_woman).centerCrop().into(profile_pic_iv);
-                } else {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference users = database.getReference("users");
+
+                    users.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                User user = ds.getValue(User.class);
+                                if (user.getUid().equals(fbUser.getUid())) {
+                                    if (user.getProfilePhoto() != null)
+                                    {
+                                        Glide.with(MainActivity.this)
+                                                .load(user.getProfilePhoto())
+                                                .centerCrop()
+                                                .into(profile_pic_iv);
+                                    }
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });                }
+                else {
                     currentFBUser = null;
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
