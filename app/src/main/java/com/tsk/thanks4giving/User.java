@@ -11,14 +11,14 @@ public class User {
     public String email;
     public String gender;
     public String address;
-    public Uri profilePhoto;
+    public String profilePhoto;
     public ArrayList<String> postsUid;
 
     public User() {
 
     }
 
-    public User(String uid, String name, String email, String gender, String address, Uri profilePhoto) {
+    public User(String uid, String name, String email, String gender, String address, String profilePhoto) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -34,7 +34,7 @@ public class User {
         return name;
     }
 
-    public Uri getProfilePhoto() {
+    public String getProfilePhoto() {
         return profilePhoto;
     }
 
@@ -68,7 +68,7 @@ public class User {
         this.email = email;
     }
 
-    public void setProfilePhoto(Uri profilePhoto) {
+    public void setProfilePhoto(String profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

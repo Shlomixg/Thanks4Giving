@@ -44,6 +44,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -95,6 +96,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     String path2;
     String coordinates;
     String location_method;
+    String randomKey;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -190,10 +192,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
                     } else {
-                        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, NewPostFragment.this);
+                        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
                     }
                 } else
-                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 100, NewPostFragment.this);
+                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
             }
         });
 
@@ -239,9 +241,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
                 // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
-                uploadPicture();
+                //uploadPicture();
+
                 final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 final String postID = posts.push().getKey();
@@ -269,6 +273,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
+
                 });
                 // TODO: Update the posts list at user
 
@@ -316,7 +321,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                // intent.setData(Uri.parse("package:"+getPackageName()));
+                                intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
                                 startActivity(intent);
                             }
                         })
@@ -327,7 +332,15 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                             }
                         }).setCancelable(false).show();
             }
+            else   if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                //Request location updates:
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
+            }
+
         }
+
+
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
@@ -364,6 +377,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             imageUri = data.getData();
             image.setImageURI(imageUri);
             uploadPicture();
+
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
             uploadPicture();
@@ -391,7 +405,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getActivity());
         progressDialog.setTitle("Uploading Image...");
         progressDialog.show();
-        final String randomKey = UUID.randomUUID().toString();
+        randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("images/" + randomKey);
 
         riversRef.putFile(imageUri)

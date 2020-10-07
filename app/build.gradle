@@ -57,6 +57,9 @@ dependencies {
     //Bouble SeekBar
     implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
 
+    //waterMark
+    implementation 'com.huangyz0918:androidwm:0.2.3'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

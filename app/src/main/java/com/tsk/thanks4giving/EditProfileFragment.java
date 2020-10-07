@@ -21,6 +21,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,9 +32,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,18 +54,23 @@ public class EditProfileFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     Button saveBtn, changePicBtn, cameraBtn, galleryBtn, cancelBtn;
     AutoCompleteTextView genderEditTextExposedDropdown;
-
+    String randomKey;
+    String path2;
     File file;
     Uri imageUri;
 
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
+     FirebaseStorage storage;
+     StorageReference storageReference;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
         fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
         address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
@@ -85,6 +97,7 @@ public class EditProfileFragment extends Fragment {
                     address_et.setText(user.address);
                     email_et.setText(user.email);
                     genderEditTextExposedDropdown.setText(user.gender, false);
+
                     if (user.profilePhoto != null) {
                         Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
                     }
@@ -151,15 +164,16 @@ public class EditProfileFragment extends Fragment {
                     else
                         path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
                     imageUri = Uri.parse(path);
+
                 }
+                ref.child("profilePhoto").setValue(path2);
                 if (!fullname_et.getText().toString().equals(""))
                     fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(fullname_et.getText().toString()).setPhotoUri(imageUri).build());
                 else
                     fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
-                ref.child(fbUser.getUid()).child("gender").setValue(gender);
+                ref.child("gender").setValue(gender);
                 if (!address_et.getText().toString().equals(""))
-                    ref.child(fbUser.getUid()).child("address").setValue(address_et.getText().toString());
-
+                    ref.child("address").setValue(address_et.getText().toString());
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -198,8 +212,45 @@ public class EditProfileFragment extends Fragment {
             assert data != null;
             imageUri = data.getData();
             userImage.setImageURI(imageUri);
+            uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
+            uploadPicture();
         }
     }
+        private void uploadPicture() {
+        randomKey = UUID.randomUUID().toString();
+        StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);
+
+        riversRef.putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        try {
+                            downloadFile(randomKey);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                    }
+        });
+    }
+    private void downloadFile(String randomKey) throws IOException {
+        StorageReference imageRef = storageReference.child("images").child(randomKey);
+        imageRef.getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show(); // for testing
+                        path2 = uri.toString();
+                    }
+                });
+    }
+
 }
