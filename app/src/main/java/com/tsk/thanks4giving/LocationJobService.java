@@ -11,7 +11,9 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
 import androidx.core.app.ActivityCompat;
+
 import org.greenrobot.eventbus.EventBus;
 
 public class LocationJobService extends JobService {
@@ -20,7 +22,7 @@ public class LocationJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.d("ddd","job started");
+        Log.d("ddd", "job started");
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new MyLocationListener();
         if (Build.VERSION.SDK_INT >= 23) {
@@ -29,19 +31,18 @@ public class LocationJobService extends JobService {
                 Log.d("ddd", "getting location");
                 assert locationManager != null;
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-            }
-            else Log.d("ddd", "no location permission");
+            } else Log.d("ddd", "no location permission");
         } else {
             assert locationManager != null;
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
-        jobFinished(params,true);
+        jobFinished(params, true);
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d("ddd","job on stop");
+        Log.d("ddd", "job on stop");
         return true;
     }
 
@@ -50,21 +51,23 @@ public class LocationJobService extends JobService {
         @Override
         public void onLocationChanged(Location loc) {
             String longitude = "" + loc.getLongitude();
-            Log.d("ddd",longitude);
+            Log.d("ddd", longitude);
             String latitude = "" + loc.getLatitude();
-            Log.d("ddd",latitude);
+            Log.d("ddd", latitude);
             location.setLongitude(Double.parseDouble(longitude));
             location.setLatitude(Double.parseDouble(latitude));
             EventBus.getDefault().post(new MessageEvent(location));
-            Log.d("ddd","Sent message event");
+            Log.d("ddd", "Sent message event");
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
+
         @Override
         public void onProviderEnabled(String provider) {
         }
+
         @Override
         public void onProviderDisabled(String provider) {
         }

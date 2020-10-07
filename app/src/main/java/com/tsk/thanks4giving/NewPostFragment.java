@@ -1,7 +1,6 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -321,7 +320,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
+                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                                 startActivity(intent);
                             }
                         })
@@ -331,8 +330,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                                 // finish();
                             }
                         }).setCancelable(false).show();
-            }
-            else   if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 //Request location updates:
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
@@ -343,24 +341,24 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
-                                .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
-                                        startActivity(intent);
-                                    }
-                                })
-                                .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        // finish();
-                                    }
-                                }).setCancelable(false).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
+                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // finish();
+                            }
+                        }).setCancelable(false).show();
 
-                    Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
+                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
 //                camera_btn.setVisibility(View.GONE);
 //                browse_btn.setVisibility(View.GONE);
             } else {

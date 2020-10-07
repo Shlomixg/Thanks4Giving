@@ -210,7 +210,7 @@ public class EditProfileFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
+                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                                 startActivity(intent);
                             }
                         })
@@ -258,7 +258,7 @@ public class EditProfileFragment extends Fragment {
 //            uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
-           uploadPicture();
+            uploadPicture();
         }
     }
 

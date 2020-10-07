@@ -30,35 +30,35 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.media:media:1.2.0"
+    implementation 'androidx.preference:preference:1.1.1'
 
     // Google libraries
     implementation "com.google.android.material:material:1.2.1"
     implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-database:19.4.0'
+    implementation 'com.google.firebase:firebase-database:19.5.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+
+    // Google Places
+    implementation 'com.google.android.libraries.places:places:2.4.0'
 
     // External libraries
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'androidx.preference:preference:1.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.yarolegovich:lovely-dialog:1.1.1'
+
+    // Bubble SeekBar
+    implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
+
+    // Watermark
+    implementation 'com.huangyz0918:androidwm:0.2.3'
 
     // Testing libraries
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
-    //Google Places
-    implementation 'com.google.android.libraries.places:places:2.4.0'
-
-    //Bouble SeekBar
-    implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
-
-    //waterMark
-    implementation 'com.huangyz0918:androidwm:0.2.3'
 
 }
 

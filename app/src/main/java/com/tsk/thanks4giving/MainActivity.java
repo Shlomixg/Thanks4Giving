@@ -10,11 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -36,8 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Collections;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -133,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                 fbUser = mAuth.getCurrentUser();
+                fbUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if (fbUser != null) { // Sign up or login
                     currentFBUser = fbUser;
@@ -149,8 +145,7 @@ public class MainActivity extends AppCompatActivity {
                             for (DataSnapshot ds : snapshot.getChildren()) {
                                 User user = ds.getValue(User.class);
                                 if (user.getUid().equals(fbUser.getUid())) {
-                                    if (user.getProfilePhoto() != null)
-                                    {
+                                    if (user.getProfilePhoto() != null) {
                                         Glide.with(MainActivity.this)
                                                 .load(user.getProfilePhoto())
                                                 .centerCrop()
@@ -165,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError error) {
 
                         }
-                    });                }
-                else {
+                    });
+                } else {
                     currentFBUser = null;
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
@@ -248,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
         JobInfo jobInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             jobInfo = new JobInfo.Builder(123, componentName)
-                    .setPeriodic(5*60*1000,5*60*1000)
+                    .setPeriodic(5 * 60 * 1000, 5 * 60 * 1000)
                     .setPersisted(false)
                     .build();
         } else {
             jobInfo = new JobInfo.Builder(123, componentName)
-                    .setPeriodic(5*60*1000)
+                    .setPeriodic(5 * 60 * 1000)
                     .setPersisted(false)
                     .build();
         }

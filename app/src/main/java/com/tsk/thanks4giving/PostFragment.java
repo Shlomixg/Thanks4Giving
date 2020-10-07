@@ -2,12 +2,9 @@ package com.tsk.thanks4giving;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -23,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -38,8 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.watermark.androidwm.WatermarkBuilder;
-import com.watermark.androidwm.bean.WatermarkText;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -86,10 +82,9 @@ public class PostFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data))
-                    {
-                        String coordinates=pos.getCoordinates();
-                        String a[]=coordinates.split(",");
+                    if (pos.getPostID().equals(data)) {
+                        String coordinates = pos.getCoordinates();
+                        String a[] = coordinates.split(",");
                         location = new Location("dummyProvider");
                         location.setLatitude(Double.parseDouble(a[0]));
                         location.setLongitude(Double.parseDouble(a[1]));
@@ -98,11 +93,11 @@ public class PostFragment extends Fragment {
                                 .centerCrop()
                                 .into(postImage);
 
-
                         description.setText(pos.getDesc());
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -112,15 +107,14 @@ public class PostFragment extends Fragment {
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(FirebaseAuth.getInstance().getCurrentUser() != null && !comment.getText().toString().equals("")) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null && !comment.getText().toString().equals("")) {
                     String uid = mAuth.getCurrentUser().getUid();
                     String userName = mAuth.getCurrentUser().getDisplayName();
                     String text = comment.getText().toString();
                     Comment newComment = new Comment(uid, userName, text);
                     comments.child(data).push().setValue(newComment);
                     comment.setText("");
-                }
-                else if(FirebaseAuth.getInstance().getCurrentUser() == null)
+                } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
                 else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment.getText().toString().equals(""))
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
@@ -131,13 +125,13 @@ public class PostFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
-                for (DataSnapshot snap : snapshot.getChildren())
-                {
+                for (DataSnapshot snap : snapshot.getChildren()) {
                     Comment comment1 = snap.getValue(Comment.class);
                     commentList.add(comment1);
                 }
                 adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -180,7 +174,7 @@ public class PostFragment extends Fragment {
                 sendIntent.setType("image/*");
                 Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:"+description.getText().toString()+"\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + description.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 startActivity(sendIntent);
             }
         });
@@ -216,10 +210,8 @@ public class PostFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data))
-                    {
-                        if (pos.getLocationMethod().equals("GPS"))
-                        {
+                    if (pos.getPostID().equals(data)) {
+                        if (pos.getLocationMethod().equals("GPS")) {
                             List<Address> addresses = null;
                             try {
                                 addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -227,11 +219,9 @@ public class PostFragment extends Fragment {
                                 e.printStackTrace();
                             }
                             final Address bestAddress = addresses.get(0);
-                            String url = "https://www.google.com/maps/search/?api=1&query=" +bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
+                            String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                        }
-                        else
-                        {
+                        } else {
                             String url = "https://www.google.com/maps/search/?api=1&query=" + pos.getAddress();
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 
@@ -245,6 +235,7 @@ public class PostFragment extends Fragment {
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -284,19 +275,19 @@ public class PostFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data))
-                    {
+                    if (pos.getPostID().equals(data)) {
 //
-                            double latitude = location.getLatitude();
-                            double longitude = location.getLongitude();
-                            String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 //
 
 
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -321,6 +312,7 @@ public class PostFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
+
     private Bitmap addWaterMark(Bitmap src) {
         int w = src.getWidth();
         int h = src.getHeight();
@@ -330,9 +322,9 @@ public class PostFragment extends Fragment {
 
         Bitmap waterMark = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_share_24);
         //  canvas.drawBitmap(waterMark, 0, 0, null);
-        int startX= (canvas.getWidth()-waterMark.getWidth())/2;//for horisontal position
-        int startY=(canvas.getHeight()-waterMark.getHeight())/2;//for vertical position
-        canvas.drawBitmap(waterMark,startX,startY,null);
+        int startX = (canvas.getWidth() - waterMark.getWidth()) / 2;//for horisontal position
+        int startY = (canvas.getHeight() - waterMark.getHeight()) / 2;//for vertical position
+        canvas.drawBitmap(waterMark, startX, startY, null);
 
         return result;
     }

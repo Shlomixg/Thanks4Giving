@@ -67,12 +67,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         progressDialog = new LovelyProgressDialog(getContext())
-                 .setTopColorRes(R.color.colorPrimary)
-                 .setCancelable(false)
-                 .setIcon(R.drawable.ic_like)
-                 .setTitle("Loading data...") // TODO: Move to strings
-                 .setMessage("Please wait");
+        progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like)
+                .setTitle("Loading data...") // TODO: Move to strings
+                .setMessage("Please wait");
         progressDialog.show();
     }
 
