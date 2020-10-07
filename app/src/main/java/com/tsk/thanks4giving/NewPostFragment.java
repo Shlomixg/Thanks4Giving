@@ -101,8 +101,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference posts = database.getReference("posts");
     DatabaseReference users = database.getReference("users");
+    DatabaseReference posts = database.getReference("posts");
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
@@ -343,9 +343,26 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
-                camera_btn.setVisibility(View.GONE);
-                browse_btn.setVisibility(View.GONE);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
+                                .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
+                                        startActivity(intent);
+                                    }
+                                })
+                                .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        // finish();
+                                    }
+                                }).setCancelable(false).show();
+
+                    Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
+//                camera_btn.setVisibility(View.GONE);
+//                browse_btn.setVisibility(View.GONE);
             } else {
                 camera_btn.setVisibility(View.VISIBLE);
                 browse_btn.setVisibility(View.VISIBLE);

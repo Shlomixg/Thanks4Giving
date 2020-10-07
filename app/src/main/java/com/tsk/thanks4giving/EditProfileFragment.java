@@ -1,12 +1,16 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +64,14 @@ public class EditProfileFragment extends Fragment {
     String path2;
     File file;
     Uri imageUri;
+    int flag = 0;
+
 
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
-     FirebaseStorage storage;
-     StorageReference storageReference;
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,18 +128,20 @@ public class EditProfileFragment extends Fragment {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-                } else {
-                    Random r = new Random();
-                    int low = 10;
-                    int high = 1000000;
-                    int result = r.nextInt(high - low) + low;
-                    file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                    imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                flag = 1;
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
+                    } else {
+                        Random r = new Random();
+                        int low = 10, high = 1000000;
+                        int result = r.nextInt(high - low) + low;
+                        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
+                        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    }
                 }
             }
         });
@@ -139,12 +149,21 @@ public class EditProfileFragment extends Fragment {
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                flag = 2;
+                if (Build.VERSION.SDK_INT >= 23) {
+
+                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
+                    } else {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                    }
+                }
             }
         });
+
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,21 +204,44 @@ public class EditProfileFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == WRITE_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show();
-                cameraBtn.setVisibility(View.GONE);
-                galleryBtn.setVisibility(View.GONE);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
+                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.parse("package:"+getActivity().getPackageName()));
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // finish();
+                            }
+                        }).setCancelable(false).show();
+
             } else {
-                cameraBtn.setVisibility(View.VISIBLE);
-                galleryBtn.setVisibility(View.VISIBLE);
-                Random r = new Random();
-                int low = 10;
-                int high = 1000000;
-                int result = r.nextInt(high - low) + low;
-                file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                {
+                    cameraBtn.setVisibility(View.VISIBLE);
+                    galleryBtn.setVisibility(View.VISIBLE);
+                    Random r = new Random();
+                    int low = 10;
+                    int high = 1000000;
+                    int result = r.nextInt(high - low) + low;
+                    file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
+                    imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+                    if (flag == 1) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    } else if (flag == 2) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                    }
+                }
             }
         }
     }
@@ -213,12 +255,17 @@ public class EditProfileFragment extends Fragment {
             imageUri = data.getData();
             userImage.setImageURI(imageUri);
             uploadPicture();
+//            uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
-            uploadPicture();
+           uploadPicture();
         }
     }
-        private void uploadPicture() {
+
+    private void uploadPicture() {
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getActivity());
+        progressDialog.setTitle("Uploading Image...");
+        progressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);
 
@@ -226,6 +273,8 @@ public class EditProfileFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
+
                         try {
                             downloadFile(randomKey);
                         } catch (IOException e) {
@@ -239,18 +288,27 @@ public class EditProfileFragment extends Fragment {
                         // Handle unsuccessful uploads
                         // ...
                     }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                progressDialog.setMessage("Progress " + (int) progress + " %");
+                if ((int) progress == 100)
+                    progressDialog.dismiss();
+            }
         });
     }
+
     private void downloadFile(String randomKey) throws IOException {
-        StorageReference imageRef = storageReference.child("images").child(randomKey);
+        StorageReference imageRef = storageReference.child("ProfileImages").child(randomKey);
         imageRef.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show(); // for testing
+                        Toast.makeText(getContext(), "abbb", Toast.LENGTH_SHORT).show(); // for testing
                         path2 = uri.toString();
                     }
                 });
+//    }
     }
-
 }
