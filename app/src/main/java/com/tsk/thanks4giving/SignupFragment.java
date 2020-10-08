@@ -93,17 +93,24 @@ public class SignupFragment extends Fragment {
 
                                 // TODO: Upload to storage and get data
 
+                                if (imageUri == null) {
+                                    if (gender.equals("Female"))
+                                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                                    else {
+                                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
+                                    }
+                                }
 
                                 // Updating full name & photo
                                 fbUser.updateProfile(new UserProfileChangeRequest.Builder()
-                                        .setPhotoUri(null)
+                                        .setPhotoUri(imageUri)
                                         .setDisplayName(name).build())
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                    @Override
                                                                    public void onComplete(@NonNull Task<Void> task) {
                                                                        // Saving to DB
                                                                        String userUid = fbUser.getUid();
-                                                                       User user = new User(userUid, name, mail, gender, address, null);
+                                                                       User user = new User(userUid, name, mail, gender, address, imageUri.toString());
                                                                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                                                        mDatabase.child("users").child(fbUser.getUid()).setValue(user);
 

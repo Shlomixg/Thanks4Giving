@@ -223,7 +223,6 @@ public class EditProfileFragment extends Fragment {
                         imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
                     }
                 } else {
-                    // TODO: We need profile photo field in db?
                     ref.child("profilePhoto").setValue(profile_photo_path);
                 }
 
