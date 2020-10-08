@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +38,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -51,6 +56,7 @@ public class PostFragment extends Fragment {
     RecyclerView commentsRecycler;
     Button commentBtn;
     EditText comment;
+    TextView date;
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
@@ -69,13 +75,16 @@ public class PostFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
+
         description = rootView.findViewById(R.id.post_title);
         postImage = rootView.findViewById(R.id.BigPostImage);
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment = rootView.findViewById(R.id.post_comment_et);
+        date = rootView.findViewById(R.id.date);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
         Bundle bundle = this.getArguments();
         data = bundle.getString("PostId");
+
 
         posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -111,7 +120,11 @@ public class PostFragment extends Fragment {
                     String uid = mAuth.getCurrentUser().getUid();
                     String userName = mAuth.getCurrentUser().getDisplayName();
                     String text = comment.getText().toString();
-                    Comment newComment = new Comment(uid, userName, text);
+                    SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date=new Date();
+                    String date1=format.format(date);
+                    Toast.makeText(getContext(), date1, Toast.LENGTH_SHORT).show();
+                    Comment newComment = new Comment(uid, userName, text,date1);
                     comments.child(data).push().setValue(newComment);
                     comment.setText("");
                 } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
@@ -201,6 +214,7 @@ public class PostFragment extends Fragment {
 //                startActivity(intent);
 //            }
 //        });
+
         return rootView;
     }
 

@@ -32,13 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -49,33 +42,37 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class NewPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
+public class EditPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
     final int WRITE_PERMISSION_REQUEST = 1;
     final int LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1;
@@ -99,22 +96,21 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     String coordinates;
     String location_method;
     String randomKey;
+    DatabaseReference ref;
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference users = database.getReference("users");
-    DatabaseReference posts = database.getReference("posts");
     private FirebaseStorage storage;
     private StorageReference storageReference;
-
+    String postID;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
-
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -134,8 +130,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_edit_post, container, false);
+        if (getArguments() != null) {
+            postID = getArguments().getString("postId");
+            Toast.makeText(getActivity(), postID, Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
 
+        }
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
         addressTv = rootView.findViewById(R.id.address_editText);//##
@@ -195,10 +195,10 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
                     } else {
-                        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
+                        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, EditPostFragment.this);
                     }
                 } else
-                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
+                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, EditPostFragment.this);
             }
         });
 
@@ -241,45 +241,49 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
+
+        ref = mDatabase.child("posts");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post pos = ds.getValue(Post.class);
+                    if (pos.getPostID()==postID)
+                    {
+                        addressTv.setText(pos.getAddress());
+                        descriptionET.setText(pos.getDesc());
+                        Glide.with(getActivity()).load(pos.getPostImage()).centerCrop().into(image);
+                        if (imageUri==null)
+                            path2=pos.getPostImage();
+                        else
+                            uploadPicture();
+                        if (coordinates==null ||coordinates.equals(""))
+                            coordinates=pos.getCoordinates();
+                    }
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
-                // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
-                //uploadPicture();
-
-                final String uid = currentFBUser.getUid();
-                // TODO: Add title & desc to post
-                final String postID = posts.push().getKey();
                 if (flag_location == 0)
                     location_method = "GPS";
                 else
                     location_method = "Google";
-
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, 1, spinner.getSelectedItem().toString(), path2);
-                posts.child(postID).setValue(post);
-                users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        User user = snapshot.getValue(User.class);
-                        if (user != null) {
-                            if (user.postsUid == null) {
-                                user.postsUid = new ArrayList<String>();
-                            }
-                            user.postsUid.add(postID);
-                            users.child(uid).setValue(user);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-
-                });
-                // TODO: Update the posts list at user
-
+                Post post2 = new Post(postID, currentFBUser.getUid(), descriptionET.getText().toString()
+                        , addressTv.getText().toString(), coordinates, location_method, 1, spinner.getSelectedItem().toString(), path2);
+                ref.child(postID).setValue(post2);
                 setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
             }
         });
@@ -337,7 +341,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                 //Request location updates:
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, EditPostFragment.this);
             }
 
         }

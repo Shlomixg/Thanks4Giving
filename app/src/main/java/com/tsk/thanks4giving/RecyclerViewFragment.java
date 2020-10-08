@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,8 +32,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 public class RecyclerViewFragment extends Fragment {
 
@@ -43,10 +49,9 @@ public class RecyclerViewFragment extends Fragment {
     Query query;
     SwipeRefreshLayout refreshLayout;
     BubbleSeekBar bubbleSeekBar;
-
     private static final String ARG_USER_UID = "userUid";
     private static final String ARG_STATUS = "itemsStatus";
-
+    ImageButton delete_btn;
     private String mUserUid;
     private int mItemsStatus;
 
@@ -73,6 +78,11 @@ public class RecyclerViewFragment extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+
+
+
+
+
         bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
         bubbleSeekBar.setProgress((float) (100.0));
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
@@ -94,9 +104,14 @@ public class RecyclerViewFragment extends Fragment {
                             location2.setLongitude(Double.parseDouble(a[1]));
                             if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
                                 postList.add(pos);
-                        }
+
+//                    {
+//                        holder.edit_btn.setVisibility(View.VISIBLE);
+//                    }
+                                                   }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
+
                     }
 
                     @Override
@@ -138,6 +153,7 @@ public class RecyclerViewFragment extends Fragment {
 
             }
         });
+
 
         final String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home"; //TODO ???
 
