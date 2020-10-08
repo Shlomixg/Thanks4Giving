@@ -129,7 +129,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
-        addressTv = rootView.findViewById(R.id.address_editText);//##
+        addressTv = rootView.findViewById(R.id.address_editText);
         Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         addressTv.setFocusable(false);
         addressTv.setOnClickListener(new View.OnClickListener() {

@@ -1,12 +1,8 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,8 +63,7 @@ public class EditProfileFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     Button saveBtn, changePicBtn, cameraBtn, galleryBtn, cancelBtn;
     AutoCompleteTextView genderEditTextExposedDropdown;
-    String randomKey;
-    String path2;
+    String randomKey, profile_photo_path;
     File file;
     Uri imageUri;
     int flag = 0;
@@ -111,7 +105,7 @@ public class EditProfileFragment extends Fragment {
         changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
 
         String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
         genderEditTextExposedDropdown.setAdapter(adapter);
 
@@ -213,24 +207,29 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = fullname_et.getText().toString();
                 String gender = genderEditTextExposedDropdown.getText().toString();
-                if (imageUri == null) {
-                    String path = null;
-                    if (gender.equals("Female"))
-                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
-                    else
-                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                    imageUri = Uri.parse(path);
+                String address = address_et.getText().toString();
 
-                }
-                ref.child("profilePhoto").setValue(path2);
-                if (!fullname_et.getText().toString().equals(""))
+                if (!name.isEmpty()) {
                     fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(fullname_et.getText().toString()).setPhotoUri(imageUri).build());
-                else
-                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
+                    ref.child("name").setValue(name);
+                }
+
+                if (imageUri == null) {
+                    if (gender.equals("Female"))
+                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                    else {
+                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
+                    }
+                } else {
+                    // TODO: We need profile photo field in db?
+                    ref.child("profilePhoto").setValue(profile_photo_path);
+                }
+
+                fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
                 ref.child("gender").setValue(gender);
-                if (!address_et.getText().toString().equals(""))
-                    ref.child("address").setValue(address_et.getText().toString());
+                if (!address.isEmpty()) ref.child("address").setValue(address);
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -330,7 +329,7 @@ public class EditProfileFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        path2 = uri.toString();
+                        profile_photo_path = uri.toString();
                     }
                 });
     }

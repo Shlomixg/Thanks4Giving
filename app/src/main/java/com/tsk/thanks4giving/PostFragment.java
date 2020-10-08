@@ -1,6 +1,5 @@
 package com.tsk.thanks4giving;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,9 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,15 +27,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
+import com.stfalcon.imageviewer.StfalconImageViewer;
+import com.stfalcon.imageviewer.loader.ImageLoader;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,98 +48,154 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PostFragment extends Fragment {
 
     TextView description;
-    ImageView postImage;
+    ImageView postImageView;
     RecyclerView commentsRecycler;
     Button commentBtn;
-    EditText comment;
-    TextView date;
+    EditText comment_et;
+    TextView comment_date_tv, username_tv, post_date_tv;
+    MaterialButton edit_btn;
     Location location;
     ImageView imageView;
     CommentAdapter adapter;
-    Geocoder geocoder; //##
-    String data;
+    Geocoder geocoder;
+    String postID;
+    CircleImageView user_profile_photo_civ;
 
-    //String postID;
-
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference posts = database.getReference().child("posts");
+    final DatabaseReference users = database.getReference().child("users");
+    final String PROFILE_FRAG = "Profile Fragment";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        geocoder = new Geocoder(getContext());
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
 
-        description = rootView.findViewById(R.id.post_title);
-        postImage = rootView.findViewById(R.id.BigPostImage);
+        description = rootView.findViewById(R.id.post_item_title);
+        postImageView = rootView.findViewById(R.id.post_item_img);
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
-        comment = rootView.findViewById(R.id.post_comment_et);
-        date = rootView.findViewById(R.id.date);
+        comment_et = rootView.findViewById(R.id.post_comment_et);
+        comment_date_tv = rootView.findViewById(R.id.date);
         commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
-        Bundle bundle = this.getArguments();
-        data = bundle.getString("PostId");
+        username_tv = rootView.findViewById(R.id.post_user_name);
+        user_profile_photo_civ = rootView.findViewById(R.id.post_frag_profile_img);
+        post_date_tv = rootView.findViewById(R.id.post_date);
+        edit_btn = rootView.findViewById(R.id.post_edit_btn);
 
+        if (getArguments() != null) {
+            Bundle bundle = this.getArguments();
+            postID = bundle.getString("PostId");
+        } else {
+            // TODO: Error handling
+        }
 
-        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+        final String[] postImageUri = new String[1];
+
+        posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data)) {
-                        String coordinates = pos.getCoordinates();
-                        String a[] = coordinates.split(",");
-                        location = new Location("dummyProvider");
-                        location.setLatitude(Double.parseDouble(a[0]));
-                        location.setLongitude(Double.parseDouble(a[1]));
-                        Glide.with(PostFragment.this)
-                                .load(pos.getPostImage())
-                                .centerCrop()
-                                .into(postImage);
+                final Post post = snapshot.getValue(Post.class);
+                if (post != null) {
+                    Glide.with(PostFragment.this)
+                            .load(post.postImage)
+                            .centerCrop()
+                            .into(postImageView);
+                    if (currentUser != null && currentUser.getUid().equals(post.userUid)) edit_btn.setVisibility(View.VISIBLE);
+                    String coordinates = post.coordinates;
+                    String a[] = coordinates.split(",");
+                    location = new Location("dummyProvider");
+                    location.setLatitude(Double.parseDouble(a[0]));
+                    location.setLongitude(Double.parseDouble(a[1]));
+                    description.setText(post.desc);
+                    postImageUri[0] = post.postImage;
+                    // TODO: how to move out?
+                    users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            User user = snapshot.getValue(User.class);
+                            if (user != null) {
+                                if (user.profilePhoto != null) {
+                                    Glide.with(PostFragment.this).load(user.profilePhoto).centerCrop().into(user_profile_photo_civ);
+                                } else {
+                                    if (user.gender.equals("Female")) {
+                                        Glide.with(PostFragment.this).load(R.drawable.profile_woman).centerCrop().into(user_profile_photo_civ);
+                                    } else {
+                                        Glide.with(PostFragment.this).load(R.drawable.profile_man).centerCrop().into(user_profile_photo_civ);
+                                    }
+                                }
+                                username_tv.setText(user.name);
+                                post_date_tv.setText("Date");
+                            }
+                        }
 
-                        description.setText(pos.getDesc());
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                // TODO: error handling
             }
         });
-        Toast.makeText(getContext(), data, Toast.LENGTH_SHORT).show();
+
+
+
+        edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("postId", postID);
+                EditPostFragment fragment = new EditPostFragment();
+                fragment.setArguments(bundle);
+                getParentFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+            }
+        });
 
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FirebaseAuth.getInstance().getCurrentUser() != null && !comment.getText().toString().equals("")) {
-                    String uid = mAuth.getCurrentUser().getUid();
-                    String userName = mAuth.getCurrentUser().getDisplayName();
-                    String text = comment.getText().toString();
-                    SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                    Date date=new Date();
-                    String date1=format.format(date);
-                    Toast.makeText(getContext(), date1, Toast.LENGTH_SHORT).show();
-                    Comment newComment = new Comment(uid, userName, text,date1);
-                    comments.child(data).push().setValue(newComment);
-                    comment.setText("");
-                } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
+                String text = comment_et.getText().toString();
+                if (currentUser == null) {
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
-                else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment.getText().toString().equals(""))
+                } else if (text.isEmpty()) {
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    String uid = currentUser.getUid();
+                    String userName = currentUser.getDisplayName();
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date = new Date();
+                    Comment newComment = new Comment(uid, userName, text, format.format(date));
+                    comments.child(postID).push().setValue(newComment);
+                    comment_et.setText("");
+                }
             }
         });
 
-        comments.child(data).addValueEventListener(new ValueEventListener() {
+        comments.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    Comment comment1 = snap.getValue(Comment.class);
-                    commentList.add(comment1);
+                    Comment comment = snap.getValue(Comment.class);
+                    commentList.add(comment);
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -156,32 +211,39 @@ public class PostFragment extends Fragment {
         adapter = new CommentAdapter(commentList);
         commentsRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        ImageButton googlemaps = rootView.findViewById(R.id.googlemaps);
-        googlemaps.setOnClickListener(new View.OnClickListener() {
+
+        postImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openView(postImageUri[0]);
+            }
+        });
+
+        ImageButton googleMaps = rootView.findViewById(R.id.googlemaps);
+        googleMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    cordinatesToMaps();
+                    coordinatesToMaps();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
+
         ImageButton waze = rootView.findViewById(R.id.waze);
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                location.setLatitude(32.03140520);
-//                location.setLongitude(34.74392110);
-                cordinatesToWaze();
+                coordinatesToWaze();
             }
         });
 
-        ImageButton whastsapp = rootView.findViewById(R.id.whatsapp);
-        whastsapp.setOnClickListener(new View.OnClickListener() {
+        ImageButton post_share_btn = rootView.findViewById(R.id.post_share_btn);
+        post_share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageView = rootView.findViewById(R.id.BigPostImage);
+                imageView = rootView.findViewById(R.id.post_item_img);
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setType("image/*");
@@ -191,62 +253,39 @@ public class PostFragment extends Fragment {
                 startActivity(sendIntent);
             }
         });
-//        ImageButton facebook = rootView.findViewById(R.id.facebook);
-//        facebook.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Intent.ACTION_SEND);
-//                intent.setType("image/*");
-//                imageView = rootView.findViewById(R.id.BigPostImage);
-//                imageView.setImageResource(R.drawable.tv);
-//                Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
-//                intent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-//                intent.putExtra(Intent.EXTRA_TEXT, "http://www.one.co.il");
-//                boolean facebookAppFound = false;
-//                List<ResolveInfo> matches = getActivity().getPackageManager().queryIntentActivities(intent, 0);
-//                for (ResolveInfo info : matches) {
-//                    if (info.activityInfo.packageName.toLowerCase().startsWith("com.facebook.katana")) {
-//                        intent.setPackage(info.activityInfo.packageName);
-//                        facebookAppFound = true;
-//                        break;
-//                    }
-//                }
-//                startActivity(intent);
-//            }
-//        });
 
         return rootView;
     }
 
-    private void cordinatesToMaps() throws IOException {
-        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void openView(String link) {
+        ArrayList<String> temp = new ArrayList();
+        temp.add(link);
+        new StfalconImageViewer.Builder<String>(getContext(), temp, new ImageLoader<String>() {
+            @Override
+            public void loadImage(ImageView imageView, String image) {
+                Glide.with(getContext()).load(image).into(imageView);
+            }
+        }).withHiddenStatusBar(true).show();
+    }
+
+    private void coordinatesToMaps() throws IOException {
+        posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data)) {
-                        if (pos.getLocationMethod().equals("GPS")) {
-                            List<Address> addresses = null;
-                            try {
-                                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            final Address bestAddress = addresses.get(0);
-                            String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                        } else {
-                            String url = "https://www.google.com/maps/search/?api=1&query=" + pos.getAddress();
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-
-//                            String a[]=coordinates.split(",");
-//                            location = new Location("dummyProvider");
-//                            location.setLatitude(Double.parseDouble(a[0]));
-//                            location.setLongitude(Double.parseDouble(a[1]));
-                        }
-
-
+                Post post = snapshot.getValue(Post.class);
+                if (post != null && post.getLocationMethod().equals("GPS")) {
+                    List<Address> addresses = null;
+                    try {
+                        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    final Address bestAddress = addresses.get(0);
+                    String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                } else {
+                    String url = "https://www.google.com/maps/search/?api=1&query=" + post.getAddress();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             }
 
@@ -259,8 +298,7 @@ public class PostFragment extends Fragment {
 
     public Uri SaveImage(Bitmap finalBitmap) {
         Random r = new Random();
-        int low = 10;
-        int high = 1000000;
+        int low = 10, high = 1000000;
         int result = r.nextInt(high - low) + low;
         File file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), result + ".jpg"); //eran
         try {
@@ -271,9 +309,7 @@ public class PostFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Uri imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-        Toast.makeText(getContext(), imageUri.toString(), Toast.LENGTH_SHORT).show();
-        return imageUri;
+        return FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
     }
 
     public static Bitmap loadBitmapFromView(View v, int width, int height) {
@@ -283,48 +319,11 @@ public class PostFragment extends Fragment {
         return b;
     }
 
-    private void cordinatesToWaze() {
-        posts.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID().equals(data)) {
-//
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-//
-
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        geocoder = new Geocoder(getContext());
-        //postID = MainActivity.getPostClickedID();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void coordinatesToWaze() {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
     private Bitmap addWaterMark(Bitmap src) {

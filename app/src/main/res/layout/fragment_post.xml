@@ -1,129 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:background="@color/colorAccent"
-    android:padding="3dp">
-
-    <TextView
-        android:id="@+id/post_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="DuplicateIds" />
+    tools:context=".PostFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:id="@+id/share_layout"
-        android:layout_below="@id/BigPostImage"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        android:padding="3dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/share"
-            android:textColor="@color/colorWhite"
-            android:background="@drawable/bg"
-            android:padding="10dp"
-            android:textSize="20sp"
-            android:layout_marginEnd="10dp"/>
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <ImageButton
-            android:id="@+id/whatsapp"
-            android:layout_width="wrap_content"
+            <!-- User info, time & edit button -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/post_frag_profile_img"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="1dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/post_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/post_frag_profile_img"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/post_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@id/post_frag_profile_img"
+                    app:layout_constraintTop_toBottomOf="@id/post_user_name" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/post_edit_btn"
+                    style="?attr/borderlessButtonStyle"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@null"
+                    android:contentDescription="Edit"
+                    android:padding="0dp"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_edit_small"
+                    app:iconGravity="textStart"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Title, secondary and supporting text -->
+            <TextView
+                android:id="@+id/post_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+            <TextView
+                android:id="@+id/post_item_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:id="@+id/post_item_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Item description - bla bla more bla bla bla many bla bla's. so much. just some text here with many dots: ..... that's enough. bye."
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
+
+        </LinearLayout>
+
+        <!-- Media -->
+        <ImageView
+            android:id="@+id/post_item_img"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:padding="2dp"
-            android:src="@drawable/ic_baseline_share_24"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="91dp"
-            tools:layout_editor_absoluteY="72dp"
-            />
+            android:contentDescription="Item image"
+            android:scaleType="centerCrop" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/share_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/waze1"
-            tools:layout_editor_absoluteX="3dp"
-            tools:layout_editor_absoluteY="70dp"
-            android:padding="2dp"
-            android:id="@+id/waze"
-            tools:ignore="MissingConstraints"
-            android:background="@null"/>
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg"
+                android:padding="10dp"
+                android:text="@string/share"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
+
+            <ImageButton
+                android:id="@+id/post_share_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="2dp"
+                android:src="@drawable/ic_baseline_share_24"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="91dp"
+                tools:layout_editor_absoluteY="72dp" />
+
+            <ImageButton
+                android:id="@+id/waze"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:padding="2dp"
+                android:src="@drawable/waze1"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="3dp"
+                tools:layout_editor_absoluteY="70dp" />
+
+            <ImageButton
+                android:id="@+id/googlemaps"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@null"
+                android:padding="2dp"
+                android:src="@drawable/maps"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="3dp"
+                tools:layout_editor_absoluteY="70dp" />
+
+        </LinearLayout>
 
 
-        <ImageButton
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:src="@drawable/maps"
-            tools:layout_editor_absoluteX="3dp"
-            tools:layout_editor_absoluteY="70dp"
-            android:padding="2dp"
-            android:id="@+id/googlemaps"
-            tools:ignore="MissingConstraints"
-            android:background="@null"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/post_comments_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/post_comment_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="8"
+                android:background="@drawable/bg"
+                android:hint="@string/comment"
+                android:padding="5dp"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/post_add_comment_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/bg"
+                android:text="@string/post_comment_btn"
+                android:textColor="@color/colorWhite" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/BigPostImage"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@id/post_title"
-        android:layout_margin="5dp"
-        android:contentDescription="Item Photo"
-        android:scaleType="centerCrop"
-         />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/post_comments_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/share_layout"
-        android:layout_above="@+id/layout"
-        android:layout_margin="5dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/layout"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
-
-        <EditText
-            android:layout_width="0dp"
-            android:layout_weight="8"
-            android:layout_height="match_parent"
-            android:id="@+id/post_comment_et"
-            android:layout_marginEnd="5dp"
-            android:padding="5dp"
-            android:hint="@string/comment"
-            android:textColorHint="@color/colorWhite"
-            android:textSize="15sp"
-            android:textColor="@color/colorWhite"
-            android:background="@drawable/bg" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="wrap_content"
-            android:id="@+id/post_add_comment_btn"
-            android:background="@drawable/bg"
-            android:text="@string/post_comment_btn"
-            android:textColor="@color/colorWhite"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
-
+</androidx.core.widget.NestedScrollView>

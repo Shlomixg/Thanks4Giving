@@ -32,7 +32,7 @@
     <string name="confirm_and_sign_up">אישור והרשמה</string>
     <string name="welcome_guest">ברוך הבא אורח</string>
     <string name="need_permissions">יש צורך בהרשאות לפתיחת מצלמה או גלריה</string>
-    <string name="wellcome_back">, טוב שחזרת</string>
+    <string name="welcome_back">, טוב שחזרת</string>
     <string name="login_fail">התחברות נכשלה</string>
     <string name="logged_out">התנתקת</string>
     <string name="guest">אורח</string>
