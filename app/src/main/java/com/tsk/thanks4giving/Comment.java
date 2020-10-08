@@ -6,10 +6,14 @@ public class Comment {
     private String userName;
     private String text;
 
-    public Comment(String uid, String userName, String text) {
+
+    private String date;
+
+    public Comment(String uid, String userName, String text,String date) {
         this.uid = uid;
         this.userName = userName;
         this.text = text;
+        this.date=date;
     }
 
     public Comment() {
@@ -37,5 +41,13 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

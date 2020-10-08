@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         scheduleJob();
 
+
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
 
@@ -180,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
         currentFBUser = mAuth.getCurrentUser();
+
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
@@ -197,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentFBUser != null) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+
         } else {
             menu.clear();
         }

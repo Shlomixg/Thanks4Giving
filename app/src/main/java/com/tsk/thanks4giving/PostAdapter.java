@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +46,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     final DatabaseReference postFollows = database.getReference().child("follows");
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     Drawable like, like_fill, follow, follow_fill;
+    FirebaseUser currentUser1= FirebaseAuth.getInstance().getCurrentUser();
+
+
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -64,6 +68,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         ImageView postImage;
         CircleImageView profileImage;
+        ImageButton edit_btn;
         MaterialButton like, comment, follow;
         TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV;
 
@@ -71,6 +76,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             super(itemView);
             postImage = itemView.findViewById(R.id.post_item_img);
             profileImage = itemView.findViewById(R.id.post_profile_img);
+            edit_btn = itemView.findViewById(R.id.editbtn);
+            edit_btn.setVisibility(View.GONE);
             userNameTV = itemView.findViewById(R.id.post_user_name);
             itemTitleTV = itemView.findViewById(R.id.post_item_title);
             itemCategoryTV = itemView.findViewById(R.id.post_item_category);
@@ -122,8 +129,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
+
+                if (currentUser1!=null)
+                {
+                    if (user.getUid().equals(currentUser1.getUid()))
+                    {
+                        holder.edit_btn.setVisibility(View.VISIBLE);
+
+                    }
+                }
+
+
+
+
                 if (user != null) {
-                    holder.userNameTV.setText(user.name);
+                     holder.userNameTV.setText(user.name);
                     if (user.profilePhoto != null) {
                         Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profileImage);
                     } else if (user.gender.equals("Female")) {
@@ -132,6 +152,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
                     }
                 }
+
+
             }
 
             @Override
@@ -154,6 +176,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 int size = (int) snapshot.getChildrenCount();
                 holder.like.setText("" + size);
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
+
                     holder.like.setIcon(like_fill);
             }
 
@@ -199,6 +222,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
             }
         });
+
+        holder.edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) context;
+                Bundle bundle = new Bundle();
+                bundle.putString("postId", postID);
+                EditPostFragment fragment = new EditPostFragment();
+                fragment.setArguments(bundle);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+            }
+        });
+
 
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override

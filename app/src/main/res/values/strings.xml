@@ -159,4 +159,5 @@
     <string name="attention">Attention</string>
     <string name="must_be_logged">Must be logged in to use this feature</string>
     <string name="no_empty_comment">Cannot post empty comment</string>
+    <string name="EditingPost">Editing Post</string>
 </resources>
