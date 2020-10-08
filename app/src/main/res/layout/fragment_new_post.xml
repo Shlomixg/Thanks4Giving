@@ -1,147 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:background="@color/colorAccent"
-    android:padding="5dp">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/post_new_item"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--<androidx.appcompat.widget.AppCompatAutoCompleteTextView
-        android:id="@+id/autocomplete_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingClass,MissingConstraints" />-->
-
-
-    <EditText
-        android:id="@+id/condition_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/bg"
-        android:gravity="center"
-        android:hint="@string/description"
-        android:textColor="@color/colorWhite"
-        android:textColorHint="@color/colorWhite"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
-
-    <EditText
-        android:id="@+id/address_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/bg"
-        android:gravity="center"
-        android:hint="@string/address"
-        android:textColor="@color/colorWhite"
-        android:textColorHint="@color/colorWhite"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/condition_editText" />
-
-    <Button
-        android:id="@+id/gpsLocation_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
-        android:background="@drawable/bg"
-        android:drawableLeft="@drawable/ic_location_on"
-        android:padding="3dp"
-        android:text="@string/get_address_with_gps_location"
-        android:textColor="@color/colorWhite"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_editText"/>
-
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg"
-        android:padding="5dp"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:layout_margin="5dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
-
-    <ImageView
-        android:id="@+id/newPostImage"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_margin="5dp"
-        android:contentDescription="Item Photo"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/category_spinner"/>
+    tools:context=".NewPostFragment">
 
     <LinearLayout
-        android:id="@+id/picBtnsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/newPostImage">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/pic_btn"
-            android:layout_width="200dp"
+        <TextView
+            android:id="@+id/new_post_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
+            android:gravity="center"
+            android:text="@string/post_new_item"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!--<androidx.appcompat.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/autocomplete_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingClass,MissingConstraints" />-->
+
+
+        <EditText
+            android:id="@+id/condition_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:background="@drawable/bg"
-            android:drawableLeft="@drawable/ic_camera_alt"
-            android:padding="3dp"
-            android:text="@string/take_picture"
-            android:textColor="@color/colorWhite" />
+            android:gravity="center"
+            android:hint="@string/description"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <EditText
+            android:id="@+id/address_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/bg"
+            android:gravity="center"
+            android:hint="@string/address"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/condition_editText" />
 
         <Button
-            android:id="@+id/gallery_btn"
+            android:id="@+id/gpsLocation_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/bg"
+            android:drawableLeft="@drawable/ic_location_on"
+            android:padding="3dp"
+            android:text="@string/get_address_with_gps_location"
+            android:textColor="@color/colorWhite"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/address_editText" />
+
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@drawable/bg"
-            android:drawableLeft="@drawable/ic_insert_photo"
-            android:padding="3dp"
-            android:text="@string/picture_from_gallery"
-            android:textColor="@color/colorWhite" />
+            android:gravity="center"
+            android:padding="5dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn" />
+
+        <ImageView
+            android:id="@+id/newPostImage"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_margin="5dp"
+            android:contentDescription="Item Photo"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/category_spinner" />
+
+        <LinearLayout
+            android:id="@+id/picBtnsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/newPostImage">
+
+            <Button
+                android:id="@+id/pic_btn"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/bg"
+                android:drawableLeft="@drawable/ic_camera_alt"
+                android:padding="3dp"
+                android:text="@string/take_picture"
+                android:textColor="@color/colorWhite" />
+
+            <Button
+                android:id="@+id/gallery_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg"
+                android:drawableLeft="@drawable/ic_insert_photo"
+                android:padding="3dp"
+                android:text="@string/picture_from_gallery"
+                android:textColor="@color/colorWhite" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/confirm_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_check"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/confirm_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:src="@drawable/ic_check"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+</androidx.core.widget.NestedScrollView>

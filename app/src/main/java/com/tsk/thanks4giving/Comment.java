@@ -6,14 +6,13 @@ public class Comment {
     private String userName;
     private String text;
 
-
     private String date;
 
-    public Comment(String uid, String userName, String text,String date) {
+    public Comment(String uid, String userName, String text, String date) {
         this.uid = uid;
         this.userName = userName;
         this.text = text;
-        this.date=date;
+        this.date = date;
     }
 
     public Comment() {

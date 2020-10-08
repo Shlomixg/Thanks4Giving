@@ -1,23 +1,19 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,7 +36,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,25 +63,36 @@ public class EditProfileFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     Button saveBtn, changePicBtn, cameraBtn, galleryBtn, cancelBtn;
     AutoCompleteTextView genderEditTextExposedDropdown;
-    String randomKey;
-    String path2;
+    String randomKey, profile_photo_path;
     File file;
     Uri imageUri;
     int flag = 0;
 
+    LovelyProgressDialog progressLoadingDialog;
 
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
-    FirebaseStorage storage;
     StorageReference storageReference;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        progressLoadingDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like)
+                .setTitle("Loading data...") // TODO: Move to strings
+                .setMessage("Please wait");
+        progressLoadingDialog.show();
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
         fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
         address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
@@ -91,10 +105,11 @@ public class EditProfileFragment extends Fragment {
         changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
 
         String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
         genderEditTextExposedDropdown.setAdapter(adapter);
 
+        // Loading existing data into UI
         ref = mDatabase.child("users").child(fbUser.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -105,16 +120,19 @@ public class EditProfileFragment extends Fragment {
                     address_et.setText(user.address);
                     email_et.setText(user.email);
                     genderEditTextExposedDropdown.setText(user.gender, false);
-
                     if (user.profilePhoto != null) {
                         Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
                     }
+                    progressLoadingDialog.dismiss();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("EditProfile Log", "--- Profile loading failed");
+                Log.d("EditProfile Log", "--- Error: " + error);
+                // TODO: Add error handling
+                progressLoadingDialog.dismiss();
             }
         });
 
@@ -128,39 +146,53 @@ public class EditProfileFragment extends Fragment {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag = 1;
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-                    } else {
-                        Random r = new Random();
-                        int low = 10, high = 1000000;
-                        int result = r.nextInt(high - low) + low;
-                        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    }
-                }
+                // TODO: Check on SDK 23
+                Dexter.withContext(getContext())
+                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                takePicture();
+                            }
+
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                showSettingsDialog("Camera"); // TODO: Strings with explanation
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                // TODO: Display dialog with explanation why this permission needed
+                                permissionToken.continuePermissionRequest();
+                            }
+                        })
+                        .check();
             }
         });
 
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag = 2;
-                if (Build.VERSION.SDK_INT >= 23) {
+                Dexter.withContext(getContext())
+                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                selectPicture();
+                            }
 
-                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-                    } else {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-                    }
-                }
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                showSettingsDialog("Browse"); // TODO: Strings with explanation
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                // TODO: Display dialog with explanation why this permission needed
+                                permissionToken.continuePermissionRequest();
+                            }
+                        })
+                        .check();
             }
         });
 
@@ -175,75 +207,69 @@ public class EditProfileFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = fullname_et.getText().toString();
                 String gender = genderEditTextExposedDropdown.getText().toString();
-                if (imageUri == null) {
-                    String path = null;
-                    if (gender.equals("Female"))
-                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_woman";
-                    else
-                        path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                    imageUri = Uri.parse(path);
+                String address = address_et.getText().toString();
 
-                }
-                ref.child("profilePhoto").setValue(path2);
-                if (!fullname_et.getText().toString().equals(""))
+                if (!name.isEmpty()) {
                     fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(fullname_et.getText().toString()).setPhotoUri(imageUri).build());
-                else
-                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
+                    ref.child("name").setValue(name);
+                }
+
+                if (imageUri == null) {
+                    if (gender.equals("Female"))
+                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                    else {
+                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
+                    }
+                } else {
+                    // TODO: We need profile photo field in db?
+                    ref.child("profilePhoto").setValue(profile_photo_path);
+                }
+
+                fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
                 ref.child("gender").setValue(gender);
-                if (!address_et.getText().toString().equals(""))
-                    ref.child("address").setValue(address_et.getText().toString());
+                if (!address.isEmpty()) ref.child("address").setValue(address);
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
         return rootView;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == WRITE_PERMISSION_REQUEST) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
-                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // finish();
-                            }
-                        }).setCancelable(false).show();
+    private void takePicture() {
+        Random r = new Random();
+        int low = 10, high = 1000000, result = r.nextInt(high - low) + low;
+        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); // eran
+        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // eran
+        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    }
 
-            } else {
-                {
-                    cameraBtn.setVisibility(View.VISIBLE);
-                    galleryBtn.setVisibility(View.VISIBLE);
-                    Random r = new Random();
-                    int low = 10;
-                    int high = 1000000;
-                    int result = r.nextInt(high - low) + low;
-                    file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                    imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                    if (flag == 1) {
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    } else if (flag == 2) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+    private void selectPicture() {
+        Intent selectIntent = new Intent();
+        selectIntent.setType("image/*");
+        selectIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        startActivityForResult(Intent.createChooser(selectIntent, "Select Image"), PICK_IMAGE);
+    }
+
+    public void showSettingsDialog(String explanation) {
+        new LovelyStandardDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setPositiveButton(R.string.settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivity(intent);
                     }
-                }
-            }
-        }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.ic_like)
+                .setTitle(R.string.attention)
+                .setMessage(explanation)
+                .show();
     }
 
     @Override
@@ -255,7 +281,6 @@ public class EditProfileFragment extends Fragment {
             imageUri = data.getData();
             userImage.setImageURI(imageUri);
             uploadPicture();
-//            uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
             uploadPicture();
@@ -263,8 +288,11 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void uploadPicture() {
-        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getActivity());
-        progressDialog.setTitle("Uploading Image...");
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setTitle("Uploading image..."); // TODO: Move to strings
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);
@@ -273,8 +301,6 @@ public class EditProfileFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
-
                         try {
                             downloadFile(randomKey);
                         } catch (IOException e) {
@@ -285,16 +311,14 @@ public class EditProfileFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
+                        // TODO: Handle unsuccessful uploads
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                 double progress = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
                 progressDialog.setMessage("Progress " + (int) progress + " %");
-                if ((int) progress == 100)
-                    progressDialog.dismiss();
+                if ((int) progress == 100) progressDialog.dismiss();
             }
         });
     }
@@ -305,10 +329,8 @@ public class EditProfileFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(getContext(), "abbb", Toast.LENGTH_SHORT).show(); // for testing
-                        path2 = uri.toString();
+                        profile_photo_path = uri.toString();
                     }
                 });
-//    }
     }
 }

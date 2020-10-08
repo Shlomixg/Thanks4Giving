@@ -46,9 +46,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     final DatabaseReference postFollows = database.getReference().child("follows");
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     Drawable like, like_fill, follow, follow_fill;
-    FirebaseUser currentUser1= FirebaseAuth.getInstance().getCurrentUser();
-
-
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -68,16 +65,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         ImageView postImage;
         CircleImageView profileImage;
-        ImageButton edit_btn;
-        MaterialButton like, comment, follow;
+        MaterialButton like, comment, follow, edit_btn;
         TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV;
 
         public PostCardHolder(@NonNull View itemView) {
             super(itemView);
             postImage = itemView.findViewById(R.id.post_item_img);
             profileImage = itemView.findViewById(R.id.post_profile_img);
-            edit_btn = itemView.findViewById(R.id.editbtn);
-            edit_btn.setVisibility(View.GONE);
+            edit_btn = itemView.findViewById(R.id.post_edit_btn);
             userNameTV = itemView.findViewById(R.id.post_user_name);
             itemTitleTV = itemView.findViewById(R.id.post_item_title);
             itemCategoryTV = itemView.findViewById(R.id.post_item_category);
@@ -124,26 +119,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         post = list.get(position);
         final String postID = post.postID, userID = post.userUid;
 
-        final DatabaseReference postRef = users.child(post.userUid);
-        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-
-                if (currentUser1!=null)
-                {
-                    if (user.getUid().equals(currentUser1.getUid()))
-                    {
-                        holder.edit_btn.setVisibility(View.VISIBLE);
-
-                    }
-                }
-
-
-
-
                 if (user != null) {
-                     holder.userNameTV.setText(user.name);
                     if (user.profilePhoto != null) {
                         Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profileImage);
                     } else if (user.gender.equals("Female")) {
@@ -151,9 +131,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     } else {
                         Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
                     }
+                    if (currentUser != null && user.uid.equals(currentUser.getUid())) holder.edit_btn.setVisibility(View.VISIBLE);
+                    holder.userNameTV.setText(user.name);
                 }
-
-
             }
 
             @Override
@@ -162,7 +142,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         });
 
         Glide.with(context)
-                .load(post.getPostImage())
+                .load(post.postImage)
                 .fitCenter()
                 .into(holder.postImage);
 

@@ -143,6 +143,7 @@ public class ProfileFragment extends Fragment {
                     if (user.profilePhoto != null) {
                         Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(profile_civ);
                     } else {
+                        // TODO: Load according to gender
                         String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
                         Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(profile_civ);
                     }
@@ -155,10 +156,13 @@ public class ProfileFragment extends Fragment {
                 }
             }
 
+
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.d("Profile Log", "--- Profile display failed");
                 Log.d("Profile Log", "--- Error: " + error);
+                // TODO: Add error handling
                 progressDialog.dismiss();
             }
         });

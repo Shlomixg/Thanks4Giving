@@ -38,6 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,14 +61,10 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     public static boolean commentSwitch = true;
 
-    FirebaseUser currentFBUser;
+    FirebaseUser currentUser;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseMessaging messaging = FirebaseMessaging.getInstance();
-
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference users = db.getReference("users");
-    DatabaseReference posts = db.getReference("posts");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,10 +140,9 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                fbUser = mAuth.getCurrentUser();
+                currentUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
-                if (fbUser != null) { // Sign up or login
-                    currentFBUser = fbUser;
+                if (currentUser != null) { // Sign up or login
                     if(commentSwitch)
                     {
                         String topic = "commentNotif" + mAuth.getUid();
@@ -154,38 +151,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
-                    user_name_tv.setText(fbUser.getDisplayName());
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference users = database.getReference("users");
-                    users.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (DataSnapshot ds : snapshot.getChildren()) {
-                                User user = ds.getValue(User.class);
-                                if (user.getUid().equals(fbUser.getUid())) {
-                                    if (user.getProfilePhoto() != null) {
-                                        Glide.with(MainActivity.this)
-                                                .load(user.getProfilePhoto())
-                                                .centerCrop()
-                                                .into(profile_pic_iv);
-                                    }
-                                }
 
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+                    user_name_tv.setText(currentUser.getDisplayName());
+                    Glide.with(MainActivity.this)
+                            .load(currentUser.getPhotoUrl())
+                            .centerCrop().into(profile_pic_iv);
                 } else {
-                    currentFBUser = null;
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
 
                     user_name_tv.setText(getString(R.string.guest));
-                    Glide.with(getApplicationContext()).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
+                    Glide.with(getApplicationContext())
+                            .load(R.drawable.profile_man)
+                            .centerCrop().into(profile_pic_iv);
                 }
             }
         };
@@ -197,14 +175,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
-        currentFBUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
+        // Prevent opening the same fragment twice
         FragmentManager fragmentManager = getSupportFragmentManager();
-        /*Fragment fragmentA = fragmentManager.findFragmentByTag(FRAG);
-        if (fragmentA == null)*/
-        // TODO: Remove if current fragment is same
+        List<Fragment> list = fragmentManager.getFragments();
+        // Get last fragment
+        if (!list.isEmpty()) {
+            Fragment topFragment = list.get(list.size() - 1);
+            if (topFragment != null && topFragment.getTag().equals(FRAG)) {
+                fragmentManager.popBackStack();
+            }
+        }
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.flContent, fragment, FRAG);
         if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
@@ -213,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (currentFBUser != null) {
+        if (currentUser != null) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
 
         } else {
@@ -232,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 setFragment(new NewPostFragment(), NEW_POST_FRAG);
                 break;
             case R.id.my_profile:
-                String currUserUid = currentFBUser.getUid();
+                String currUserUid = currentUser.getUid();
                 Bundle bundle = new Bundle();
                 bundle.putString("userUid", currUserUid);
                 ProfileFragment fragment = new ProfileFragment();

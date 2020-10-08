@@ -70,7 +70,7 @@ public class LoginFragment extends Fragment {
                             Log.d("Login Log", "--- Login Success");
                             FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
-                                Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + getString(R.string.wellcome_back), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(getActivity().findViewById(android.R.id.content), fbUser.getDisplayName() + getString(R.string.welcome_back), Snackbar.LENGTH_SHORT).show();
                                 getActivity().onBackPressed(); // Close fragment
                             }
                         } else {
