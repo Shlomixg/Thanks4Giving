@@ -14,6 +14,7 @@ import androidx.preference.PreferenceManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,17 +51,18 @@ public class MainActivity extends AppCompatActivity {
     final String SETTINGS_FRAG = "Settings Fragment";
 
     SharedPreferences sharedPrefs;
-    private static String postClickedID;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
     TextView user_name_tv;
     CircleImageView profile_pic_iv;
     FirebaseUser fbUser;
+    public static boolean commentSwitch = true;
 
     FirebaseUser currentFBUser;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseMessaging messaging = FirebaseMessaging.getInstance();
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference users = db.getReference("users");
@@ -68,11 +72,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        scheduleJob();
 
+        if(mAuth.getUid() != null) {
+            String topic = "commentNotif" + mAuth.getUid();
+            messaging.subscribeToTopic(topic);
+            Log.d("fcm","onCreate: " + topic);
+        }
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
+
+        boolean autoLocation = sharedPrefs.getBoolean("locationPref",false);
+        if (autoLocation)
+            scheduleJob();
 
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
@@ -134,12 +146,17 @@ public class MainActivity extends AppCompatActivity {
                 navigationView.getMenu().clear();
                 if (fbUser != null) { // Sign up or login
                     currentFBUser = fbUser;
+                    if(commentSwitch)
+                    {
+                        String topic = "commentNotif" + mAuth.getUid();
+                        messaging.subscribeToTopic(topic);
+                        Log.d("fcm","authState: " + topic);
+                    }
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
                     user_name_tv.setText(fbUser.getDisplayName());
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference users = database.getReference("users");
-
                     users.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -181,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
         currentFBUser = mAuth.getCurrentUser();
-
     }
 
     private void setFragment(Fragment fragment, String FRAG) {
@@ -261,4 +277,21 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ddd", "Job scheduled");
         else Log.d("ddd", "Job scheduling failed");
     }
+
+    public static void setCommentSwitch(boolean val)
+    {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String uid = mAuth.getUid();
+        FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+        String topic = "commentNotif" + uid;
+        Log.d("fcm","Switch: " + topic);
+        if (val) {
+            commentSwitch = true;
+            messaging.subscribeToTopic(topic);
+        } else {
+            commentSwitch = false;
+            messaging.unsubscribeFromTopic(topic);
+        }
+    }
+
 }

@@ -22,36 +22,6 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_home"
-            android:title="@string/gallery" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_home"
-            android:title="@string/tools" />
-    </group>
-
-    <group
-        android:id="@+id/nav_group_share"
-        android:checkableBehavior="all">
-        <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/ic_share"
-            android:title="@string/share" />
-        <item
-            android:id="@+id/nav_send"
-            android:icon="@drawable/ic_share"
-            android:title="@string/send" />
-    </group>
-
-    <group
-        android:id="@+id/nav_group_settings"
-        android:checkableBehavior="none">
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="@string/settings" />
     </group>
 
 </menu>

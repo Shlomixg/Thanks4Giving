@@ -11,6 +11,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +46,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -46,7 +56,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class PostFragment extends Fragment {
@@ -63,13 +75,14 @@ public class PostFragment extends Fragment {
     Geocoder geocoder; //##
     String data;
 
-    //String postID;
-
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     ArrayList<Comment> commentList = new ArrayList<>();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference posts = database.getReference().child("posts");
+    final String SK = "AAAAV2IEwl0:APA91bGzC8ukmt6UCf6kWMg4XzoHl9RthEfzBWrhv0HGOjEHrXVr6QwsbEgdXOC2Bb79AJ-P4v4Zh0eWiqPUdamh2P83EhEFymkv3cIA-_iQ7lFSdHNlL4n11oqivy-ahWphe-ANbAYl";
+
+    final String[] topic = new String[1];
 
     @Nullable
     @Override
@@ -101,7 +114,6 @@ public class PostFragment extends Fragment {
                                 .load(pos.getPostImage())
                                 .centerCrop()
                                 .into(postImage);
-
                         description.setText(pos.getDesc());
                     }
                 }
@@ -120,13 +132,68 @@ public class PostFragment extends Fragment {
                     String uid = mAuth.getCurrentUser().getUid();
                     String userName = mAuth.getCurrentUser().getDisplayName();
                     String text = comment.getText().toString();
-                    SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                    Date date=new Date();
-                    String date1=format.format(date);
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date = new Date();
+                    String date1 = format.format(date);
                     Toast.makeText(getContext(), date1, Toast.LENGTH_SHORT).show();
-                    Comment newComment = new Comment(uid, userName, text,date1);
+                    Comment newComment = new Comment(uid, userName, text, date1);
                     comments.child(data).push().setValue(newComment);
                     comment.setText("");
+
+                    //send notification to post owner
+                    String textToSend = getString(R.string.new_comment) + userName;
+                    posts.child(data).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String uid = snapshot.child("userUid").getValue(String.class);
+                            topic[0] = "commentNotif" + uid;
+                            Log.d("fcm","Post: " + topic[0]);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {}
+                    });
+
+                    final JSONObject rootObject = new JSONObject();
+                    try {
+                        rootObject.put("to", "/topics/" + topic[0]);
+                        rootObject.put("data", new JSONObject().put("message", textToSend));
+                        String url = "https://fcm.googleapis.com/fcm/send";
+
+                        RequestQueue queue = Volley.newRequestQueue(getContext());
+                        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>()
+                        {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d("fcm","response:" + response);
+                            }
+                        }, new Response.ErrorListener()
+                        {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("fcm","error:" + error.getMessage());
+                            }
+                        })
+
+                        {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=" + SK);
+                                return headers;
+                            }
+                            @Override
+                            public byte[] getBody() throws AuthFailureError {
+                                return rootObject.toString().getBytes();
+                            }
+                        };
+
+                        queue.add(request);
+                        queue.start();
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                    }
+
                 } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
                 else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment.getText().toString().equals(""))
@@ -214,7 +281,6 @@ public class PostFragment extends Fragment {
 //                startActivity(intent);
 //            }
 //        });
-
         return rootView;
     }
 
@@ -295,9 +361,6 @@ public class PostFragment extends Fragment {
                         double longitude = location.getLongitude();
                         String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-//
-
-
                     }
                 }
             }
