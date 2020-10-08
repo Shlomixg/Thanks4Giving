@@ -1,5 +1,6 @@
 package com.tsk.thanks4giving;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class SignupFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     Button confirm_btn, login_btn;
     AutoCompleteTextView genderEditTextExposedDropdown;
+    Uri imageUri;
 
     FirebaseAuth mAuth;
 
@@ -86,11 +88,11 @@ public class SignupFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("Signup Log", "--- Signup Success");
                             final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                             if (fbUser != null) {
 
                                 // TODO: Upload to storage and get data
+
 
                                 // Updating full name & photo
                                 fbUser.updateProfile(new UserProfileChangeRequest.Builder()
@@ -109,7 +111,7 @@ public class SignupFragment extends Fragment {
                                                                        View header = navigationView.getHeaderView(0);
                                                                        TextView user_name_tv = header.findViewById(R.id.nav_tv_user_name);
                                                                        user_name_tv.setText(fbUser.getDisplayName());
-                                                                       setSnackbar(fbUser);
+                                                                       Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + fbUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
                                                                        getActivity().onBackPressed(); // Close fragment
                                                                    }
                                                                }
