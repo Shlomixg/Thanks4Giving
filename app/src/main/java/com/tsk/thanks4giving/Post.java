@@ -10,6 +10,7 @@ public class Post {
     public String address;
     public String coordinates;
     public String locationMethod;
+    public String date;
     public int status; // 1 = available 0 = not available
     public String category; // items general category
     public String postImage; // Item image
@@ -21,7 +22,7 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod,String date, int status, String category, String postImage) {
         this.postID = postid;
         this.userUid = userUid;
         this.status = status;
@@ -29,6 +30,7 @@ public class Post {
         this.address = address;
         this.coordinates = coordinates;
         this.locationMethod = locationMethod;
+        this.date=date;
         this.category = category;
         this.postImage = postImage;
         this.likes = new ArrayList<String>();
@@ -134,5 +136,13 @@ public class Post {
 
     public void setLocationMethod(String locationMethod) {
         this.locationMethod = locationMethod;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

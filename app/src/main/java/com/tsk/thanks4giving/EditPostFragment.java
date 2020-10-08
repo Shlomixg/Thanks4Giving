@@ -94,7 +94,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
     final String RECYCLER_FRAG = "Recycler View Fragment";
     String path, path2;
     String coordinates, location_method, randomKey;
-    String postID;
+    String postID,date1;
 
     LovelyProgressDialog progressLoadingDialog;
 
@@ -205,6 +205,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                         else uploadPicture();
                         if (coordinates == null || coordinates.equals(""))
                             coordinates = post.getCoordinates();
+                        date1=post.getDate();
                         progressLoadingDialog.dismiss();
                     }
             }
@@ -293,7 +294,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                 if (flag_location == 0) location_method = "GPS";
                 else location_method = "Google";
                 Post tempPost = new Post(postID, currentFBUser.getUid(), descriptionET.getText().toString()
-                        , addressTv.getText().toString(), coordinates, location_method, 1, spinner.getSelectedItem().toString(), path2);
+                        , addressTv.getText().toString(), coordinates, location_method,date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(tempPost);
 
                 setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);

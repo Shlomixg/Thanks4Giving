@@ -129,6 +129,22 @@
         <item name="Clothes">Clothes</item>
         <item name="Games">Games</item>
     </string-array>
+    <string-array name="categories_for_filter">
+        <item name="Choose Category">Choose Category</item>
+        <item name="All Categories">All Categories</item>
+        <item name="Electronics">Electronics</item>
+        <item name="Furniture">Furniture</item>
+        <item name="Sport">Sport</item>
+        <item name="Clothes">Clothes</item>
+        <item name="Games">Games</item>
+    </string-array>
+    <string-array name="times">
+        <item name="Time">Time </item>
+        <item name="Today">Today</item>
+        <item name="Last 3 days">Last 3 days</item>
+        <item name="Last week">Last week</item>
+        <item name="All posts">All posts</item>
+    </string-array>
     <string name="need_permissions">Need permissions to open camera or gallery</string>
     <string name="welcome_back">, Welcome back</string>
     <string name="login_fail">Login failed</string>
@@ -160,4 +176,7 @@
     <string name="must_be_logged">Must be logged in to use this feature</string>
     <string name="no_empty_comment">Cannot post empty comment</string>
     <string name="EditingPost">Editing Post</string>
+    <string name="submit_filter">Submit</string>
+    <string name="keywordhint">What are you looking for ?</string>
+    <string name="cleanfilters">Clean Filters</string>
 </resources>
