@@ -19,12 +19,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,8 +46,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.stfalcon.imageviewer.loader.ImageLoader;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment {
@@ -126,7 +131,8 @@ public class PostFragment extends Fragment {
                             .load(post.postImage)
                             .centerCrop()
                             .into(postImageView);
-                    if (currentUser != null && currentUser.getUid().equals(post.userUid)) edit_btn.setVisibility(View.VISIBLE);
+                    if (currentUser != null && currentUser.getUid().equals(post.userUid))
+                        edit_btn.setVisibility(View.VISIBLE);
                     String coordinates = post.coordinates;
                     String a[] = coordinates.split(",");
                     location = new Location("dummyProvider");
@@ -153,13 +159,17 @@ public class PostFragment extends Fragment {
                                 post_date_tv.setText("Date");
                             }
                         }
+
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) { }
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
                     });
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { } // TODO: error handling
+            public void onCancelled(@NonNull DatabaseError error) {
+            } // TODO: error handling
         });
 
         edit_btn.setOnClickListener(new View.OnClickListener() {
@@ -195,10 +205,12 @@ public class PostFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             String uid = snapshot.child("userUid").getValue(String.class);
                             topic[0] = "commentNotif" + uid;
-                            Log.d("fcm","Post: " + topic[0]);
+                            Log.d("fcm", "Post: " + topic[0]);
                         }
+
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) {}
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
                     });
                     final JSONObject rootObject = new JSONObject();
                     try {
@@ -207,20 +219,17 @@ public class PostFragment extends Fragment {
                         String url = "https://fcm.googleapis.com/fcm/send";
 
                         RequestQueue queue = Volley.newRequestQueue(getContext());
-                        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>()
-                        {
+                        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.d("fcm","response:" + response);
+                                Log.d("fcm", "response:" + response);
                             }
-                        }, new Response.ErrorListener()
-                        {
+                        }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("fcm","error:" + error.getMessage());
+                                Log.d("fcm", "error:" + error.getMessage());
                             }
-                        })
-                        {
+                        }) {
                             @Override
                             public Map<String, String> getHeaders() throws AuthFailureError {
                                 Map<String, String> headers = new HashMap<>();
@@ -228,6 +237,7 @@ public class PostFragment extends Fragment {
                                 headers.put("Authorization", "key=" + SK);
                                 return headers;
                             }
+
                             @Override
                             public byte[] getBody() throws AuthFailureError {
                                 return rootObject.toString().getBytes();
@@ -255,8 +265,10 @@ public class PostFragment extends Fragment {
                 }
                 adapter.notifyDataSetChanged();
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
 
         commentsRecycler.setHasFixedSize(true);
@@ -340,8 +352,10 @@ public class PostFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 

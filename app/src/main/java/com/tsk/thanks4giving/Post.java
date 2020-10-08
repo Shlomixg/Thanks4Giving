@@ -22,7 +22,7 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod,String date, int status, String category, String postImage) {
+    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod, String date, int status, String category, String postImage) {
         this.postID = postid;
         this.userUid = userUid;
         this.status = status;
@@ -30,7 +30,7 @@ public class Post {
         this.address = address;
         this.coordinates = coordinates;
         this.locationMethod = locationMethod;
-        this.date=date;
+        this.date = date;
         this.category = category;
         this.postImage = postImage;
         this.likes = new ArrayList<String>();
@@ -54,6 +54,22 @@ public class Post {
 
     public int getStatus() {
         return status;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public String getLocationMethod() {
+        return locationMethod;
     }
 
     public String getCategory() {
@@ -114,33 +130,19 @@ public class Post {
         this.watching = watching;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getCoordinates() {
-        return coordinates;
     }
 
     public void setCoordinates(String coordinates) {
         this.coordinates = coordinates;
     }
 
-    public String getLocationMethod() {
-        return locationMethod;
-    }
 
     public void setLocationMethod(String locationMethod) {
         this.locationMethod = locationMethod;
     }
 
-    public String getDate() {
-        return date;
-    }
 
     public void setDate(String date) {
         this.date = date;

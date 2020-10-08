@@ -29,8 +29,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +43,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -68,10 +65,10 @@ public class RecyclerViewFragment extends Fragment {
     private String mUserUid;
     private int mItemsStatus;
     EditText keyword;
-    Spinner spinner,timer_spinner;
-    Button filter_btn,search_btn,clean_btn,submit_filter_btn,submit_search_btn;
-    ImageButton close_btn,close_search_btn;
-    LinearLayout filters,search,filter_submit,search_submit;
+    Spinner spinner, timer_spinner;
+    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn;
+    ImageButton close_btn, close_search_btn;
+    LinearLayout filters, search, filter_submit, search_submit;
     long diff;
     int required_days;
 
@@ -109,11 +106,11 @@ public class RecyclerViewFragment extends Fragment {
         });
         clean_btn = rootView.findViewById(R.id.clean_filter_btn);
         filter_btn = rootView.findViewById(R.id.filter_btn);
-        search_btn=rootView.findViewById(R.id.search_btn);
-        search_submit=rootView.findViewById(R.id.linear_submitsearch);
-        search=rootView.findViewById(R.id.linear_search);
-        filters=rootView.findViewById(R.id.linear_filter);
-        filter_submit=rootView.findViewById(R.id.linear_filter_submit);
+        search_btn = rootView.findViewById(R.id.search_btn);
+        search_submit = rootView.findViewById(R.id.linear_submitsearch);
+        search = rootView.findViewById(R.id.linear_search);
+        filters = rootView.findViewById(R.id.linear_filter);
+        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,7 +124,6 @@ public class RecyclerViewFragment extends Fragment {
             public void onClick(View v) {
                 spinner.setSelection(0);
                 timer_spinner.setSelection(0);
-
 //                Toast.makeText(getContext(), "Days: "+daysBetween, Toast.LENGTH_SHORT).show();
 
             }
@@ -140,7 +136,6 @@ public class RecyclerViewFragment extends Fragment {
                 filter_submit.setVisibility(View.VISIBLE);
                 search.setVisibility(View.GONE);
                 search_submit.setVisibility(View.GONE);
-
             }
         });
         search_btn.setOnClickListener(new View.OnClickListener() {
@@ -150,7 +145,6 @@ public class RecyclerViewFragment extends Fragment {
                 filter_submit.setVisibility(View.GONE);
                 search.setVisibility(View.VISIBLE);
                 search_submit.setVisibility(View.VISIBLE);
-
             }
         });
         spinner = rootView.findViewById(R.id.category_spinner_filter);
@@ -207,23 +201,22 @@ public class RecyclerViewFragment extends Fragment {
         timer_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (timer_spinner.getSelectedItem().toString())
-                {
+                switch (timer_spinner.getSelectedItem().toString()) {
                     case "Today":
-                        required_days=1;
-                        break ;
+                        required_days = 1;
+                        break;
                     case "Last 3 days":
-                        required_days=3;
-                        break ;
+                        required_days = 3;
+                        break;
                     case "Last week":
-                        required_days=7;
-                        break ;
+                        required_days = 7;
+                        break;
                     case "All posts":
-                        required_days=-1;
-                        break ;
+                        required_days = -1;
+                        break;
                     case "Time":
-                        required_days=-1;
-                        break ;
+                        required_days = -1;
+                        break;
                     default:
                 }
             }
@@ -235,20 +228,15 @@ public class RecyclerViewFragment extends Fragment {
         });
         timer_spinner.setSelection(0);
 
-
-
-
-        submit_filter_btn=rootView.findViewById(R.id.submit_filter);
-        submit_search_btn=rootView.findViewById(R.id.submit_serach);
+        submit_filter_btn = rootView.findViewById(R.id.submit_filter);
+        submit_search_btn = rootView.findViewById(R.id.submit_serach);
         submit_search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Post pos = ds.getValue(Post.class);
                             Location location = new Location("dummyProvider");
@@ -275,32 +263,23 @@ public class RecyclerViewFragment extends Fragment {
                             }
                             Toast.makeText(getContext(), "rew Days: " + required_days, Toast.LENGTH_SHORT).show();
 
-
                             if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
                                 if (pos.getDesc().contains(keyword.getText().toString()) && pos.getCategory().equals(spinner.getSelectedItem())) {
                                     if (required_days != -1) {
-
                                         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                                             postList.add(pos);
-
                                         }
                                     } else {
                                         postList.add(pos);
-
                                     }
                                 } else if (pos.getDesc().contains(keyword.getText().toString()) && spinner.getSelectedItem().equals("All Categories")) {
                                     if (required_days != -1) {
-
                                         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                                             postList.add(pos);
-
                                         }
                                     } else {
                                         postList.add(pos);
-
                                     }
-
-
                                 }
                         }
                         Collections.reverse(postList);
@@ -314,7 +293,7 @@ public class RecyclerViewFragment extends Fragment {
             }
         });
 
-        keyword=rootView.findViewById(R.id.keyword);
+        keyword = rootView.findViewById(R.id.keyword);
         submit_filter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -363,8 +342,7 @@ public class RecyclerViewFragment extends Fragment {
                                         postList.add(pos);
 
                                     }
-                                } else if (pos.getDesc().contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())))
-                            {
+                                } else if (pos.getDesc().contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()))) {
                                     if (required_days != -1) {
 
                                         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
@@ -389,9 +367,6 @@ public class RecyclerViewFragment extends Fragment {
                 });
             }
         });
-
-
-
 
 
         bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
@@ -419,7 +394,7 @@ public class RecyclerViewFragment extends Fragment {
 //                    {
 //                        holder.edit_btn.setVisibility(View.VISIBLE);
 //                    }
-                                                   }
+                        }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
 
@@ -464,7 +439,6 @@ public class RecyclerViewFragment extends Fragment {
 
             }
         });
-
 
         final String path = "android.resource://com.tsk.thanks4giving/drawable/ic_home"; //TODO ???
 

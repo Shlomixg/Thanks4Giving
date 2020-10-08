@@ -131,7 +131,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     } else {
                         Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
                     }
-                    if (currentUser != null && user.uid.equals(currentUser.getUid())) holder.edit_btn.setVisibility(View.VISIBLE);
+                    if (currentUser != null && user.uid.equals(currentUser.getUid()))
+                        holder.edit_btn.setVisibility(View.VISIBLE);
                     holder.userNameTV.setText(user.name);
                 }
             }

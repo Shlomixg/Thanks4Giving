@@ -261,12 +261,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 if (flag_location == 0) location_method = "GPS";
                 else location_method = "Google";
 
-                SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy");
-                Date date=new Date();
-                String date1=format.format(date);
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                Date date = new Date();
+                String date1 = format.format(date);
 
 
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method,date1, 1, spinner.getSelectedItem().toString(), path2);
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
 
                 // Save post id in user data

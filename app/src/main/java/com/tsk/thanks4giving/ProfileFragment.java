@@ -157,7 +157,6 @@ public class ProfileFragment extends Fragment {
             }
 
 
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.d("Profile Log", "--- Profile display failed");

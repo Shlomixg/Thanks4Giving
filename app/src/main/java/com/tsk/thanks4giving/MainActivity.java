@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
 
-        boolean autoLocation = sharedPrefs.getBoolean("locationPref",false);
+        boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
         if (autoLocation)
             scheduleJob();
 
@@ -143,11 +143,10 @@ public class MainActivity extends AppCompatActivity {
                 currentUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if (currentUser != null) { // Sign up or login
-                    if(commentSwitch)
-                    {
+                    if (commentSwitch) {
                         String topic = "commentNotif" + mAuth.getUid();
                         messaging.subscribeToTopic(topic);
-                        Log.d("fcm","authState: " + topic + " subscribed");
+                        Log.d("fcm", "authState: " + topic + " subscribed");
                     }
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
@@ -262,8 +261,7 @@ public class MainActivity extends AppCompatActivity {
         else Log.d("ddd", "Job scheduling failed");
     }
 
-    public static void setCommentSwitch(boolean val)
-    {
+    public static void setCommentSwitch(boolean val) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getUid();
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();
@@ -271,11 +269,11 @@ public class MainActivity extends AppCompatActivity {
         if (val) {
             commentSwitch = true;
             messaging.subscribeToTopic(topic);
-            Log.d("fcm","Switch: " + topic + " subscribed");
+            Log.d("fcm", "Switch: " + topic + " subscribed");
         } else {
             commentSwitch = false;
             messaging.unsubscribeFromTopic(topic);
-            Log.d("fcm","Switch: " + topic + " unsubscribed");
+            Log.d("fcm", "Switch: " + topic + " unsubscribed");
         }
     }
 

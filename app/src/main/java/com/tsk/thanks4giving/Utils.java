@@ -48,7 +48,7 @@ public class Utils {
                 Utils.setTheme(Integer.parseInt(theme));
                 break;
             case KEY_COMMENT:
-                MainActivity.setCommentSwitch(sharedPrefs.getBoolean(KEY_COMMENT,true));
+                MainActivity.setCommentSwitch(sharedPrefs.getBoolean(KEY_COMMENT, true));
                 break;
         }
     }
