@@ -66,6 +66,7 @@ public class EditProfileFragment extends Fragment {
     String randomKey, profile_photo_path;
     File file;
     Uri imageUri;
+
     int flag = 0;
 
     LovelyProgressDialog progressLoadingDialog;

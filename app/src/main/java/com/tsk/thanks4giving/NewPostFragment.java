@@ -71,8 +71,10 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -259,7 +261,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 if (flag_location == 0) location_method = "GPS";
                 else location_method = "Google";
 
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, 1, spinner.getSelectedItem().toString(), path2);
+                SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy");
+                Date date=new Date();
+                String date1=format.format(date);
+
+
+                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method,date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
 
                 // Save post id in user data

@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".RecyclerViewFragment">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,11 +19,10 @@
 
             <com.xw.repo.BubbleSeekBar
                 android:id="@+id/BubbleSeekBar"
-                android:layout_width="match_parent"
+                android:layout_width="325dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
+                android:layout_weight="1"
                 app:bsb_bubble_color="#BD574F"
                 app:bsb_bubble_text_color="@color/colorWhite"
                 app:bsb_max="200"
@@ -37,8 +35,148 @@
                 app:bsb_show_section_mark="true"
                 app:bsb_show_section_text="true"
                 app:bsb_show_thumb_text="true"
-                app:bsb_track_color="@color/colorAccent"/>
+                app:bsb_track_color="@color/colorAccent" />
 
+            <Button
+                android:id="@+id/search_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_baseline_search_24"
+                /><Button
+            android:id="@+id/filter_btn"
+            android:layout_width="40sp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/filter_icon"
+            />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/all_filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/linear_search"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search"
+                    android:layout_marginRight="25dp"/>
+                <EditText
+                    android:id="@+id/keyword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/keywordhint"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linear_filter"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/category_spinner_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:gravity="center"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_weight="1"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
+                <Spinner
+                    android:id="@+id/time_spinner_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_filter_submit"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/submit_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:layout_marginRight="50dp"
+                    android:text="@string/submit_filter"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
+                <Button
+                    android:id="@+id/clean_filter_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/cleanfilters"
+                    android:textColor="@color/colorWhite"
+                    android:layout_marginRight="5dp"
+                    android:textSize="20sp" />
+
+
+                <ImageButton
+                    android:id="@+id/close_all_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_baseline_close_24"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linear_submitsearch"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/submit_serach"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="15dp"
+                    android:layout_marginRight="150dp"
+                    android:text="@string/submit_filter"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
+                <ImageButton
+                    android:id="@+id/close_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_baseline_close_24"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
+
+
+            </LinearLayout>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
