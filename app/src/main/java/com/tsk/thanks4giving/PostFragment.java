@@ -1,9 +1,7 @@
 package com.tsk.thanks4giving;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.location.Address;
 import android.location.Geocoder;
@@ -19,17 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,11 +44,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.stfalcon.imageviewer.loader.ImageLoader;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,7 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment {
@@ -162,22 +153,14 @@ public class PostFragment extends Fragment {
                                 post_date_tv.setText("Date");
                             }
                         }
-
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
+                        public void onCancelled(@NonNull DatabaseError error) { }
                     });
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // TODO: error handling
-            }
+            public void onCancelled(@NonNull DatabaseError error) { } // TODO: error handling
         });
-
-
 
         edit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,21 +176,21 @@ public class PostFragment extends Fragment {
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FirebaseAuth.getInstance().getCurrentUser() != null && !comment.getText().toString().equals("")) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null && !comment_et.getText().toString().equals("")) {
                     String uid = mAuth.getCurrentUser().getUid();
                     String userName = mAuth.getCurrentUser().getDisplayName();
-                    String text = comment.getText().toString();
+                    String text = comment_et.getText().toString();
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date date = new Date();
                     String date1 = format.format(date);
                     Toast.makeText(getContext(), date1, Toast.LENGTH_SHORT).show();
                     Comment newComment = new Comment(uid, userName, text, date1);
-                    comments.child(data).push().setValue(newComment);
-                    comment.setText("");
+                    comments.child(postID).push().setValue(newComment);
+                    comment_et.setText("");
 
                     //send notification to post owner
                     String textToSend = getString(R.string.new_comment) + userName;
-                    posts.child(data).addListenerForSingleValueEvent(new ValueEventListener() {
+                    posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             String uid = snapshot.child("userUid").getValue(String.class);
@@ -217,7 +200,6 @@ public class PostFragment extends Fragment {
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {}
                     });
-
                     final JSONObject rootObject = new JSONObject();
                     try {
                         rootObject.put("to", "/topics/" + topic[0]);
@@ -238,7 +220,6 @@ public class PostFragment extends Fragment {
                                 Log.d("fcm","error:" + error.getMessage());
                             }
                         })
-
                         {
                             @Override
                             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -252,16 +233,14 @@ public class PostFragment extends Fragment {
                                 return rootObject.toString().getBytes();
                             }
                         };
-
                         queue.add(request);
                         queue.start();
                     } catch (JSONException ex) {
                         ex.printStackTrace();
                     }
-
                 } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
-                else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment.getText().toString().equals(""))
+                else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment_et.getText().toString().equals(""))
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
             }
         });
@@ -276,11 +255,8 @@ public class PostFragment extends Fragment {
                 }
                 adapter.notifyDataSetChanged();
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
 
         commentsRecycler.setHasFixedSize(true);
@@ -330,7 +306,6 @@ public class PostFragment extends Fragment {
                 startActivity(sendIntent);
             }
         });
-
         return rootView;
     }
 
@@ -365,12 +340,9 @@ public class PostFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
-
     }
 
     public Uri SaveImage(Bitmap finalBitmap) {
@@ -403,19 +375,4 @@ public class PostFragment extends Fragment {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
-    private Bitmap addWaterMark(Bitmap src) {
-        int w = src.getWidth();
-        int h = src.getHeight();
-        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
-        Canvas canvas = new Canvas(result);
-        canvas.drawBitmap(src, 0, 0, null);
-
-        Bitmap waterMark = BitmapFactory.decodeResource(getResources(), R.drawable.ic_baseline_share_24);
-        //  canvas.drawBitmap(waterMark, 0, 0, null);
-        int startX = (canvas.getWidth() - waterMark.getWidth()) / 2;//for horisontal position
-        int startY = (canvas.getHeight() - waterMark.getHeight()) / 2;//for vertical position
-        canvas.drawBitmap(waterMark, startX, startY, null);
-
-        return result;
-    }
 }

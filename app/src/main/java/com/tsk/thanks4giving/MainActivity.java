@@ -71,11 +71,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(mAuth.getUid() != null) {
+       /* if(mAuth.getUid() != null) {
             String topic = "commentNotif" + mAuth.getUid();
             messaging.subscribeToTopic(topic);
-            Log.d("fcm","onCreate: " + topic);
-        }
+            Log.d("fcm","onCreate: " + topic + " subscribed");
+        }*/
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     {
                         String topic = "commentNotif" + mAuth.getUid();
                         messaging.subscribeToTopic(topic);
-                        Log.d("fcm","authState: " + topic);
+                        Log.d("fcm","authState: " + topic + " subscribed");
                     }
                     navigationView.inflateMenu(R.menu.main_menu);
                     invalidateOptionsMenu();
@@ -268,13 +268,14 @@ public class MainActivity extends AppCompatActivity {
         String uid = mAuth.getUid();
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();
         String topic = "commentNotif" + uid;
-        Log.d("fcm","Switch: " + topic);
         if (val) {
             commentSwitch = true;
             messaging.subscribeToTopic(topic);
+            Log.d("fcm","Switch: " + topic + " subscribed");
         } else {
             commentSwitch = false;
             messaging.unsubscribeFromTopic(topic);
+            Log.d("fcm","Switch: " + topic + " unsubscribed");
         }
     }
 
