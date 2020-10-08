@@ -59,4 +59,13 @@
     </string-array>
     <string name="must_be_logged">צריך להיות מחובר על מנת להשתמש במאפיין זה</string>
     <string name="no_empty_comment">לא ניתן לפרסם תגובה ריקה</string>
+    <string name="auto_location">מיקום</string>
+    <string name="allow_auto_location">עדכון מיקום אוטומטי</string>
+    <string name="auto_location_summery">אפשר לאפליקציה לקבל עדכוני מיקום באופן אוטומטי בהפעלה הבאה</string>
+    <string name="comments_switch">תגובות</string>
+    <string name="notifications">התראות</string>
+    <string name="comments_summery">קבל התראות על תגובות בפוסטים שלך</string>
+    <string name="new_comment">יש לך תגובה חדשה בפוסט מ-</string>
+    <string name="EditingPost">עריכת פוסט</string>
+    <string name="new_comment_title">בדוק את התגובות בפוסט שלך!</string>
 </resources>

@@ -30,6 +30,7 @@ public class Utils {
     private final static int THEME_DARK = 3;
 
     private static final String KEY_PREF_THEME = "pref_theme";
+    private static final String KEY_COMMENT = "commentSwitch";
 
     static void loadPrefs(SharedPreferences sharedPrefs) {
         Utils.sharedPrefs = sharedPrefs;
@@ -45,6 +46,9 @@ public class Utils {
             case KEY_PREF_THEME:
                 String theme = sharedPrefs.getString(key, "1");
                 Utils.setTheme(Integer.parseInt(theme));
+                break;
+            case KEY_COMMENT:
+                MainActivity.setCommentSwitch(sharedPrefs.getBoolean(KEY_COMMENT,true));
                 break;
         }
     }

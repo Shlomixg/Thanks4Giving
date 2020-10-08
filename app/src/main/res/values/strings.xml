@@ -111,7 +111,7 @@
     <string name="take_picture">Take Picture</string>
     <string name="picture_from_gallery">Picture from gallery</string>
     <string name="share">Share</string>
-    <string name="comment">Comment...</string>
+    <string name="comment">Comment…</string>
     <string name="post_comment_btn">Post</string>
     <string name="gender">Gender</string>
     <string name="profile_edit_btn">Edit Profile</string>
@@ -160,4 +160,12 @@
     <string name="must_be_logged">Must be logged in to use this feature</string>
     <string name="no_empty_comment">Cannot post empty comment</string>
     <string name="EditingPost">Editing Post</string>
+    <string name="auto_location">Location</string>
+    <string name="allow_auto_location">Automatic location updates</string>
+    <string name="auto_location_summery">Allow the app to get automatic location updates on next start.</string>
+    <string name="comments_switch">Comments</string>
+    <string name="notifications">Notifications</string>
+    <string name="comments_summery">Receive notifications on comments in your posts.</string>
+    <string name="new_comment">"You have a new post comment from "</string>
+    <string name="new_comment_title">Check your post comments!</string>
 </resources>
