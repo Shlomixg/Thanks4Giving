@@ -1,7 +1,6 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -34,7 +33,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -62,55 +60,64 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 public class EditPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
-    final int WRITE_PERMISSION_REQUEST = 1;
-    final int LOCATION_PERMISSION_REQUEST = 2;
-    static final int PICK_IMAGE = 1;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
+    final int WRITE_PERMISSION_REQUEST = 1, LOCATION_PERMISSION_REQUEST = 2;
+    static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
     int flag = 0;
     int flag_location = 0;
-    EditText descriptionET;
-    EditText addressTv;
-    Handler handler = new Handler();//##
+    EditText descriptionET, addressTv;
+    Handler handler = new Handler(); //##
     Geocoder geocoder; //##
-    LocationManager manager;//##
-    Button btn_gps, camera_btn, browse_btn;//##
+    LocationManager manager; //##
+    Button btn_gps, camera_btn, browse_btn; //##
     File file;
     Uri imageUri;
     ImageView image;
     Spinner spinner;
     ImageButton confirm_btn; //%
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    String path;
-    String path2;
-    String coordinates;
-    String location_method;
-    String randomKey;
-    DatabaseReference ref;
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    String path, path2;
+    String coordinates, location_method, randomKey;
+    String postID;
+
+    LovelyProgressDialog progressLoadingDialog;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private FirebaseStorage storage;
+    DatabaseReference posts = database.getReference().child("posts");
     private StorageReference storageReference;
-    String postID;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        progressLoadingDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like)
+                .setTitle("Loading data...") // TODO: Move to strings
+                .setMessage("Please wait");
+        progressLoadingDialog.show();
+
         geocoder = new Geocoder(getContext());
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -134,7 +141,6 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         if (getArguments() != null) {
             postID = getArguments().getString("postId");
             Toast.makeText(getActivity(), postID, Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
-
         }
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
@@ -151,7 +157,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
             }
         });
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
-        descriptionET = rootView.findViewById(R.id.condition_editText);//##
+        descriptionET = rootView.findViewById(R.id.condition_editText); //##
         image = rootView.findViewById(R.id.newPostImage);
         spinner = rootView.findViewById(R.id.category_spinner);
         confirm_btn = rootView.findViewById(R.id.confirm_btn);
@@ -186,6 +192,31 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         spinner.setOnItemSelectedListener(this);
         spinner.setSelection(0, false);
 
+        // Loading existing data into UI
+        posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Post post = snapshot.getValue(Post.class);
+                    if (post != null) {
+                        addressTv.setText(post.address);
+                        descriptionET.setText(post.desc);
+                        Glide.with(getActivity()).load(post.postImage).centerCrop().into(image);
+                        if (imageUri == null) path2 = post.postImage;
+                        else uploadPicture();
+                        if (coordinates == null || coordinates.equals(""))
+                            coordinates = post.getCoordinates();
+                        progressLoadingDialog.dismiss();
+                    }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("EditPost Log", "--- Post loading failed");
+                Log.d("EditPost Log", "--- Error: " + error);
+                // TODO: Add error handling
+                progressLoadingDialog.dismiss();
+            }
+        });
+
         btn_gps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,89 +236,106 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag = 1;
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-                    } else {
-                        Random r = new Random();
-                        int low = 10, high = 1000000;
-                        int result = r.nextInt(high - low) + low;
-                        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    }
-                }
+                // TODO: Check on SDK 23
+                Dexter.withContext(getContext())
+                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                takePicture();
+                            }
+
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                showSettingsDialog("Camera"); // TODO: Strings with explanation
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                // TODO: Display dialog with explanation why this permission needed
+                                permissionToken.continuePermissionRequest();
+                            }
+                        })
+                        .check();
             }
         });
 
         browse_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag = 2;
-                if (Build.VERSION.SDK_INT >= 23) {
+                Dexter.withContext(getContext())
+                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                                selectPicture();
+                            }
 
-                    if (getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
-                    } else {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-                    }
-                }
-            }
-        });
+                            @Override
+                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                                showSettingsDialog("Browse"); // TODO: Strings with explanation
+                            }
 
-
-        ref = mDatabase.child("posts");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Post pos = ds.getValue(Post.class);
-                    if (pos.getPostID()==postID)
-                    {
-                        addressTv.setText(pos.getAddress());
-                        descriptionET.setText(pos.getDesc());
-                        Glide.with(getActivity()).load(pos.getPostImage()).centerCrop().into(image);
-                        if (imageUri==null)
-                            path2=pos.getPostImage();
-                        else
-                            uploadPicture();
-                        if (coordinates==null ||coordinates.equals(""))
-                            coordinates=pos.getCoordinates();
-                    }
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                                // TODO: Display dialog with explanation why this permission needed
+                                permissionToken.continuePermissionRequest();
+                            }
+                        })
+                        .check();
             }
         });
 
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
-                if (flag_location == 0)
-                    location_method = "GPS";
-                else
-                    location_method = "Google";
-                Post post2 = new Post(postID, currentFBUser.getUid(), descriptionET.getText().toString()
+                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
+                if (flag_location == 0) location_method = "GPS";
+                else location_method = "Google";
+                Post tempPost = new Post(postID, currentFBUser.getUid(), descriptionET.getText().toString()
                         , addressTv.getText().toString(), coordinates, location_method, 1, spinner.getSelectedItem().toString(), path2);
-                ref.child(postID).setValue(post2);
+                posts.child(postID).setValue(tempPost);
+
                 setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
             }
         });
         return rootView;
+    }
+
+    private void takePicture() {
+        Random r = new Random();
+        int low = 10, high = 1000000, result = r.nextInt(high - low) + low;
+        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); // eran
+        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // eran
+        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    }
+
+    private void selectPicture() {
+        Intent selectIntent = new Intent();
+        selectIntent.setType("image/*");
+        selectIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        startActivityForResult(Intent.createChooser(selectIntent, "Select Image"), PICK_IMAGE);
+    }
+
+    public void showSettingsDialog(String explanation) {
+        new LovelyStandardDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setPositiveButton(R.string.settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.ic_like)
+                .setTitle(R.string.attention)
+                .setMessage(explanation)
+                .show();
     }
 
     @Override
@@ -296,7 +344,6 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         final double lng = location.getLongitude();
         coordinates = lat + "," + lng;
         //descriptionET.setText(lat + " , " + lng);
-
         new Thread() {
             @Override
             public void run() {
@@ -322,72 +369,10 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
-                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // finish();
-                            }
-                        }).setCancelable(false).show();
+                showSettingsDialog(getString(R.string.location_permission));
             } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                //Request location updates:
+                // Request location updates:
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, EditPostFragment.this);
-            }
-
-        }
-
-
-        if (requestCode == WRITE_PERMISSION_REQUEST) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(getString(R.string.attention)).setMessage(getString(R.string.location_permission))
-                        .setPositiveButton(getString(R.string.settings), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // finish();
-                            }
-                        }).setCancelable(false).show();
-
-                Toast.makeText(getActivity(), getString(R.string.need_permissions), Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
-//                camera_btn.setVisibility(View.GONE);
-//                browse_btn.setVisibility(View.GONE);
-            } else {
-                camera_btn.setVisibility(View.VISIBLE);
-                browse_btn.setVisibility(View.VISIBLE);
-                Random r = new Random();
-                int low = 10;
-                int high = 1000000;
-                int result = r.nextInt(high - low) + low;
-                file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); //eran
-                imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-                if (flag == 1) {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);// eran
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                } else if (flag == 2) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                    startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-                }
             }
         }
     }
@@ -400,11 +385,11 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
             imageUri = data.getData();
             image.setImageURI(imageUri);
             uploadPicture();
-
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
             uploadPicture();
         }
+
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             addressTv.setText(place.getAddress());
@@ -425,8 +410,11 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
     }
 
     private void uploadPicture() {
-        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getActivity());
-        progressDialog.setTitle("Uploading Image...");
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setTitle("Uploading image..."); // TODO: Move to strings
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("images/" + randomKey);
@@ -447,7 +435,6 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
-                        // ...
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -466,7 +453,6 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show(); // for testing
                         path2 = uri.toString();
                     }
                 });

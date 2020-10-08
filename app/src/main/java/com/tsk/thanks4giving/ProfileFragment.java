@@ -159,6 +159,7 @@ public class ProfileFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.d("Profile Log", "--- Profile display failed");
                 Log.d("Profile Log", "--- Error: " + error);
+                // TODO: Add error handling
                 progressDialog.dismiss();
             }
         });

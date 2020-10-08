@@ -71,11 +71,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -111,7 +108,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         geocoder = new Geocoder(getContext());
         storageReference = FirebaseStorage.getInstance().getReference();
 
-
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
         List<String> providers = manager.getProviders(false);
@@ -131,7 +127,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
-
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
         addressTv = rootView.findViewById(R.id.address_editText);//##
@@ -255,9 +250,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             @Override
             public void onClick(View v) {
 
-                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; //here
-                // path2 = "android.resource://com.tsk.thanks4giving/" + R.drawable.tv; //here
-                //uploadPicture();
+                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
 
                 final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
@@ -376,11 +369,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             imageUri = data.getData();
             image.setImageURI(imageUri);
             uploadPicture();
-
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             image.setImageURI(imageUri);
             uploadPicture();
         }
+
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             addressTv.setText(place.getAddress());
@@ -444,7 +437,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(getContext(), uri.toString(), Toast.LENGTH_SHORT).show(); // for testing
                         path2 = uri.toString();
                     }
                 });
