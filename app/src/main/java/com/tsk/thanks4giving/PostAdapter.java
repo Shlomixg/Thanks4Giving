@@ -181,20 +181,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        follows.child(postID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int size = (int) snapshot.getChildrenCount();
-                holder.follow_btn.setText("" + size);
-                if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
-                    holder.follow_btn.setIcon(follow_fill);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
         holder.profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,17 +239,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                comments.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // TODO: Open comments section
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // TODO: Error handling
-                    }
-                });
             }
         });
 

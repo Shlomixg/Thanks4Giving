@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,9 +65,10 @@ public class PostFragment extends Fragment {
 
     ImageView post_image_view;
     TextView comment_date_tv, username_tv, post_date_tv, title_tv, category_tv, desc_tv;
-    MaterialButton share_btn, edit_btn, like_btn, comment_btn, follow_btn;
+    MaterialButton share_btn, edit_btn, like_btn, comment_btn,
+            follow_btn, send_comment_btn, waze_btn, google_maps_btn;
+    ;
     EditText comment_et;
-    Button send_comment_btn;
     CircleImageView user_profile_photo_civ;
     Location location;
     Geocoder geocoder;
@@ -122,8 +122,8 @@ public class PostFragment extends Fragment {
         comment_date_tv = rootView.findViewById(R.id.comment_date);
         send_comment_btn = rootView.findViewById(R.id.post_add_comment_btn);
 
-        ImageButton waze = rootView.findViewById(R.id.waze);
-        ImageButton googleMaps = rootView.findViewById(R.id.googlemaps);
+        waze_btn = rootView.findViewById(R.id.waze_btn);
+        google_maps_btn = rootView.findViewById(R.id.google_maps_btn);
 
         if (getArguments() != null) {
             Bundle bundle = this.getArguments();
@@ -143,8 +143,12 @@ public class PostFragment extends Fragment {
                             .load(post.postImage)
                             .centerCrop()
                             .into(post_image_view);
-                    if (currentUser != null && currentUser.getUid().equals(post.userUid))
+                    if (currentUser != null && currentUser.getUid().equals(post.userUid)) {
                         edit_btn.setVisibility(View.VISIBLE);
+                    } else {
+                        waze_btn.setVisibility(View.VISIBLE);
+                        google_maps_btn.setVisibility(View.VISIBLE);
+                    }
                     String coordinates = post.coordinates;
                     String[] a = coordinates.split(",");
                     location = new Location("dummyProvider");
@@ -183,6 +187,38 @@ public class PostFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             } // TODO: error handling
+        });
+
+        likes.child(postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                like_btn.setText("" + size);
+                if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
+                    like_btn.setIcon(getResources().getDrawable(R.drawable.ic_like_fill, null));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        comments.child(postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                comment_btn.setText("" + size);
+                commentList.clear();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Comment comment = snap.getValue(Comment.class);
+                    commentList.add(comment);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
 
         edit_btn.setOnClickListener(new View.OnClickListener() {
@@ -267,22 +303,6 @@ public class PostFragment extends Fragment {
             }
         });
 
-        comments.child(postID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                commentList.clear();
-                for (DataSnapshot snap : snapshot.getChildren()) {
-                    Comment comment = snap.getValue(Comment.class);
-                    commentList.add(comment);
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-
         commentsRecycler.setHasFixedSize(true);
         commentsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new CommentAdapter(commentList);
@@ -296,7 +316,7 @@ public class PostFragment extends Fragment {
             }
         });
 
-        googleMaps.setOnClickListener(new View.OnClickListener() {
+        google_maps_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -307,13 +327,49 @@ public class PostFragment extends Fragment {
             }
         });
 
-        waze.setOnClickListener(new View.OnClickListener() {
+        waze_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 coordinatesToWaze();
             }
         });
 
+        like_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (currentUser != null) {
+                    final String currUserUid = currentUser.getUid(),
+                            currUserName = currentUser.getDisplayName();
+                    likes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.hasChild(currUserUid)) {
+                                likes.child(postID).child(currUserUid).removeValue();
+                                like_btn.setIcon(getResources().getDrawable(R.drawable.ic_like, null));
+                            } else {
+                                likes.child(postID).child(currUserUid).setValue(currUserName);
+                                like_btn.setIcon(getResources().getDrawable(R.drawable.ic_like_fill, null));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            // TODO: Error handling
+                        }
+                    });
+                } else {
+                    Log.d("Log post like", "Not logged in!");
+                    Snackbar.make(v, R.string.must_be_logged, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        comment_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                comment_et.requestFocus();
+            }
+        });
 
         share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,6 +420,7 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
