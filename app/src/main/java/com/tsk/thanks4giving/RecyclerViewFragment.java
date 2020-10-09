@@ -42,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,9 +72,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     private int mItemsStatus;
     EditText keyword;
     TextView current_text, search_tv, current_search;
-    Spinner spinner, timer_spinner;
+    Spinner spinner, times_spinner;
     Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword,location_filter;
-    ImageButton close_btn, close_search_btn, close_edit_current_filters, close_edit_current_search;
+    ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
     LinearLayout filters, search, filter_submit, search_submit, linear_current_filter;
     long diff;
     int required_days;
@@ -83,8 +82,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     LocationManager manager; //##
     int LOCATION_PERMISSION_REQUEST = 2;
      ProgressDialog progressDialog2;
-    String inputString2;
-    SimpleDateFormat myFormat;
 
 
     public RecyclerViewFragment() {
@@ -110,20 +107,94 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
-         progressDialog2 = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
-        progressDialog2.setTitle(getString(R.string.loading));
-        takeCurrentTime();
-        manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
-        close_edit_current_filters = rootView.findViewById(R.id.close_current_filter);
-        location_filter=rootView.findViewById(R.id.location_filter);
-        location_filter.setOnClickListener(new View.OnClickListener() {
 
+        progressDialog2 = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext()); // loading dialog for gps location
+        progressDialog2.setTitle(getString(R.string.loading)); // set text for dialog
+
+
+        spinner = rootView.findViewById(R.id.category_spinner_filter); // ****categories spinner****
+        times_spinner = rootView.findViewById(R.id.time_spinner_filter);//****times spinner****
+        search_btn = rootView.findViewById(R.id.search_btn); // *****First search Button*****
+        filter_btn = rootView.findViewById(R.id.filter_btn);// *****First filter Button*****
+        location_filter=rootView.findViewById(R.id.location_filter);// ****First location filter button****
+        clean_btn = rootView.findViewById(R.id.clean_filter_btn); // ****clean filters button****
+        close_search_btn = rootView.findViewById(R.id.close_search); // ****close search button****
+        close_filter_button = rootView.findViewById(R.id.close_all_filters);// ****close filter button****
+        edit_current_search = rootView.findViewById(R.id.close_current_search); // ****edit search button****
+        edit_current_filters = rootView.findViewById(R.id.close_current_filter); // ****edit filter button****
+        bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar); // ****SeekBar****
+
+
+        search_btn.setOnClickListener(new View.OnClickListener() { // listener for search button from menu
+            @Override
+            public void onClick(View v) {
+                if (search.getVisibility() == View.GONE) { // if search option is closed
+                    filters.setVisibility(View.GONE);  // hide filters
+                    filter_submit.setVisibility(View.GONE);  // hide submit filter button
+                    search.setVisibility(View.VISIBLE); // show search option
+                    search_submit.setVisibility(View.VISIBLE); // show submit search button
+                    current_search.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
+
+
+        filter_btn.setOnClickListener(new View.OnClickListener() {  // listener for filter button from menu
+            @Override
+            public void onClick(View v) {
+                if (linear_current_filter.getVisibility() == View.GONE) { // if filter option is closed
+                    filters.setVisibility(View.VISIBLE); // show filters
+                    filter_submit.setVisibility(View.VISIBLE); // hide submit filter button
+                    search.setVisibility(View.GONE); // hide search option
+                    search_submit.setVisibility(View.GONE);// hide submit search button
+                }
+            }
+        });
+
+
+
+        clean_btn.setOnClickListener(new View.OnClickListener() { // ****listener for clean filters button****
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                spinner.setSelection(0); // reset spinner
+                times_spinner.setSelection(0); // reset spinner
+                linear_current_filter.setVisibility(View.GONE); // hide all current result layout
+
+            }
+        });
+
+
+
+        close_search_btn.setOnClickListener(new View.OnClickListener() { // listener for close search button layout
+            @Override
+            public void onClick(View v) {
+                search.setVisibility(View.GONE); // hide search option
+                search_submit.setVisibility(View.GONE); // hide submit search button
+            }
+        });
+
+
+
+        close_filter_button.setOnClickListener(new View.OnClickListener() { // listener for close filter button layout
+            @Override
+            public void onClick(View v) {
+                filters.setVisibility(View.GONE); // hide filter option
+                filter_submit.setVisibility(View.GONE); // hide submit filter button
+                linear_current_filter.setVisibility(View.GONE); // hide all current result layout
+            }
+        });
+
+
+
+        location_filter.setOnClickListener(new View.OnClickListener() { // listener for get location Seekbar
             // TODO: Move to strings
             @Override
             public void onClick(View v) {
-                progressDialog2.show();
-
-                if (Build.VERSION.SDK_INT >= 23) {
+                progressDialog2.show(); //start loading dialog
+                if (Build.VERSION.SDK_INT >= 23) { //check permissions for gps location and get it.
                     int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
@@ -134,104 +205,41 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
             }
         });
-        close_edit_current_search = rootView.findViewById(R.id.close_current_search);
-        close_edit_current_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                close_edit_current_search.setVisibility(View.GONE);
-                search_keyword.setVisibility(View.GONE);
-                current_search.setVisibility(View.GONE);
-                search_tv.setVisibility(View.VISIBLE);
-                keyword.setVisibility(View.VISIBLE);
-                search_submit.setVisibility(View.VISIBLE);
 
 
-            }
-        });
-        close_edit_current_filters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filter_submit.setVisibility(View.VISIBLE);
-                filters.setVisibility(View.VISIBLE);
-                linear_current_filter.setVisibility(View.GONE);
-            }
-        });
-        current_text = rootView.findViewById(R.id.current);
-        search_tv = rootView.findViewById(R.id.search_tv);
-        current_search = rootView.findViewById(R.id.current_search);
-        close_btn = rootView.findViewById(R.id.close_all_filter);
-        close_search_btn = rootView.findViewById(R.id.close_search);
-        close_search_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search_submit.setVisibility(View.GONE);
-                search.setVisibility(View.GONE);
-            }
-        });
-        clean_btn = rootView.findViewById(R.id.clean_filter_btn);
-        filter_btn = rootView.findViewById(R.id.filter_btn);
-        search_btn = rootView.findViewById(R.id.search_btn);
-        search_submit = rootView.findViewById(R.id.linear_submitsearch);
-        linear_current_filter = rootView.findViewById(R.id.linear_current_filter);
-        search = rootView.findViewById(R.id.linear_search);
-        filters = rootView.findViewById(R.id.linear_filter);
-        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
-        keyword = rootView.findViewById(R.id.keyword);
-        close_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filters.setVisibility(View.GONE);
-                filter_submit.setVisibility(View.GONE);
-                linear_current_filter.setVisibility(View.GONE);
-            }
-        });
-        clean_btn.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View v) {
-                spinner.setSelection(0);
-                timer_spinner.setSelection(0);
-                filter1.setVisibility(View.GONE);
-                filter2.setVisibility(View.GONE);
-                current_text.setVisibility(View.GONE);
-                close_edit_current_filters.setVisibility(View.GONE);
-                linear_current_filter.setVisibility(View.GONE);
 
-//                Toast.makeText(getContext(), "Days: "+daysBetween, Toast.LENGTH_SHORT).show();
-
+        edit_current_search.setOnClickListener(new View.OnClickListener() { // listener for edit search button - pencil
+            @Override
+            public void onClick(View v) {
+                edit_current_search.setVisibility(View.GONE); // hide edit button
+                search_keyword.setVisibility(View.GONE); //hide  the current keyword.
+                current_search.setVisibility(View.GONE); // hide the text view in red for results
+                search_tv.setVisibility(View.VISIBLE); // show search textview near edittext again
+                keyword.setVisibility(View.VISIBLE); //show edit text again
+                search_submit.setVisibility(View.VISIBLE); //show submit layout again
             }
         });
 
 
-        //        linearLayout_filters=rootView.findViewById(R.id.all_filters);
-        filter_btn.setOnClickListener(new View.OnClickListener() {
+        edit_current_filters.setOnClickListener(new View.OnClickListener() { //listener for edit filters button
             @Override
             public void onClick(View v) {
-                if (linear_current_filter.getVisibility() == View.GONE) {
-                    filters.setVisibility(View.VISIBLE);
-                    filter_submit.setVisibility(View.VISIBLE);
-                    search.setVisibility(View.GONE);
-                    search_submit.setVisibility(View.GONE);
-                }
-
-
+                filter_submit.setVisibility(View.VISIBLE); // show filter submit button
+                filters.setVisibility(View.VISIBLE); // show filters options
+                linear_current_filter.setVisibility(View.GONE); // hide current filter results
             }
         });
-        search_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (search.getVisibility() == View.GONE) {
-                    filters.setVisibility(View.GONE);
-                    filter_submit.setVisibility(View.GONE);
-                    search.setVisibility(View.VISIBLE);
-                    search_submit.setVisibility(View.VISIBLE);
-                    search_submit.setVisibility(View.VISIBLE);
-                }
 
-            }
-        });
-        spinner = rootView.findViewById(R.id.category_spinner_filter);
-        timer_spinner = rootView.findViewById(R.id.time_spinner_filter);
+
+
+
+
+
+
+
+
+
+
         String[] a = getResources().getStringArray(R.array.categories_for_filter);
         String[] b = getResources().getStringArray(R.array.times);
         final ArrayAdapter<String> adapter1 =
@@ -280,11 +288,11 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     }
                 };
         adapter2.setDropDownViewResource(R.layout.spinner_text);
-        timer_spinner.setAdapter(adapter2);
-        timer_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        times_spinner.setAdapter(adapter2);
+        times_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (timer_spinner.getSelectedItem().toString()) {
+                switch (times_spinner.getSelectedItem().toString()) {
                     case "Today":
                         required_days = 0;
                         break;
@@ -309,7 +317,87 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
             }
         });
-        timer_spinner.setSelection(0);
+
+
+
+        bubbleSeekBar.setProgress((float) (100.0));
+        bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(final BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        postList.clear();
+                            showallposts(snapshot); //  loop over all posts and filter by distance
+                        Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
+                        Collections.reverse(postList);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+            @Override
+            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+            }
+            @Override
+            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
+        current_text = rootView.findViewById(R.id.current);
+        search_tv = rootView.findViewById(R.id.search_tv);
+        current_search = rootView.findViewById(R.id.current_search);
+        search_submit = rootView.findViewById(R.id.linear_submitsearch);
+        linear_current_filter = rootView.findViewById(R.id.linear_current_filter);
+        search = rootView.findViewById(R.id.linear_search);
+        filters = rootView.findViewById(R.id.linear_filter);
+        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
+        keyword = rootView.findViewById(R.id.keyword);
+        keyword.setText("");
+
+
+        times_spinner.setSelection(0);
 
 
         submit_filter_btn = rootView.findViewById(R.id.submit_filter);
@@ -326,53 +414,42 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 keyword.setVisibility(View.GONE);
                 search_tv.setVisibility(View.GONE);
                 search_keyword.animate().rotation(search_keyword.getRotation() + 360).start();
-                close_edit_current_search.setVisibility(View.VISIBLE);
+                edit_current_search.setVisibility(View.VISIBLE);
                 search_submit.setVisibility(View.GONE);
+                if (search_keyword.getText().toString().equals(""))
+                {
+                    search.setVisibility(View.VISIBLE);
+                    keyword.setVisibility(View.VISIBLE);
+                    search_tv.setVisibility(View.VISIBLE);
+                    current_search.setVisibility(View.GONE);
+                    search_keyword.setVisibility(View.GONE);
+                    search_submit.setVisibility(View.VISIBLE);
+                    edit_current_search.setVisibility(View.GONE);
+
+                }
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            Post post = ds.getValue(Post.class);
-                               String coordinates = post.coordinates;
-                            String a[] = coordinates.split(",");
-                            Location location2 = new Location("dummyProvider");
-                            location2.setLatitude(Double.parseDouble(a[0]));
-                            location2.setLongitude(Double.parseDouble(a[1]));
+                        if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+                        {
+                            showallposts(snapshot);
+                            Toast.makeText(getContext(), "option A - no location", Toast.LENGTH_SHORT).show();
 
-                            String inputString1 = post.date;
-                            try {
-                                Date date1 = myFormat.parse(inputString1);
-                                Date date2 = myFormat.parse(inputString2);
-                                diff = date2.getTime() - date1.getTime();// calculate the difference
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            if (location_original!=null && location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000) {
-                                if (post.desc.contains(keyword.getText().toString())) {
-//                                    if (pos.getDesc().contains(keyword.getText().toString()) && (pos.getCategory().equals(spinner.getSelectedItem()) || spinner.getSelectedItem().equals("All Categories")) ) {
-//                                    if (required_days != -1) {
-//
-////                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
-//                                            postList.add(pos);
+                        }
+                        else
+                        {
+                            showallpostsNoLocation(snapshot);
+                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
 
-//                                        }
-//                                    } else {
-                                    postList.add(post);
-//                                    }
-                                }
-                            }
-                            else    if (post.desc.contains(keyword.getText().toString())) { // in case - no location
-                                postList.add(post);
-
-                            }
-                            }
-
-
+                        }
 
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
+
+
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -389,96 +466,61 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
                         if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
-                                !(timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem()))) {
+                                !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                             linear_current_filter.setVisibility(View.VISIBLE);
-                            filter2.setText(timer_spinner.getSelectedItem().toString());
+                            filter2.setText(times_spinner.getSelectedItem().toString());
                             filter2.animate().rotation(filter2.getRotation() + 360).start();
                             filter1.setVisibility(View.GONE);
                             filter2.setVisibility(View.VISIBLE);
-                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            edit_current_filters.setVisibility(View.VISIBLE);
                             current_text.setVisibility(View.VISIBLE);
 
                         } else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
-                                timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem())) {
+                                times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                             linear_current_filter.setVisibility(View.VISIBLE);
                             filter1.setText(spinner.getSelectedItem().toString());
                             filter1.animate().rotation(filter1.getRotation() + 360).start();
                             filter2.setVisibility(View.GONE);
                             filter1.setVisibility(View.VISIBLE);
-                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            edit_current_filters.setVisibility(View.VISIBLE);
                             current_text.setVisibility(View.VISIBLE);
 
 
                         } else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
-                                !(timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem()))) {
+                                !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                             linear_current_filter.setVisibility(View.VISIBLE);
                             filter1.setVisibility(View.VISIBLE);
                             filter2.setVisibility(View.VISIBLE);
                             current_text.setVisibility(View.VISIBLE);
-                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            edit_current_filters.setVisibility(View.VISIBLE);
                             filter1.setText(spinner.getSelectedItem().toString());
                             filter1.animate().rotation(filter1.getRotation() + 360).start();
-                            filter2.setText(timer_spinner.getSelectedItem().toString());
+                            filter2.setText(times_spinner.getSelectedItem().toString());
                             filter2.animate().rotation(filter2.getRotation() + 360).start();
 
                         } else if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
-                                timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem())) {
+                                times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                             filter1.setVisibility(View.GONE);
                             filter2.setVisibility(View.GONE);
                             current_text.setVisibility(View.GONE);
                             linear_current_filter.setVisibility(View.GONE);
-                            close_edit_current_filters.setVisibility(View.GONE);
+                            edit_current_filters.setVisibility(View.GONE);
                         }
+//                        if (!keyword.getText().toString().equals("") && keyword!=null)
+                        if (!keyword.getText().toString().equals(""))
+                            search.setVisibility(View.VISIBLE);
+//
+                        if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+                        {
+                            Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
+                            showallposts(snapshot);
 
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            Post post = ds.getValue(Post.class);
+                        }
+                        else
+                        {
+                            showallpostsNoLocation(snapshot);
+                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
 
-                            String coordinates = post.coordinates;
-                            String a[] = coordinates.split(",");
-                            Location location2 = new Location("dummyProvider");
-                            location2.setLatitude(Double.parseDouble(a[0]));
-                            location2.setLongitude(Double.parseDouble(a[1]));
-                            String inputString1 = post.date; // take post time
-                            try {
-                                Date date1 = myFormat.parse(inputString1);
-                                Date date2 = myFormat.parse(inputString2);
-                                diff = date2.getTime() - date1.getTime(); // calculate the difference
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                            if (location_original != null) {
-                                if (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                                    if (post.category.equals(spinner.getSelectedItem()) || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) {
-                                        if (required_days != -1) {
-
-                                            if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
-                                                postList.add(post);
-
-                                            }
-                                        } else {
-                                            postList.add(post);
-
-                                        }
-                                    } else if (post.desc.contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()))) {
-                                        if (required_days != -1) {
-
-                                            if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
-                                                postList.add(post);
-
-                                            }
-                                        } else {
-                                            postList.add(post);
-
-                                        }
-
-
-                                    }
-                            }
-                            else
-                            {
-
-                            }
                         }
 
                         Collections.reverse(postList);
@@ -495,39 +537,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         });
 
 
-        bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
-        bubbleSeekBar.setProgress((float) (100.0));
-        bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
-            @Override
-            public void onProgressChanged(final BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        postList.clear();
-                        filterLocation(snapshot);//                    {
-//                        holder.edit_btn.setVisibility(View.VISIBLE);
-//                    }
-//                        }
-                        Collections.reverse(postList);
-                        adapter.notifyDataSetChanged();
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-            }
-
-            @Override
-            public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
-
-            }
-
-            @Override
-            public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
-
-            }
-        });
 
         refreshLayout = rootView.findViewById(R.id.refresh);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -538,7 +548,17 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                        showallposts(snapshot);
+                        if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+                        {
+                            showallposts(snapshot);
+                            Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            showallpostsNoLocation(snapshot);
+                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
+
+                        }
                         Collections.reverse(postList);
                         // adapter=new PostAdapter(postList);
                         adapter.notifyDataSetChanged();
@@ -563,7 +583,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressDialog.show();
                 postList.clear();
-                showallposts(snapshot);
+                nofilters(snapshot);
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
@@ -603,13 +623,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         return rootView;
     }
 
-    private void takeCurrentTime() {
-        myFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-         inputString2 = myFormat.format(date);
-    }
-
-    private void showallposts(DataSnapshot snapshot) {
+    private void showallpostsNoLocation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post post = ds.getValue(Post.class);
             String coordinates = post.coordinates;
@@ -617,10 +631,99 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             Location location2 = new Location("dummyProvider");
             location2.setLatitude(Double.parseDouble(a[0]));
             location2.setLongitude(Double.parseDouble(a[1]));
-//            if (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-            postList.add(post);
+            SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = new Date();
+            String inputString2 = myFormat.format(date);
+            try {
+                Date date1 = myFormat.parse(post.getDate());
+                Date date2 = myFormat.parse(inputString2);
+                diff = date2.getTime() - date1.getTime();// calculate the difference
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if(post.desc.contains(keyword.getText().toString()) &&
+                    (post.getCategory().equals(spinner.getSelectedItem().toString()) ||
+                            spinner.getSelectedItem().toString().equals("All Categories") ||
+                            spinner.getSelectedItem().toString().equals(spinner.getItemAtPosition(0))) )// if post contain search
+
+            {
+                if (required_days != -1)
+                {
+
+                    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                        postList.add(post);
+                        Toast.makeText(getContext(), "" + post.getDate() + "-" + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    postList.add(post);
+                }
+            }
+            else  if(!post.desc.contains(keyword.getText().toString()))
+            {
+
+            }
         }
     }
+
+    private void nofilters(DataSnapshot snapshot) {
+        for (DataSnapshot ds : snapshot.getChildren()) {
+            Post post = ds.getValue(Post.class);
+            String coordinates = post.coordinates;
+            String a[] = coordinates.split(",");
+            Location location2 = new Location("dummyProvider");
+            location2.setLatitude(Double.parseDouble(a[0]));
+            location2.setLongitude(Double.parseDouble(a[1]));
+             postList.add(post);
+
+        }
+    }
+
+
+
+    private void showallposts(DataSnapshot snapshot) { // show posts by filters and search
+        for (DataSnapshot ds : snapshot.getChildren()) {
+            Post post = ds.getValue(Post.class);
+            String coordinates = post.coordinates;
+            String a[] = coordinates.split(",");
+            Location location2 = new Location("dummyProvider");
+            location2.setLatitude(Double.parseDouble(a[0]));
+            location2.setLongitude(Double.parseDouble(a[1]));
+            SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = new Date();
+            String inputString2 = myFormat.format(date);
+            try {
+                Date date1 = myFormat.parse(post.getDate());
+                Date date2 = myFormat.parse(inputString2);
+                diff = date2.getTime() - date1.getTime();// calculate the difference
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if(post.desc.contains(keyword.getText().toString()) &&
+                    (post.getCategory().equals(spinner.getSelectedItem().toString()) ||
+                            spinner.getSelectedItem().toString().equals("All Categories") ||
+                            spinner.getSelectedItem().toString().equals(spinner.getItemAtPosition(0))) && (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress()*1000))// if post contain search
+
+            {
+                if (required_days != -1)
+                {
+
+                    if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                        postList.add(post);
+                        Toast.makeText(getContext(), "" + post.getDate() + "-" + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
+                    }
+                    }
+                else {
+                        postList.add(post);
+                    }
+                }
+            else  if(!post.desc.contains(keyword.getText().toString()))
+            {
+
+            }
+            }}
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
@@ -687,7 +790,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { // permission function
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
