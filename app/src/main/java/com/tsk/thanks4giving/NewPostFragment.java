@@ -266,7 +266,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 String date1 = format.format(date);
 
 
-                final Post post = new Post(postID, uid, descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, date1, 1, spinner.getSelectedItem().toString(), path2);
+                final Post post = new Post(postID, uid, "TODO: ADD TITLE", descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
 
                 // Save post id in user data

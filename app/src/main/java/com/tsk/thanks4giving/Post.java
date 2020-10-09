@@ -6,6 +6,7 @@ public class Post {
 
     public String postID;
     public String userUid; // UID of the user that posted
+    public String title;
     public String desc; // Description for the item
     public String address;
     public String coordinates;
@@ -22,10 +23,11 @@ public class Post {
 
     }
 
-    public Post(String postid, String userUid, String desc, String address, String coordinates, String locationMethod, String date, int status, String category, String postImage) {
-        this.postID = postid;
+    public Post(String postID, String userUid, String title, String desc, String address, String coordinates, String locationMethod, String date, int status, String category, String postImage) {
+        this.postID = postID;
         this.userUid = userUid;
         this.status = status;
+        this.title = title;
         this.desc = desc;
         this.address = address;
         this.coordinates = coordinates;
@@ -46,6 +48,10 @@ public class Post {
 
     public String getPostID() {
         return postID;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public String getUserUid() {
@@ -106,6 +112,10 @@ public class Post {
         this.userUid = userUid;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setStatus(int status) {
         this.status = status;
     }
@@ -138,11 +148,9 @@ public class Post {
         this.coordinates = coordinates;
     }
 
-
     public void setLocationMethod(String locationMethod) {
         this.locationMethod = locationMethod;
     }
-
 
     public void setDate(String date) {
         this.date = date;

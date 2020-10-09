@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentCardHolder> {
 
@@ -36,10 +34,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
     @Override
     public void onBindViewHolder(@NonNull final CommentCardHolder holder, int position) {
         final Comment comment2 = list.get(position);
-        holder.profileName.setText(comment2.getUserName());
-        holder.message.setText(comment2.getText());
-        holder.date.setText(comment2.getDate());
-
+        holder.profileName.setText(comment2.userName);
+        holder.message.setText(comment2.userID);
+        holder.date.setText(comment2.date);
 
         /*DatabaseReference ref = comments.child("comments").child(comment2.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -72,7 +69,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
             super(itemView);
             profileName = itemView.findViewById(R.id.comment_profile_name);
             message = itemView.findViewById(R.id.comment_message);
-            date = itemView.findViewById(R.id.date);
+            date = itemView.findViewById(R.id.comment_date);
 
         }
     }

@@ -2,28 +2,28 @@ package com.tsk.thanks4giving;
 
 public class Comment {
 
-    private String uid;
-    private String userName;
-    private String text;
+    public String userID;
+    public String userName;
+    public String text;
+    public String date;
 
-    private String date;
-
-    public Comment(String uid, String userName, String text, String date) {
-        this.uid = uid;
+    public Comment(String userID, String userName, String text, String date) {
+        this.userID = userID;
         this.userName = userName;
         this.text = text;
         this.date = date;
     }
 
     public Comment() {
+
     }
 
-    public String getUid() {
-        return uid;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getUserName() {

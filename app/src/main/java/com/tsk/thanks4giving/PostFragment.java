@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,30 +64,32 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment {
 
-    TextView desc_tv;
-    ImageView postImageView;
-    RecyclerView commentsRecycler;
-    Button commentBtn;
+    ImageView post_image_view;
+    TextView comment_date_tv, username_tv, post_date_tv, title_tv, category_tv, desc_tv;
+    MaterialButton share_btn, edit_btn, like_btn, comment_btn, follow_btn;
     EditText comment_et;
-    TextView comment_date_tv, username_tv, post_date_tv, title_tv;
-    MaterialButton edit_btn;
-    Location location;
-    ImageView imageView;
-    CommentAdapter adapter;
-    Geocoder geocoder;
-    String postID;
+    Button send_comment_btn;
     CircleImageView user_profile_photo_civ;
+    Location location;
+    Geocoder geocoder;
+
+    RecyclerView commentsRecycler;
+    CommentAdapter adapter;
+    ArrayList<Comment> commentList = new ArrayList<>();
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    ArrayList<Comment> commentList = new ArrayList<>();
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference posts = database.getReference().child("posts");
+    final DatabaseReference users = database.getReference().child("users");
+    final DatabaseReference comments = database.getReference().child("comments");
+    final DatabaseReference likes = database.getReference().child("likes");
+    final DatabaseReference follows = database.getReference().child("follows");
+
+    String postID;
     final String SK = "AAAAV2IEwl0:APA91bGzC8ukmt6UCf6kWMg4XzoHl9RthEfzBWrhv0HGOjEHrXVr6QwsbEgdXOC2Bb79AJ-P4v4Zh0eWiqPUdamh2P83EhEFymkv3cIA-_iQ7lFSdHNlL4n11oqivy-ahWphe-ANbAYl";
 
     final String[] topic = new String[1];
-    final DatabaseReference users = database.getReference().child("users");
     final String PROFILE_FRAG = "Profile Fragment";
 
     @Override
@@ -102,17 +103,27 @@ public class PostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
 
+        post_image_view = rootView.findViewById(R.id.post_item_img);
         title_tv = rootView.findViewById(R.id.post_item_title);
+        category_tv = rootView.findViewById(R.id.post_item_category);
         desc_tv = rootView.findViewById(R.id.post_item_desc);
-        postImageView = rootView.findViewById(R.id.post_item_img);
-        commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
-        comment_et = rootView.findViewById(R.id.post_comment_et);
-        comment_date_tv = rootView.findViewById(R.id.date);
-        commentBtn = rootView.findViewById(R.id.post_add_comment_btn);
         username_tv = rootView.findViewById(R.id.post_user_name);
         user_profile_photo_civ = rootView.findViewById(R.id.post_frag_profile_img);
         post_date_tv = rootView.findViewById(R.id.post_date);
         edit_btn = rootView.findViewById(R.id.post_edit_btn);
+
+        share_btn = rootView.findViewById(R.id.post_share_btn);
+        like_btn = rootView.findViewById(R.id.post_like_btn);
+        comment_btn = rootView.findViewById(R.id.post_comment_btn);
+        follow_btn = rootView.findViewById(R.id.post_follow_btn);
+
+        commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
+        comment_et = rootView.findViewById(R.id.post_comment_et);
+        comment_date_tv = rootView.findViewById(R.id.comment_date);
+        send_comment_btn = rootView.findViewById(R.id.post_add_comment_btn);
+
+        ImageButton waze = rootView.findViewById(R.id.waze);
+        ImageButton googleMaps = rootView.findViewById(R.id.googlemaps);
 
         if (getArguments() != null) {
             Bundle bundle = this.getArguments();
@@ -131,7 +142,7 @@ public class PostFragment extends Fragment {
                     Glide.with(PostFragment.this)
                             .load(post.postImage)
                             .centerCrop()
-                            .into(postImageView);
+                            .into(post_image_view);
                     if (currentUser != null && currentUser.getUid().equals(post.userUid))
                         edit_btn.setVisibility(View.VISIBLE);
                     String coordinates = post.coordinates;
@@ -185,20 +196,24 @@ public class PostFragment extends Fragment {
             }
         });
 
-        commentBtn.setOnClickListener(new View.OnClickListener() {
+        send_comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FirebaseAuth.getInstance().getCurrentUser() != null && !comment_et.getText().toString().equals("")) {
+                String text = comment_et.getText().toString();
+                if (FirebaseAuth.getInstance().getCurrentUser() == null)
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
+                else if (text.isEmpty())
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
+                else {
                     String uid = mAuth.getCurrentUser().getUid();
                     String userName = mAuth.getCurrentUser().getDisplayName();
-                    String text = comment_et.getText().toString();
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date date = new Date();
                     Comment newComment = new Comment(uid, userName, text, format.format(date));
                     comments.child(postID).push().setValue(newComment);
                     comment_et.setText("");
 
-                    //send notification to post owner
+                    // send notification to post owner
                     String textToSend = getString(R.string.new_comment) + userName;
                     posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -248,10 +263,7 @@ public class PostFragment extends Fragment {
                     } catch (JSONException ex) {
                         ex.printStackTrace();
                     }
-                } else if (FirebaseAuth.getInstance().getCurrentUser() == null)
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.must_be_logged), Snackbar.LENGTH_SHORT).show();
-                else if (FirebaseAuth.getInstance().getCurrentUser() != null && comment_et.getText().toString().equals(""))
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -277,14 +289,13 @@ public class PostFragment extends Fragment {
         commentsRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        postImageView.setOnClickListener(new View.OnClickListener() {
+        post_image_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openView(postImageUri[0]);
             }
         });
 
-        ImageButton googleMaps = rootView.findViewById(R.id.googlemaps);
         googleMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -296,7 +307,6 @@ public class PostFragment extends Fragment {
             }
         });
 
-        ImageButton waze = rootView.findViewById(R.id.waze);
         waze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,15 +314,14 @@ public class PostFragment extends Fragment {
             }
         });
 
-        ImageButton post_share_btn = rootView.findViewById(R.id.post_share_btn);
-        post_share_btn.setOnClickListener(new View.OnClickListener() {
+
+        share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageView = rootView.findViewById(R.id.post_item_img);
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.setType("image/*");
-                Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
+                Bitmap bitmap = loadBitmapFromView(post_image_view, post_image_view.getWidth(), post_image_view.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + desc_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 startActivity(sendIntent);
@@ -329,7 +338,7 @@ public class PostFragment extends Fragment {
             public void loadImage(ImageView imageView, String image) {
                 Glide.with(getContext()).load(image).into(imageView);
             }
-        }).withHiddenStatusBar(true).show();
+        }).withTransitionFrom(post_image_view).withHiddenStatusBar(true).show();
     }
 
     private void coordinatesToMaps() throws IOException {
@@ -337,7 +346,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Post post = snapshot.getValue(Post.class);
-                if (post != null && post.getLocationMethod().equals("GPS")) {
+                if (post != null && post.locationMethod.equals("GPS")) {
                     List<Address> addresses = null;
                     try {
                         addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -348,7 +357,7 @@ public class PostFragment extends Fragment {
                     String url = "https://www.google.com/maps/search/?api=1&query=" + bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName();
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 } else {
-                    String url = "https://www.google.com/maps/search/?api=1&query=" + post.getAddress();
+                    String url = "https://www.google.com/maps/search/?api=1&query=" + post.address;
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             }

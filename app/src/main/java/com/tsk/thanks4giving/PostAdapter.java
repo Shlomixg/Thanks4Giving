@@ -40,9 +40,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference users = database.getReference().child("users");
-    final DatabaseReference postLikes = database.getReference().child("likes");
-    final DatabaseReference postComments = database.getReference().child("comments");
-    final DatabaseReference postFollows = database.getReference().child("follows");
+    final DatabaseReference likes = database.getReference().child("likes");
+    final DatabaseReference comments = database.getReference().child("comments");
+    final DatabaseReference follows = database.getReference().child("follows");
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     Drawable like, like_fill, follow, follow_fill;
 
@@ -64,7 +64,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         ImageView postImage;
         CircleImageView profileImage;
-        MaterialButton like, comment, follow, edit_btn;
+        MaterialButton like_btn, comment_btn, follow_btn, edit_btn;
         TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV, itemDateTV;
 
         public PostCardHolder(@NonNull View itemView) {
@@ -77,9 +77,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             itemCategoryTV = itemView.findViewById(R.id.post_item_category);
             itemDescTV = itemView.findViewById(R.id.post_item_desc);
             itemDateTV = itemView.findViewById(R.id.post_date);
-            like = itemView.findViewById(R.id.post_like_btn);
-            comment = itemView.findViewById(R.id.post_comment_btn);
-            follow = itemView.findViewById(R.id.post_follow_btn);
+            like_btn = itemView.findViewById(R.id.post_like_btn);
+            comment_btn = itemView.findViewById(R.id.post_comment_btn);
+            follow_btn = itemView.findViewById(R.id.post_follow_btn);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,19 +149,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 .fitCenter()
                 .into(holder.postImage);
 
-        holder.itemTitleTV.setText("Item Title");
+        holder.itemTitleTV.setText(post.title);
         holder.itemCategoryTV.setText(post.category);
         holder.itemDescTV.setText(post.desc);
         holder.itemDateTV.setText(post.date);
 
-        postLikes.child(postID).addValueEventListener(new ValueEventListener() {
+        likes.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int size = (int) snapshot.getChildrenCount();
-                holder.like.setText("" + size);
+                holder.like_btn.setText("" + size);
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
 
-                    holder.like.setIcon(like_fill);
+                    holder.like_btn.setIcon(like_fill);
             }
 
             @Override
@@ -169,11 +169,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        postComments.child(postID).addValueEventListener(new ValueEventListener() {
+        comments.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int size = (int) snapshot.getChildrenCount();
-                holder.comment.setText("" + size);
+                holder.comment_btn.setText("" + size);
             }
 
             @Override
@@ -181,13 +181,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        postFollows.child(postID).addValueEventListener(new ValueEventListener() {
+        follows.child(postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int size = (int) snapshot.getChildrenCount();
-                holder.follow.setText("" + size);
+                holder.follow_btn.setText("" + size);
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
-                    holder.follow.setIcon(follow_fill);
+                    holder.follow_btn.setIcon(follow_fill);
             }
 
             @Override
@@ -220,21 +220,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         });
 
 
-        holder.like.setOnClickListener(new View.OnClickListener() {
+        holder.like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 if (currentUser != null) {
                     final String currUserUid = currentUser.getUid(),
                             currUserName = currentUser.getDisplayName();
-                    postLikes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    likes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(currUserUid)) {
-                                postLikes.child(postID).child(currUserUid).removeValue();
-                                holder.like.setIcon(like);
+                                likes.child(postID).child(currUserUid).removeValue();
+                                holder.like_btn.setIcon(like);
                             } else {
-                                postLikes.child(postID).child(currUserUid).setValue(currUserName);
-                                holder.like.setIcon(like_fill);
+                                likes.child(postID).child(currUserUid).setValue(currUserName);
+                                holder.like_btn.setIcon(like_fill);
                             }
                         }
 
@@ -250,10 +250,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        holder.comment.setOnClickListener(new View.OnClickListener() {
+        holder.comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                postComments.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                comments.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         // TODO: Open comments section
@@ -267,21 +267,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        holder.follow.setOnClickListener(new View.OnClickListener() {
+        holder.follow_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 if (currentUser != null) {
                     final String currUserUid = currentUser.getUid(),
                             currUserName = currentUser.getDisplayName();
-                    postFollows.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    follows.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(currUserUid)) {
-                                postFollows.child(postID).child(currUserUid).removeValue();
-                                holder.follow.setIcon(follow);
+                                follows.child(postID).child(currUserUid).removeValue();
+                                holder.follow_btn.setIcon(follow);
                             } else {
-                                postFollows.child(postID).child(currUserUid).setValue(currUserName);
-                                holder.follow.setIcon(follow_fill);
+                                follows.child(postID).child(currUserUid).setValue(currUserName);
+                                holder.follow_btn.setIcon(follow_fill);
                             }
                         }
 

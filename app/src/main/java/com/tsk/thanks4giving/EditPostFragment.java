@@ -204,8 +204,8 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                     if (imageUri == null) path2 = post.postImage;
                     else uploadPicture();
                     if (coordinates == null || coordinates.equals(""))
-                        coordinates = post.getCoordinates();
-                    date1 = post.getDate();
+                        coordinates = post.coordinates;
+                    date1 = post.date;
                     progressLoadingDialog.dismiss();
                 }
             }
@@ -294,7 +294,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
                 if (flag_location == 0) location_method = "GPS";
                 else location_method = "Google";
-                Post tempPost = new Post(postID, currentFBUser.getUid(), descriptionET.getText().toString()
+                Post tempPost = new Post(postID, currentFBUser.getUid(), "TODO: ADD TITLE", descriptionET.getText().toString()
                         , addressTv.getText().toString(), coordinates, location_method, date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(tempPost);
 
