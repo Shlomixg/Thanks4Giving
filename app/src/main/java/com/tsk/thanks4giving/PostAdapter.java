@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,7 +65,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         ImageView postImage;
         CircleImageView profileImage;
         MaterialButton like, comment, follow, edit_btn;
-        TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV;
+        TextView itemTitleTV, itemCategoryTV, itemDescTV, userNameTV, itemDateTV;
 
         public PostCardHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +76,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             itemTitleTV = itemView.findViewById(R.id.post_item_title);
             itemCategoryTV = itemView.findViewById(R.id.post_item_category);
             itemDescTV = itemView.findViewById(R.id.post_item_desc);
+            itemDateTV = itemView.findViewById(R.id.post_date);
             like = itemView.findViewById(R.id.post_like_btn);
             comment = itemView.findViewById(R.id.post_comment_btn);
             follow = itemView.findViewById(R.id.post_follow_btn);
@@ -126,7 +126,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 if (user != null) {
                     if (user.profilePhoto != null) {
                         Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profileImage);
-                    } else if (user.gender.equals("Female")) {
+                    }
+                    // TODO: Remove else if after fixing the signup upload
+                    else if (user.gender.equals("Female")) {
                         Glide.with(context).load(R.drawable.profile_woman).centerCrop().into(holder.profileImage);
                     } else {
                         Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profileImage);
@@ -150,6 +152,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.itemTitleTV.setText("Item Title");
         holder.itemCategoryTV.setText(post.category);
         holder.itemDescTV.setText(post.desc);
+        holder.itemDateTV.setText(post.date);
 
         postLikes.child(postID).addValueEventListener(new ValueEventListener() {
             @Override

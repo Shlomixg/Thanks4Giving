@@ -65,12 +65,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment {
 
-    TextView description;
+    TextView desc_tv;
     ImageView postImageView;
     RecyclerView commentsRecycler;
     Button commentBtn;
     EditText comment_et;
-    TextView comment_date_tv, username_tv, post_date_tv;
+    TextView comment_date_tv, username_tv, post_date_tv, title_tv;
     MaterialButton edit_btn;
     Location location;
     ImageView imageView;
@@ -102,7 +102,8 @@ public class PostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_post, container, false);
 
-        description = rootView.findViewById(R.id.post_item_title);
+        title_tv = rootView.findViewById(R.id.post_item_title);
+        desc_tv = rootView.findViewById(R.id.post_item_desc);
         postImageView = rootView.findViewById(R.id.post_item_img);
         commentsRecycler = rootView.findViewById(R.id.post_comments_recycler);
         comment_et = rootView.findViewById(R.id.post_comment_et);
@@ -134,11 +135,13 @@ public class PostFragment extends Fragment {
                     if (currentUser != null && currentUser.getUid().equals(post.userUid))
                         edit_btn.setVisibility(View.VISIBLE);
                     String coordinates = post.coordinates;
-                    String a[] = coordinates.split(",");
+                    String[] a = coordinates.split(",");
                     location = new Location("dummyProvider");
                     location.setLatitude(Double.parseDouble(a[0]));
                     location.setLongitude(Double.parseDouble(a[1]));
-                    description.setText(post.desc);
+                    title_tv.setText("Title");
+                    desc_tv.setText(post.desc);
+                    post_date_tv.setText(post.date);
                     postImageUri[0] = post.postImage;
                     // TODO: how to move out?
                     users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -156,7 +159,6 @@ public class PostFragment extends Fragment {
                                     }
                                 }
                                 username_tv.setText(user.name);
-                                post_date_tv.setText("Date");
                             }
                         }
 
@@ -192,9 +194,7 @@ public class PostFragment extends Fragment {
                     String text = comment_et.getText().toString();
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date date = new Date();
-                    String date1 = format.format(date);
-                    Toast.makeText(getContext(), date1, Toast.LENGTH_SHORT).show();
-                    Comment newComment = new Comment(uid, userName, text, date1);
+                    Comment newComment = new Comment(uid, userName, text, format.format(date));
                     comments.child(postID).push().setValue(newComment);
                     comment_et.setText("");
 
@@ -314,7 +314,7 @@ public class PostFragment extends Fragment {
                 sendIntent.setType("image/*");
                 Bitmap bitmap = loadBitmapFromView(imageView, imageView.getWidth(), imageView.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + description.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + desc_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
                 startActivity(sendIntent);
             }
         });
