@@ -1,8 +1,12 @@
 package com.tsk.thanks4giving;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,7 +55,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class RecyclerViewFragment extends Fragment {
+public class RecyclerViewFragment extends Fragment implements LocationListener {
 
     final String POST_FRAG = "Post Fragment";
     ArrayList<Post> postList = new ArrayList<>();
@@ -67,11 +74,18 @@ public class RecyclerViewFragment extends Fragment {
     EditText keyword;
     TextView current_text, search_tv, current_search;
     Spinner spinner, timer_spinner;
-    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword;
+    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword,location_filter;
     ImageButton close_btn, close_search_btn, close_edit_current_filters, close_edit_current_search;
     LinearLayout filters, search, filter_submit, search_submit, linear_current_filter;
     long diff;
     int required_days;
+    Location location_original = new Location("dummyProvider");
+    LocationManager manager; //##
+    int LOCATION_PERMISSION_REQUEST = 2;
+     ProgressDialog progressDialog2;
+    String inputString2;
+    SimpleDateFormat myFormat;
+
 
     public RecyclerViewFragment() {
     }
@@ -96,7 +110,30 @@ public class RecyclerViewFragment extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+         progressDialog2 = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
+        progressDialog2.setTitle(getString(R.string.loading));
+        takeCurrentTime();
+        manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
         close_edit_current_filters = rootView.findViewById(R.id.close_current_filter);
+        location_filter=rootView.findViewById(R.id.location_filter);
+        location_filter.setOnClickListener(new View.OnClickListener() {
+
+            // TODO: Move to strings
+            @Override
+            public void onClick(View v) {
+                progressDialog2.show();
+
+                if (Build.VERSION.SDK_INT >= 23) {
+                    int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+                    if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+                    } else {
+                        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
+                    }
+                } else
+                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
+            }
+        });
         close_edit_current_search = rootView.findViewById(R.id.close_current_search);
         close_edit_current_search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,13 +286,13 @@ public class RecyclerViewFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (timer_spinner.getSelectedItem().toString()) {
                     case "Today":
-                        required_days = 1;
+                        required_days = 0;
                         break;
                     case "Last 3 days":
-                        required_days = 3;
+                        required_days = 2;
                         break;
                     case "Last week":
-                        required_days = 7;
+                        required_days = 6;
                         break;
                     case "All posts":
                         required_days = -1;
@@ -289,8 +326,6 @@ public class RecyclerViewFragment extends Fragment {
                 keyword.setVisibility(View.GONE);
                 search_tv.setVisibility(View.GONE);
                 search_keyword.animate().rotation(search_keyword.getRotation() + 360).start();
-                search_submit.setVisibility(View.GONE);
-                search_submit.setVisibility(View.VISIBLE);
                 close_edit_current_search.setVisibility(View.VISIBLE);
                 search_submit.setVisibility(View.GONE);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -299,29 +334,21 @@ public class RecyclerViewFragment extends Fragment {
                         postList.clear();
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Post post = ds.getValue(Post.class);
-                            Location location = new Location("dummyProvider");
-                            location.setLatitude(32.0627896);
-                            location.setLongitude(34.7714756);
-                            String coordinates = post.coordinates;
+                               String coordinates = post.coordinates;
                             String a[] = coordinates.split(",");
                             Location location2 = new Location("dummyProvider");
                             location2.setLatitude(Double.parseDouble(a[0]));
                             location2.setLongitude(Double.parseDouble(a[1]));
-                            SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
-                            Date date = new Date();
+
                             String inputString1 = post.date;
-                            String inputString2 = myFormat.format(date);
-                            System.out.println(inputString1);
-                            System.out.println(inputString2);
                             try {
                                 Date date1 = myFormat.parse(inputString1);
                                 Date date2 = myFormat.parse(inputString2);
-                                diff = date2.getTime() - date1.getTime();
+                                diff = date2.getTime() - date1.getTime();// calculate the difference
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-
-                            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000) {
+                            if (location_original!=null && location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000) {
                                 if (post.desc.contains(keyword.getText().toString())) {
 //                                    if (pos.getDesc().contains(keyword.getText().toString()) && (pos.getCategory().equals(spinner.getSelectedItem()) || spinner.getSelectedItem().equals("All Categories")) ) {
 //                                    if (required_days != -1) {
@@ -334,9 +361,15 @@ public class RecyclerViewFragment extends Fragment {
                                     postList.add(post);
 //                                    }
                                 }
+                            }
+                            else    if (post.desc.contains(keyword.getText().toString())) { // in case - no location
+                                postList.add(post);
 
                             }
-                        }
+                            }
+
+
+
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
@@ -399,56 +432,55 @@ public class RecyclerViewFragment extends Fragment {
 
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Post post = ds.getValue(Post.class);
-                            Location location = new Location("dummyProvider");
-                            location.setLatitude(32.0627896);
-                            location.setLongitude(34.7714756);
+
                             String coordinates = post.coordinates;
                             String a[] = coordinates.split(",");
                             Location location2 = new Location("dummyProvider");
                             location2.setLatitude(Double.parseDouble(a[0]));
                             location2.setLongitude(Double.parseDouble(a[1]));
-                            SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
-                            Date date = new Date();
-                            String inputString1 = post.date;
-                            String inputString2 = myFormat.format(date);
-                            System.out.println(inputString1);
-                            System.out.println(inputString2);
+                            String inputString1 = post.date; // take post time
                             try {
                                 Date date1 = myFormat.parse(inputString1);
                                 Date date2 = myFormat.parse(inputString2);
-                                diff = date2.getTime() - date1.getTime();
+                                diff = date2.getTime() - date1.getTime(); // calculate the difference
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
 
+                            if (location_original != null) {
+                                if (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
+                                    if (post.category.equals(spinner.getSelectedItem()) || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) {
+                                        if (required_days != -1) {
 
-                            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                                if (post.category.equals(spinner.getSelectedItem()) || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) {
-                                    if (required_days != -1) {
+                                            if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                                                postList.add(post);
 
-                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                                            }
+                                        } else {
                                             postList.add(post);
 
                                         }
-                                    } else {
-                                        postList.add(post);
+                                    } else if (post.desc.contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()))) {
+                                        if (required_days != -1) {
 
-                                    }
-                                } else if (post.desc.contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()))) {
-                                    if (required_days != -1) {
+                                            if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                                                postList.add(post);
 
-                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+                                            }
+                                        } else {
                                             postList.add(post);
 
                                         }
-                                    } else {
-                                        postList.add(post);
+
 
                                     }
+                            }
+                            else
+                            {
 
-
-                                }
+                            }
                         }
+
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                         filter_submit.setVisibility(View.GONE);
@@ -472,23 +504,10 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            Post post = ds.getValue(Post.class);
-                            Location location = new Location("dummyProvider");
-                            location.setLatitude(32.0627896);
-                            location.setLongitude(34.7714756);
-                            String coordinates = post.coordinates;
-                            String a[] = coordinates.split(",");
-                            Location location2 = new Location("dummyProvider");
-                            location2.setLatitude(Double.parseDouble(a[0]));
-                            location2.setLongitude(Double.parseDouble(a[1]));
-                            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                                postList.add(post);
-
-//                    {
+                        filterLocation(snapshot);//                    {
 //                        holder.edit_btn.setVisibility(View.VISIBLE);
 //                    }
-                        }
+//                        }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
@@ -519,7 +538,7 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                        filterLocation(snapshot);
+                        showallposts(snapshot);
                         Collections.reverse(postList);
                         // adapter=new PostAdapter(postList);
                         adapter.notifyDataSetChanged();
@@ -538,12 +557,13 @@ public class RecyclerViewFragment extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
         progressDialog.setTitle(getString(R.string.loading));
 
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressDialog.show();
                 postList.clear();
-                filterLocation(snapshot);
+                showallposts(snapshot);
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
@@ -583,10 +603,32 @@ public class RecyclerViewFragment extends Fragment {
         return rootView;
     }
 
+    private void takeCurrentTime() {
+        myFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+         inputString2 = myFormat.format(date);
+    }
+
+    private void showallposts(DataSnapshot snapshot) {
+        for (DataSnapshot ds : snapshot.getChildren()) {
+            Post post = ds.getValue(Post.class);
+            String coordinates = post.coordinates;
+            String a[] = coordinates.split(",");
+            Location location2 = new Location("dummyProvider");
+            location2.setLatitude(Double.parseDouble(a[0]));
+            location2.setLongitude(Double.parseDouble(a[1]));
+//            if (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
+            postList.add(post);
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         Log.d("ddd", "event reached fragment");
         //TODO refresh posts list with new location
+        location_original.setLongitude(event.location.getLongitude());
+        location_original.setLatitude(event.location.getLatitude());
+
     }
 
     @Override
@@ -604,16 +646,56 @@ public class RecyclerViewFragment extends Fragment {
     public void filterLocation(DataSnapshot snapshot) {
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post post = ds.getValue(Post.class);
-            Location location = new Location("dummyProvider");
-            location.setLatitude(32.0627896);
-            location.setLongitude(34.7714756);
             String coordinates = post.coordinates;
             String a[] = coordinates.split(",");
             Location location2 = new Location("dummyProvider");
             location2.setLatitude(Double.parseDouble(a[0]));
             location2.setLongitude(Double.parseDouble(a[1]));
-            if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
+            if (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
                 postList.add(post);
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        progressDialog2.dismiss();
+        location_original.setLatitude(location.getLatitude());
+        location_original.setLongitude(location.getLongitude());
+      Toast.makeText(getContext(), "Location: "+location_original.getLatitude()+","+location_original.getLongitude(), Toast.LENGTH_SHORT).show();
+        if (location_original!=null)
+        {
+            manager.removeUpdates(this);
+        }
+        bubbleSeekBar.setVisibility(View.VISIBLE);
+
+
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//                showSettingsDialog(getString(R.string.location_permission));
+            } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // Request location updates:
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
+            }
         }
     }
 }

@@ -140,8 +140,8 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
-                    if (user.profilePhoto != null) {
-                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(profile_civ);
+                    if (user.getProfilePhoto() != null) {
+                        Glide.with(getActivity()).load(user.getProfilePhoto()).centerCrop().into(profile_civ);
                     } else {
                         // TODO: Load according to gender
                         String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
