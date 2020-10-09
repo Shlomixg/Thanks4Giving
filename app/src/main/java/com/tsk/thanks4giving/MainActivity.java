@@ -15,6 +15,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,14 +72,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* if(mAuth.getUid() != null) {
-            String topic = "commentNotif" + mAuth.getUid();
-            messaging.subscribeToTopic(topic);
-            Log.d("fcm","onCreate: " + topic + " subscribed");
-        }*/
-
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
+
+        if(sharedPrefs.getBoolean("firstRun",true))
+        {
+            Intent intent = new Intent(MainActivity.this, IntroActivity.class);
+            startActivity(intent);
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putBoolean("firstRun", false);
+            editor.commit();
+        }
 
         boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
         if (autoLocation)

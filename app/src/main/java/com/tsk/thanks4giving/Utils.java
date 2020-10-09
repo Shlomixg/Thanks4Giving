@@ -31,6 +31,7 @@ public class Utils {
 
     private static final String KEY_PREF_THEME = "pref_theme";
     private static final String KEY_COMMENT = "commentSwitch";
+    private static final String KEY_FIRST = "firstRun";
 
     static void loadPrefs(SharedPreferences sharedPrefs) {
         Utils.sharedPrefs = sharedPrefs;
@@ -72,4 +73,5 @@ public class Utils {
                 break;
         }
     }
+
 }

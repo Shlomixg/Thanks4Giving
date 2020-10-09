@@ -98,4 +98,15 @@
     <string name="comments_summery">Receive notifications on comments in your posts.</string>
     <string name="new_comment">"You have a new post comment from "</string>
     <string name="new_comment_title">Check your post comments!</string>
+    <string name="first_slide_title">Hello! Wellcome to Thanks4Giving!</string>
+    <string name="first_slide_desc">With this app we hope people can give away things they dont need which others may need.</string>
+    <string name="second_slide_title">First of all if you want to browse you can do so freely!</string>
+    <string name="second_slide_desc">If you want to post comments, like or post your own items you will have to sign up.</string>
+    <string name="third_slide_title">Posts can be filtered by category and by location.</string>
+    <string name="third_slide_desc">To get the best location filter you can enable automatic location updates from the settings.</string>
+    <string name="fourth_slide_title">You will get push notifications when someone comments on a post of yours.</string>
+    <string name="fourth_slide_desc">If that ever bothers you it can be easly turned off from the settings.</string>
+    <string name="fifth_slide_title">All done and ready to go!</string>
+    <string name="fifth_slide_desc">Thank you for downloading our app, and thank you for giving!</string>
+    <string name="ribbon_text">Successfuly given away!</string>
 </resources>
