@@ -65,10 +65,11 @@ public class RecyclerViewFragment extends Fragment {
     private String mUserUid;
     private int mItemsStatus;
     EditText keyword;
+    TextView current_text,search_tv,current_search;
     Spinner spinner, timer_spinner;
-    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn;
-    ImageButton close_btn, close_search_btn;
-    LinearLayout filters, search, filter_submit, search_submit;
+    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn,filter1,filter2,search_keyword;
+    ImageButton close_btn, close_search_btn,close_edit_current_filters,close_edit_current_search;
+    LinearLayout filters, search, filter_submit, search_submit,linear_current_filter;
     long diff;
     int required_days;
 
@@ -95,6 +96,32 @@ public class RecyclerViewFragment extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        close_edit_current_filters=rootView.findViewById(R.id.close_current_filter);
+        close_edit_current_search=rootView.findViewById(R.id.close_current_search);
+        close_edit_current_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                close_edit_current_search.setVisibility(View.GONE);
+                search_keyword.setVisibility(View.GONE);
+                current_search.setVisibility(View.GONE);
+                search_tv.setVisibility(View.VISIBLE);
+                keyword.setVisibility(View.VISIBLE);
+                search_submit.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+        close_edit_current_filters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filter_submit.setVisibility(View.VISIBLE);
+                filters.setVisibility(View.VISIBLE);
+                linear_current_filter.setVisibility(View.GONE);
+            }
+        });
+        current_text=rootView.findViewById(R.id.current);
+        search_tv=rootView.findViewById(R.id.search_tv);
+        current_search=rootView.findViewById(R.id.current_search);
         close_btn = rootView.findViewById(R.id.close_all_filter);
         close_search_btn = rootView.findViewById(R.id.close_search);
         close_search_btn.setOnClickListener(new View.OnClickListener() {
@@ -106,16 +133,19 @@ public class RecyclerViewFragment extends Fragment {
         });
         clean_btn = rootView.findViewById(R.id.clean_filter_btn);
         filter_btn = rootView.findViewById(R.id.filter_btn);
-        search_btn = rootView.findViewById(R.id.search_btn);
-        search_submit = rootView.findViewById(R.id.linear_submitsearch);
-        search = rootView.findViewById(R.id.linear_search);
-        filters = rootView.findViewById(R.id.linear_filter);
-        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
+        search_btn=rootView.findViewById(R.id.search_btn);
+        search_submit=rootView.findViewById(R.id.linear_submitsearch);
+        linear_current_filter=rootView.findViewById(R.id.linear_current_filter);
+        search=rootView.findViewById(R.id.linear_search);
+        filters=rootView.findViewById(R.id.linear_filter);
+        filter_submit=rootView.findViewById(R.id.linear_filter_submit);
+        keyword=rootView.findViewById(R.id.keyword);
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 filters.setVisibility(View.GONE);
                 filter_submit.setVisibility(View.GONE);
+                linear_current_filter.setVisibility(View.GONE);
             }
         });
         clean_btn.setOnClickListener(new View.OnClickListener() {
@@ -124,27 +154,45 @@ public class RecyclerViewFragment extends Fragment {
             public void onClick(View v) {
                 spinner.setSelection(0);
                 timer_spinner.setSelection(0);
+                filter1.setVisibility(View.GONE);
+                filter2.setVisibility(View.GONE);
+                current_text.setVisibility(View.GONE);
+                close_edit_current_filters.setVisibility(View.GONE);
+                linear_current_filter.setVisibility(View.GONE);
+
 //                Toast.makeText(getContext(), "Days: "+daysBetween, Toast.LENGTH_SHORT).show();
 
             }
         });
-//        linearLayout_filters=rootView.findViewById(R.id.all_filters);
+
+
+        //        linearLayout_filters=rootView.findViewById(R.id.all_filters);
         filter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filters.setVisibility(View.VISIBLE);
-                filter_submit.setVisibility(View.VISIBLE);
-                search.setVisibility(View.GONE);
-                search_submit.setVisibility(View.GONE);
+                if (linear_current_filter.getVisibility()==View.GONE)
+                {
+                    filters.setVisibility(View.VISIBLE);
+                    filter_submit.setVisibility(View.VISIBLE);
+                    search.setVisibility(View.GONE);
+                    search_submit.setVisibility(View.GONE);
+                }
+
+
             }
         });
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                filters.setVisibility(View.GONE);
-                filter_submit.setVisibility(View.GONE);
-                search.setVisibility(View.VISIBLE);
-                search_submit.setVisibility(View.VISIBLE);
+                if (search.getVisibility()==View.GONE)
+                {
+                    filters.setVisibility(View.GONE);
+                    filter_submit.setVisibility(View.GONE);
+                    search.setVisibility(View.VISIBLE);
+                    search_submit.setVisibility(View.VISIBLE);
+                    search_submit.setVisibility(View.VISIBLE);
+                }
+
             }
         });
         spinner = rootView.findViewById(R.id.category_spinner_filter);
@@ -201,22 +249,23 @@ public class RecyclerViewFragment extends Fragment {
         timer_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (timer_spinner.getSelectedItem().toString()) {
+                switch (timer_spinner.getSelectedItem().toString())
+                {
                     case "Today":
-                        required_days = 1;
-                        break;
+                        required_days=1;
+                        break ;
                     case "Last 3 days":
-                        required_days = 3;
-                        break;
+                        required_days=3;
+                        break ;
                     case "Last week":
-                        required_days = 7;
-                        break;
+                        required_days=7;
+                        break ;
                     case "All posts":
-                        required_days = -1;
-                        break;
+                        required_days=-1;
+                        break ;
                     case "Time":
-                        required_days = -1;
-                        break;
+                        required_days=-1;
+                        break ;
                     default:
                 }
             }
@@ -228,11 +277,27 @@ public class RecyclerViewFragment extends Fragment {
         });
         timer_spinner.setSelection(0);
 
-        submit_filter_btn = rootView.findViewById(R.id.submit_filter);
-        submit_search_btn = rootView.findViewById(R.id.submit_serach);
+
+
+
+        submit_filter_btn=rootView.findViewById(R.id.submit_filter);
+        filter1=rootView.findViewById(R.id.filter1);
+        filter2=rootView.findViewById(R.id.filter2);
+        search_keyword=rootView.findViewById(R.id.your_search);
+        submit_search_btn=rootView.findViewById(R.id.submit_serach);
         submit_search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                search_keyword.setText(keyword.getText().toString());
+                search_keyword.setVisibility(View.VISIBLE);
+                current_search.setVisibility(View.VISIBLE); //%%
+                keyword.setVisibility(View.GONE);
+                search_tv.setVisibility(View.GONE);
+                search_keyword.animate().rotation(search_keyword.getRotation()+360).start();
+                search_submit.setVisibility(View.GONE);
+                search_submit.setVisibility(View.VISIBLE);
+                close_edit_current_search.setVisibility(View.VISIBLE);
+                search_submit.setVisibility(View.GONE);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -257,29 +322,27 @@ public class RecyclerViewFragment extends Fragment {
                                 Date date1 = myFormat.parse(inputString1);
                                 Date date2 = myFormat.parse(inputString2);
                                 diff = date2.getTime() - date1.getTime();
-                                Toast.makeText(getContext(), "Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            Toast.makeText(getContext(), "rew Days: " + required_days, Toast.LENGTH_SHORT).show();
+
 
                             if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                                if (pos.getDesc().contains(keyword.getText().toString()) && pos.getCategory().equals(spinner.getSelectedItem())) {
-                                    if (required_days != -1) {
-                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
-                                            postList.add(pos);
-                                        }
-                                    } else {
+                            {
+                                if (pos.getDesc().contains(keyword.getText().toString()) ) {
+//                                    if (pos.getDesc().contains(keyword.getText().toString()) && (pos.getCategory().equals(spinner.getSelectedItem()) || spinner.getSelectedItem().equals("All Categories")) ) {
+//                                    if (required_days != -1) {
+//
+////                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
+//                                            postList.add(pos);
+
+//                                        }
+//                                    } else {
                                         postList.add(pos);
-                                    }
-                                } else if (pos.getDesc().contains(keyword.getText().toString()) && spinner.getSelectedItem().equals("All Categories")) {
-                                    if (required_days != -1) {
-                                        if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
-                                            postList.add(pos);
-                                        }
-                                    } else {
-                                        postList.add(pos);
-                                    }
+//
+//                                    }
+                                }
+
                                 }
                         }
                         Collections.reverse(postList);
@@ -293,15 +356,67 @@ public class RecyclerViewFragment extends Fragment {
             }
         });
 
-        keyword = rootView.findViewById(R.id.keyword);
         submit_filter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
+                        if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
+                                !(timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem())))
+                        {
+                            linear_current_filter.setVisibility(View.VISIBLE);
+                            filter2.setText(timer_spinner.getSelectedItem().toString());
+                            filter2.animate().rotation(filter2.getRotation()+360).start();
+                            filter1.setVisibility(View.GONE);
+                            filter2.setVisibility(View.VISIBLE);
+                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            current_text.setVisibility(View.VISIBLE);
+
+                        }
+                        else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
+                                timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem()))
+                        {
+                            linear_current_filter.setVisibility(View.VISIBLE);
+                            filter1.setText(spinner.getSelectedItem().toString());
+                            filter1.animate().rotation(filter1.getRotation()+360).start();
+                            filter2.setVisibility(View.GONE);
+                            filter1.setVisibility(View.VISIBLE);
+                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            current_text.setVisibility(View.VISIBLE);
+
+
+                        }
+                        else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
+                                !(timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem())))
+
+                        {
+                            linear_current_filter.setVisibility(View.VISIBLE);
+                            filter1.setVisibility(View.VISIBLE);
+                            filter2.setVisibility(View.VISIBLE);
+                            current_text.setVisibility(View.VISIBLE);
+                            close_edit_current_filters.setVisibility(View.VISIBLE);
+                            filter1.setText(spinner.getSelectedItem().toString());
+                            filter1.animate().rotation(filter1.getRotation()+360).start();
+                            filter2.setText(timer_spinner.getSelectedItem().toString());
+                            filter2.animate().rotation(filter2.getRotation()+360).start();
+
+                        }
+                        else if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
+                                timer_spinner.getItemAtPosition(0).equals(timer_spinner.getSelectedItem()))
+
+                        {
+                            filter1.setVisibility(View.GONE);
+                            filter2.setVisibility(View.GONE);
+                            current_text.setVisibility(View.GONE);
+                            linear_current_filter.setVisibility(View.GONE);
+                            close_edit_current_filters.setVisibility(View.GONE);
+
+
+                        }
+
+
 
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Post pos = ds.getValue(Post.class);
@@ -323,15 +438,13 @@ public class RecyclerViewFragment extends Fragment {
                                 Date date1 = myFormat.parse(inputString1);
                                 Date date2 = myFormat.parse(inputString2);
                                 diff = date2.getTime() - date1.getTime();
-                                Toast.makeText(getContext(), "Days: " + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            Toast.makeText(getContext(), "rew Days: " + required_days, Toast.LENGTH_SHORT).show();
 
 
                             if (location.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)
-                                if (pos.getDesc().contains(keyword.getText().toString()) && pos.getCategory().equals(spinner.getSelectedItem())) {
+                                if ( pos.getCategory().equals(spinner.getSelectedItem()) || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) {
                                     if (required_days != -1) {
 
                                         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
@@ -342,7 +455,8 @@ public class RecyclerViewFragment extends Fragment {
                                         postList.add(pos);
 
                                     }
-                                } else if (pos.getDesc().contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()))) {
+                                } else if (pos.getDesc().contains(keyword.getText().toString()) && (spinner.getSelectedItem().equals("All Categories") || spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())))
+                                {
                                     if (required_days != -1) {
 
                                         if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
@@ -359,6 +473,8 @@ public class RecyclerViewFragment extends Fragment {
                         }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
+                        filter_submit.setVisibility(View.GONE);
+                        filters.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -367,6 +483,13 @@ public class RecyclerViewFragment extends Fragment {
                 });
             }
         });
+
+
+
+
+
+
+
 
 
         bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar);
