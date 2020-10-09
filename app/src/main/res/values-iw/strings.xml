@@ -2,7 +2,6 @@
 <resources>
     <string name="open">פתח</string>
     <string name="close">סגור</string>
-    <string name="hello_blank_fragment">שלום פרגמנט ריק</string>
     <string name="change_picture">החלף תמונה</string>
     <string name="camera">מצלמה</string>
     <string name="gallery">גלריה</string>
@@ -68,4 +67,18 @@
     <string name="new_comment">יש לך תגובה חדשה בפוסט מ-</string>
     <string name="EditingPost">עריכת פוסט</string>
     <string name="new_comment_title">בדוק את התגובות בפוסט שלך!</string>
+    <string name="submit_filter">החל</string>
+    <string name="keywordhint">מה אתה מחפש?</string>
+    <string name="cleanfilters">נקה סינונים</string>
+    <string name="first_slide_title">שלום! ברוך הבא ל- Thanks4Giving!</string>
+    <string name="first_slide_desc">בעזרת האפליקציה הזו אנו מקווים שאנשים ימסרו את הדברים שהם לא צריכים שאחרים אולי יצטרכו.</string>
+    <string name="second_slide_title">קודם כל אם תרצה לעיין תוכל לעשות זאת בחופשיות!</string>
+    <string name="second_slide_desc">אם תרצה לפרסם תגובות, לייקים או פוסטים משל עצמך תצטרך להירשם.</string>
+    <string name="third_slide_title">ניתן לסנן פוסטים לפי קטגוריה ומיקום.</string>
+    <string name="third_slide_desc">בשביל לקבל את הסינון לפי מיקום הטוב ביותר תוכל לאפשר קבלת עדכוני מיקום אוטומטיים מההגדרות.</string>
+    <string name="fourth_slide_title">תקבל התראות פוש כאשר מישהו מפרסם תגובה על פוסט שלך.</string>
+    <string name="ribbon_text">נמסר בהצלחה!</string>
+    <string name="fourth_slide_desc">אם זה אי-פעם יפריע לך תוכל בקלות לכבות את זה דרך ההגדרות.</string>
+    <string name="fifth_slide_title">סיימנו ומוכנים לצאת לדרך!</string>
+    <string name="fifth_slide_desc">תודה שהורדתם את האפליקציה שלנו, ותודה שנתתם!</string>
 </resources>

@@ -15,9 +15,6 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class MessagingService extends FirebaseMessagingService {
 
-    String id = "101";
-    String channelName = "notifChannel";
-
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
         Log.d("fcm", "From: " + remoteMessage.getFrom());

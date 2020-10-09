@@ -15,13 +15,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Media -->
-        <ImageView
-            android:id="@+id/post_item_img"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:contentDescription="Item image"
-            android:scaleType="centerCrop" />
+            <!-- Media -->
+            <ImageView
+                android:id="@+id/post_item_img"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:contentDescription="Item image"
+                android:scaleType="centerCrop"/>
+
+            <com.skydoves.androidribbon.ShimmerRibbonView
+                android:id="@+id/post_ribbon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:alpha="0.8"
+                app:shimmer_base_alpha="1.0"
+                app:shimmer_highlight_alpha="0.7"
+                app:shimmer_ribbon_background_color="#D50000"
+                app:shimmer_ribbon_padding_bottom="7dp"
+                app:shimmer_ribbon_padding_top="7dp"
+                app:shimmer_ribbon_text="@string/ribbon_text"
+                app:shimmer_ribbon_textColor="@android:color/white"
+                app:shimmer_ribbon_textSize="10sp"
+                app:shimmer_ribbon_textStyle="bold"
+                android:visibility="invisible"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -177,7 +194,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/post_follow_btn"
+                    android:id="@+id/ribbon_btn"
                     style="?attr/borderlessButtonStyle"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
@@ -190,7 +207,8 @@
                     app:icon="@drawable/ic_bookmark"
                     app:iconGravity="textStart"
                     app:iconPadding="10dp"
-                    app:iconTint="@null" />
+                    app:iconTint="@null"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 
