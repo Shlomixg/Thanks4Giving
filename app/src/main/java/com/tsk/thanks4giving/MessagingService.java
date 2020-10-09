@@ -39,6 +39,7 @@ public class MessagingService extends FirebaseMessagingService {
             }
             builder.setContentTitle(getString(R.string.new_comment_title)).setContentText(remoteMessage.getData().get("message")).setSmallIcon(R.drawable.ic_comment);
             builder.setContentIntent(resultPendingIntent);
+            builder.setAutoCancel(true);
             manager.notify(1, builder.build());
         }
 

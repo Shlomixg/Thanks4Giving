@@ -147,15 +147,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                                 else if (post1.getStatus() == 0)
                                     holder.ribbon_btn.setVisibility(View.INVISIBLE);
                             }
+
                             @Override
-                            public void onCancelled(@NonNull DatabaseError error) { }
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
                         });
                     }
                     holder.userNameTV.setText(user.name);
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
 
         database.getReference().child("posts").child(postID).addValueEventListener(new ValueEventListener() {
@@ -168,8 +172,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 else if (post1.getStatus() == 1)
                     holder.shimmeringRibbon.setVisibility(View.INVISIBLE);
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
 
         holder.ribbon_btn.setOnClickListener(new View.OnClickListener() {
@@ -180,23 +186,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Post post1 = snapshot.getValue(Post.class);
                         assert post1 != null;
-                        if(post1.getStatus() == 1)
-                        {
+                        if (post1.getStatus() == 1) {
                             holder.shimmeringRibbon.setVisibility(View.VISIBLE);
                             holder.ribbon_btn.setVisibility(View.INVISIBLE);
                             database.getReference().child("posts").child(postID).child("status").setValue(0);
                         }
                     }
+
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
                 });
             }
         });
 
-                Glide.with(context)
-                        .load(post.postImage)
-                        .fitCenter()
-                        .into(holder.postImage);
+        Glide.with(context)
+                .load(post.postImage)
+                .fitCenter()
+                .into(holder.postImage);
 
         holder.itemTitleTV.setText(post.title);
         holder.itemCategoryTV.setText(post.category);

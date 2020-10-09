@@ -81,4 +81,4 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
         return list.size();
     }
 
-    }
+}

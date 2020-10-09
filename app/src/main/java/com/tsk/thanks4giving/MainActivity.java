@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     TextView user_name_tv;
     CircleImageView profile_pic_iv;
-    FirebaseUser fbUser;
     public static boolean commentSwitch = true;
 
     FirebaseUser currentUser;
@@ -75,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         Utils.loadPrefs(sharedPrefs);
 
-        if(sharedPrefs.getBoolean("firstRun",true))
-        {
+        if (sharedPrefs.getBoolean("firstRun", true)) {
             Intent intent = new Intent(MainActivity.this, IntroActivity.class);
             startActivity(intent);
             SharedPreferences.Editor editor = sharedPrefs.edit();
