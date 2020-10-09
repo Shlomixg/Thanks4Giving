@@ -144,7 +144,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
         }
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
-        addressTv = rootView.findViewById(R.id.address_editText);//##
+        addressTv = rootView.findViewById(R.id.item_pickup_address_et);//##
         Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         addressTv.setFocusable(false);
         addressTv.setOnClickListener(new View.OnClickListener() {
@@ -157,9 +157,9 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
             }
         });
         btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
-        descriptionET = rootView.findViewById(R.id.condition_editText); //##
+        descriptionET = rootView.findViewById(R.id.item_desc_et); //##
         image = rootView.findViewById(R.id.newPostImage);
-        spinner = rootView.findViewById(R.id.category_spinner);
+        spinner = rootView.findViewById(R.id.item_category_spinner);
         confirm_btn = rootView.findViewById(R.id.confirm_btn);
 
         currentFBUser = mAuth.getCurrentUser();

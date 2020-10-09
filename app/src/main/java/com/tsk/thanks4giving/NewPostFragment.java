@@ -3,7 +3,6 @@ package com.tsk.thanks4giving;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -23,16 +22,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -80,25 +78,26 @@ import java.util.Random;
 import java.util.UUID;
 
 public class NewPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
+
+    final String RECYCLER_FRAG = "Recycler View Fragment";
+
+    ImageView image;
+    TextInputEditText item_name_et, desc_et, address_et;
+    AutoCompleteTextView categoryDropdown;
+    Button btn_gps, camera_btn, browse_btn; //##
+    ImageButton confirm_btn; //%
+
     final int WRITE_PERMISSION_REQUEST = 1, LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
     int flag_location = 0;
-    EditText descriptionET, addressTv;
     Handler handler = new Handler(); //##
     Geocoder geocoder; //##
     LocationManager manager; //##
-    Button btn_gps, camera_btn, browse_btn; //##
     File file;
     Uri imageUri;
-    ImageView image;
-    Spinner spinner;
-    ImageButton confirm_btn; //%
-    final String RECYCLER_FRAG = "Recycler View Fragment";
-    String path, path2;
-    String coordinates, location_method, randomKey;
+    String path, path2, coordinates, location_method, randomKey;
 
-    FirebaseUser currentFBUser;
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser currentFBUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference users = database.getReference("users");
     DatabaseReference posts = database.getReference("posts");
@@ -129,12 +128,19 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
+        item_name_et = rootView.findViewById(R.id.item_name_et);
+        desc_et = rootView.findViewById(R.id.item_desc_et);
+        address_et = rootView.findViewById(R.id.item_pickup_address_et);
+        categoryDropdown = rootView.findViewById(R.id.item_category_spinner);
+        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
+        image = rootView.findViewById(R.id.newPostImage);
         browse_btn = rootView.findViewById(R.id.gallery_btn);
         camera_btn = rootView.findViewById(R.id.pic_btn);
-        addressTv = rootView.findViewById(R.id.address_editText);
-        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
-        addressTv.setFocusable(false);
-        addressTv.setOnClickListener(new View.OnClickListener() {
+        confirm_btn = rootView.findViewById(R.id.confirm_btn);
+
+        Places.initialize(getContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        address_et.setFocusable(false);
+        address_et.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 flag_location = 1;
@@ -143,41 +149,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 startActivityForResult(intent, 200);
             }
         });
-        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
-        descriptionET = rootView.findViewById(R.id.condition_editText); //##
-        image = rootView.findViewById(R.id.newPostImage);
-        spinner = rootView.findViewById(R.id.category_spinner);
-        confirm_btn = rootView.findViewById(R.id.confirm_btn);
 
-        currentFBUser = mAuth.getCurrentUser();
-
-        String[] a = getResources().getStringArray(R.array.categories);
-
+        String[] categories = getResources().getStringArray(R.array.categories);
         final ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(getActivity(), R.layout.spinner_text, a) {
-                    @Override
-                    public boolean isEnabled(int position) {
-                        // Disable the second item from Spinner
-                        return position != 0;
-                    }
-
-                    @Override
-                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        View view = super.getDropDownView(position, convertView, parent);
-                        TextView tv = (TextView) view;
-                        if (position == 0) {
-                            // Set the disable item text color
-                            tv.setTextColor(Color.GRAY);
-                        } else {
-                            tv.setTextColor(Color.BLACK);
-                        }
-                        return view;
-                    }
-                };
-        adapter.setDropDownViewResource(R.layout.spinner_text);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setSelection(0, false);
+                new ArrayAdapter<>(getContext(), R.layout.spinner_text, categories);
+        categoryDropdown.setAdapter(adapter);
 
         btn_gps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,10 +239,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
                 Date date = new Date();
-                String date1 = format.format(date);
 
+                final Post post = new Post(postID, uid, item_name_et.getText().toString(),
+                        desc_et.getText().toString(), address_et.getText().toString(),
+                        coordinates, location_method, format.format(date), 1,
+                        categoryDropdown.getText().toString(), path2);
 
-                final Post post = new Post(postID, uid, "TODO: ADD TITLE", descriptionET.getText().toString(), addressTv.getText().toString(), coordinates, location_method, date1, 1, spinner.getSelectedItem().toString(), path2);
                 posts.child(postID).setValue(post);
 
                 // Save post id in user data
@@ -334,7 +312,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final double lat = location.getLatitude();
         final double lng = location.getLongitude();
         coordinates = lat + "," + lng;
-        // descriptionET.setText(lat + " , " + lng);
         new Thread() {
             @Override
             public void run() {
@@ -345,7 +322,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            addressTv.setText(bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName());
+                            address_et.setText(bestAddress.getThoroughfare() + "," + bestAddress.getFeatureName() + "," + bestAddress.getLocality() + "," + bestAddress.getCountryName());
                         }
                     });
                 } catch (IOException e) {
@@ -383,7 +360,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
-            addressTv.setText(place.getAddress());
+            address_et.setText(place.getAddress());
             String temp = String.valueOf(place.getLatLng());
             coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {

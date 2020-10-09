@@ -28,7 +28,7 @@
 
 
     <EditText
-        android:id="@+id/condition_editText"
+        android:id="@+id/item_desc_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
-        android:id="@+id/address_editText"
+        android:id="@+id/item_pickup_address_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -53,7 +53,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/condition_editText" />
+        app:layout_constraintTop_toBottomOf="@id/item_desc_et" />
 
     <Button
         android:id="@+id/gpsLocation_btn"
@@ -68,10 +68,10 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_editText"/>
+        app:layout_constraintTop_toBottomOf="@id/item_pickup_address_et"/>
 
     <Spinner
-        android:id="@+id/category_spinner"
+        android:id="@+id/item_category_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
@@ -93,7 +93,7 @@
         app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/category_spinner"/>
+        app:layout_constraintTop_toBottomOf="@id/item_category_spinner"/>
 
     <LinearLayout
         android:id="@+id/picBtnsLayout"

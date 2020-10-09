@@ -36,7 +36,7 @@ public class SignupFragment extends Fragment {
     CircleImageView profile_image;
     TextInputEditText fullname_et, address_et, email_et, password_et;
     Button confirm_btn, login_btn;
-    AutoCompleteTextView genderEditTextExposedDropdown;
+    AutoCompleteTextView genderEditTextDropdown;
     Uri imageUri;
 
     FirebaseAuth mAuth;
@@ -52,7 +52,7 @@ public class SignupFragment extends Fragment {
         address_et = rootView.findViewById(R.id.signup_address_et);
         email_et = rootView.findViewById(R.id.signup_email_et);
         password_et = rootView.findViewById(R.id.signup_password_et);
-        genderEditTextExposedDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
+        genderEditTextDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
         confirm_btn = rootView.findViewById(R.id.signup_confirm_btn);
         login_btn = rootView.findViewById(R.id.signup_move_login_btn);
 
@@ -61,7 +61,7 @@ public class SignupFragment extends Fragment {
         String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
-        genderEditTextExposedDropdown.setAdapter(adapter);
+        genderEditTextDropdown.setAdapter(adapter);
 
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +79,7 @@ public class SignupFragment extends Fragment {
                 final String pass = password_et.getText().toString();
                 final String name = fullname_et.getText().toString();
                 final String address = address_et.getText().toString();
-                final String gender = genderEditTextExposedDropdown.getText().toString();
+                final String gender = genderEditTextDropdown.getText().toString();
 
                 // TODO: Add validation of form
 

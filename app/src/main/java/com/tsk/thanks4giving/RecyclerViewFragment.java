@@ -274,7 +274,6 @@ public class RecyclerViewFragment extends Fragment {
         });
         timer_spinner.setSelection(0);
 
-
         submit_filter_btn = rootView.findViewById(R.id.submit_filter);
         filter1 = rootView.findViewById(R.id.filter1);
         filter2 = rootView.findViewById(R.id.filter2);

@@ -15,277 +15,16 @@
         android:fillViewport="true"
         android:orientation="vertical">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/post_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:clickable="false"
-            android:focusable="false"
-            app:cardElevation="5dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Media -->
-                <ImageView
-                    android:id="@+id/post_item_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:contentDescription="Item image"
-                    android:scaleType="fitCenter" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <!-- User info, time & edit button -->
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/post_frag_profile_img"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            app:civ_border_color="#FF000000"
-                            app:civ_border_width="1dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/post_user_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toEndOf="@id/post_frag_profile_img"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/post_date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:textSize="15sp"
-                            app:layout_constraintStart_toEndOf="@id/post_frag_profile_img"
-                            app:layout_constraintTop_toBottomOf="@id/post_user_name" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/post_edit_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:contentDescription="Edit"
-                            android:padding="0dp"
-                            android:scaleType="fitXY"
-                            android:visibility="gone"
-                            app:icon="@drawable/ic_edit_small"
-                            app:iconGravity="textStart"
-                            app:iconTint="@null"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/waze_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:contentDescription="Waze"
-                            android:padding="0dp"
-                            android:scaleType="fitXY"
-                            android:visibility="gone"
-                            app:icon="@drawable/ic_waze"
-                            app:iconGravity="textStart"
-                            app:iconTint="@null"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/google_maps_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center"
-                            android:layout_marginEnd="8dp"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:contentDescription="Google Maps"
-                            android:padding="0dp"
-                            android:scaleType="fitXY"
-                            android:visibility="gone"
-                            app:icon="@drawable/ic_google_maps"
-                            app:iconGravity="textStart"
-                            app:iconTint="@null"
-                            app:layout_constraintEnd_toStartOf="@id/waze_btn"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <!-- Title, secondary and supporting text -->
-                    <TextView
-                        android:id="@+id/post_item_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                    <TextView
-                        android:id="@+id/post_item_category"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary" />
-
-                    <TextView
-                        android:id="@+id/post_item_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Item description - bla bla more bla bla bla many bla bla's. so much. just some text here with many dots: ..... that's enough. bye."
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary" />
-
-                </LinearLayout>
-
-                <!-- Buttons -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/post_like_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:padding="0dp"
-                            android:textColor="@android:color/black"
-                            android:textSize="20sp"
-                            app:icon="@drawable/ic_like"
-                            app:iconGravity="textStart"
-                            app:iconPadding="10dp"
-                            app:iconTint="@null" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/post_comment_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:padding="0dp"
-                            android:textColor="@android:color/black"
-                            android:textSize="20sp"
-                            app:icon="@drawable/ic_comment"
-                            app:iconGravity="textStart"
-                            app:iconPadding="10dp"
-                            app:iconTint="@null" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/post_follow_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:padding="0dp"
-                            android:textColor="@android:color/black"
-                            android:textSize="20sp"
-                            app:icon="@drawable/ic_bookmark"
-                            app:iconGravity="textStart"
-                            app:iconPadding="10dp"
-                            app:iconTint="@null" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/post_share_btn"
-                            style="?attr/borderlessButtonStyle"
-                            android:layout_width="80dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:background="@android:color/transparent"
-                            android:backgroundTint="@null"
-                            android:contentDescription="@string/share"
-                            android:padding="0dp"
-                            android:textColor="@android:color/black"
-                            android:textSize="20sp"
-                            app:icon="@drawable/ic_share"
-                            app:iconGravity="textStart"
-                            app:iconPadding="10dp"
-                            app:iconTint="@null" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
+        <include layout="@layout/cardview_post" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/comments_card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="8dp"
             android:clickable="false"
             android:focusable="false"
-            app:cardElevation="5dp">
+            app:cardElevation="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -296,7 +35,7 @@
                     android:id="@+id/post_comments_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_margin="0dp"
                     android:overScrollMode="never"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
@@ -304,8 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="5dp">
+                    android:padding="3dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/post_comment_tf"
@@ -313,23 +51,15 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="10"
-                        android:hint="@string/comment">
+                        android:hint="@string/comment"
+                        android:padding="0dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/post_comment_et"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="match_parent" />
 
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <!--                    <EditText
-                                            android:id="@+id/post_comment_et"
-                                            android:layout_width="0dp"
-                                            android:layout_height="match_parent"
-                                            android:layout_weight="8"
-                                            android:hint="@string/comment"
-                                            android:textSize="15sp"
-                                            />-->
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/post_add_comment_btn"

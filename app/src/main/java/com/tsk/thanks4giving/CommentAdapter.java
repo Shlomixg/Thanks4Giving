@@ -40,7 +40,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
             user_name = itemView.findViewById(R.id.comment_profile_name);
             message = itemView.findViewById(R.id.comment_message);
             date = itemView.findViewById(R.id.comment_date);
-
         }
     }
 
@@ -80,5 +79,4 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
     public int getItemCount() {
         return list.size();
     }
-
 }

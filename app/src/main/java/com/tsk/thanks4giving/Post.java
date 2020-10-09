@@ -17,7 +17,7 @@ public class Post {
     public String postImage; // Item image
     public ArrayList<String> likes; // List of users which liked the post
     public ArrayList<Comment> comments; // List of Comment objects
-    public ArrayList<String> watching;// List ID's watching this post
+    public ArrayList<String> watching; // List ID's watching this post
 
     public Post() {
 
