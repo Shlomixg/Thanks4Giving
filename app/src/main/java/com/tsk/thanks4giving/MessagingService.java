@@ -26,7 +26,7 @@ public class MessagingService extends FirebaseMessagingService {
             String postID = remoteMessage.getData().get("postID");
 
             Intent resultIntent = new Intent(this, MainActivity.class);
-            resultIntent.putExtra("post",postID);
+            resultIntent.putExtra("post", postID);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

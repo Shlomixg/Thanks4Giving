@@ -41,9 +41,9 @@ public class ProfileFragment extends Fragment {
     FloatingActionButton fab;
     MaterialCardView active_items_card, delivered_items_card;
     LovelyProgressDialog progressDialog;
-    TextView active_items_label,delivered_items_label;
-    int delivered_items=0;
-    int available_items=0;
+    TextView active_items_label, delivered_items_label;
+    int delivered_items = 0;
+    int available_items = 0;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
@@ -92,8 +92,8 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         profile_civ = rootView.findViewById(R.id.profile_user_image);
-        active_items_label= rootView.findViewById(R.id.active_items_label);
-        delivered_items_label=rootView.findViewById(R.id.delivered_items_label);
+        active_items_label = rootView.findViewById(R.id.active_items_label);
+        delivered_items_label = rootView.findViewById(R.id.delivered_items_label);
         name_tv = rootView.findViewById(R.id.profile_user_name_tv);
         email_tv = rootView.findViewById(R.id.profile_user_email_tv);
         gender_tv = rootView.findViewById(R.id.profile_user_gender_tv);
@@ -114,8 +114,8 @@ public class ProfileFragment extends Fragment {
                         delivered_items++;
 
                     }
-                    active_items_label.setText(""+available_items);
-                    delivered_items_label.setText(""+delivered_items);
+                    active_items_label.setText("" + available_items);
+                    delivered_items_label.setText("" + delivered_items);
 
                 }
 

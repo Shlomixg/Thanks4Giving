@@ -85,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
             scheduleJob();
 
         Intent intent = this.getIntent();
-        if(intent != null)
-        {
+        if (intent != null) {
             String idPOST = intent.getExtras().getString("post");
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
