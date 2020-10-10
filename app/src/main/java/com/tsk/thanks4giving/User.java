@@ -9,6 +9,7 @@ public class User {
     public String email;
     public String gender;
     public String address;
+    public String coordinates;
     public String profilePhoto;
     public ArrayList<String> postsUid;
 
@@ -16,12 +17,13 @@ public class User {
 
     }
 
-    public User(String uid, String name, String email, String gender, String address, String profilePhoto) {
+    public User(String uid, String name, String email, String gender, String address,String coordinates ,String profilePhoto) {
         this.uid = uid;
         this.name = name;
         this.email = email;
         this.gender = gender;
         this.address = address;
+        this.coordinates=coordinates;
         this.profilePhoto = profilePhoto;
         this.postsUid = new ArrayList<String>();
     }
@@ -84,5 +86,12 @@ public class User {
 
     public void setPostsUid(ArrayList<String> postsUid) {
         this.postsUid = postsUid;
+    }
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
     }
 }

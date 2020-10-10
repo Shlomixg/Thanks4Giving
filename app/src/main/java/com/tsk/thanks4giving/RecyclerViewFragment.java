@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -81,7 +83,11 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     Location location_original = new Location("dummyProvider");
     LocationManager manager; //##
     int LOCATION_PERMISSION_REQUEST = 2;
-     ProgressDialog progressDialog2;
+     LovelyProgressDialog progressDialog2;
+    int flagBack=-1;
+    final DatabaseReference users = database.getReference().child("users");
+    String temp;
+
 
 
     public RecyclerViewFragment() {
@@ -108,9 +114,15 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
-        progressDialog2 = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext()); // loading dialog for gps location
-        progressDialog2.setTitle(getString(R.string.loading)); // set text for dialog
+       progressDialog2 = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
+                ; // TODO: Move to strings
 
+        progressDialog2.setTitle(getString(R.string.location_loading)); // set text for dialog
+        String[] a = getResources().getStringArray(R.array.categories_for_filter);
+        String[] b = getResources().getStringArray(R.array.times);
 
         spinner = rootView.findViewById(R.id.category_spinner_filter); // ****categories spinner****
         times_spinner = rootView.findViewById(R.id.time_spinner_filter);//****times spinner****
@@ -123,6 +135,23 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         edit_current_search = rootView.findViewById(R.id.close_current_search); // ****edit search button****
         edit_current_filters = rootView.findViewById(R.id.close_current_filter); // ****edit filter button****
         bubbleSeekBar = (BubbleSeekBar) rootView.findViewById(R.id.BubbleSeekBar); // ****SeekBar****
+        manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
+        current_text = rootView.findViewById(R.id.current);
+        search_tv = rootView.findViewById(R.id.search_tv);
+        current_search = rootView.findViewById(R.id.current_search);
+        search_submit = rootView.findViewById(R.id.linear_submitsearch);
+        linear_current_filter = rootView.findViewById(R.id.linear_current_filter);
+        search = rootView.findViewById(R.id.linear_search);
+        filters = rootView.findViewById(R.id.linear_filter);
+        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
+        keyword = rootView.findViewById(R.id.keyword);
+        keyword.setText("");
+        times_spinner.setSelection(0);
+        submit_filter_btn = rootView.findViewById(R.id.submit_filter);
+        filter1 = rootView.findViewById(R.id.filter1);
+        filter2 = rootView.findViewById(R.id.filter2);
+        search_keyword = rootView.findViewById(R.id.your_search);
+        submit_search_btn = rootView.findViewById(R.id.submit_serach);
 
 
         search_btn.setOnClickListener(new View.OnClickListener() { // listener for search button from menu
@@ -194,15 +223,23 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             @Override
             public void onClick(View v) {
                 progressDialog2.show(); //start loading dialog
-                if (Build.VERSION.SDK_INT >= 23) { //check permissions for gps location and get it.
-                    int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-                    if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
-                    } else {
+                if (mUserUid==null || mUserUid.equals(""))
+                {
+                    if (Build.VERSION.SDK_INT >= 23) { //check permissions for gps location and get it.
+                        int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+                        if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+                        } else {
+                            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
+                        }
+                    } else
                         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
-                    }
-                } else
-                    manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RecyclerViewFragment.this);
+                }
+                else
+                {
+
+                }
+
             }
         });
 
@@ -232,16 +269,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
 
 
-
-
-
-
-
-
-
-
-        String[] a = getResources().getStringArray(R.array.categories_for_filter);
-        String[] b = getResources().getStringArray(R.array.times);
         final ArrayAdapter<String> adapter1 =
                 new ArrayAdapter<String>(getActivity(), R.layout.spinner_text_filter, a) {
                     @Override
@@ -318,9 +345,11 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             }
         });
 
+        if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+            bubbleSeekBar.setVisibility(View.VISIBLE);
 
 
-        bubbleSeekBar.setProgress((float) (100.0));
+            bubbleSeekBar.setProgress((float) (100.0));
         bubbleSeekBar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(final BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
@@ -328,8 +357,20 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postList.clear();
-                            showallposts(snapshot); //  loop over all posts and filter by distance
-                        Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
+                        if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+                        {
+                            showallposts(snapshot);
+                            Toast.makeText(getContext(), "2) option A - no location", Toast.LENGTH_SHORT).show();
+
+                        }
+                        else
+                        {
+                            showallpostsNoLocation(snapshot);
+                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        Toast.makeText(getContext(), "1) option A - location Exist", Toast.LENGTH_SHORT).show();
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
@@ -350,61 +391,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
-        current_text = rootView.findViewById(R.id.current);
-        search_tv = rootView.findViewById(R.id.search_tv);
-        current_search = rootView.findViewById(R.id.current_search);
-        search_submit = rootView.findViewById(R.id.linear_submitsearch);
-        linear_current_filter = rootView.findViewById(R.id.linear_current_filter);
-        search = rootView.findViewById(R.id.linear_search);
-        filters = rootView.findViewById(R.id.linear_filter);
-        filter_submit = rootView.findViewById(R.id.linear_filter_submit);
-        keyword = rootView.findViewById(R.id.keyword);
-        keyword.setText("");
-
-
-        times_spinner.setSelection(0);
-
-
-        submit_filter_btn = rootView.findViewById(R.id.submit_filter);
-        filter1 = rootView.findViewById(R.id.filter1);
-        filter2 = rootView.findViewById(R.id.filter2);
-        search_keyword = rootView.findViewById(R.id.your_search);
-        submit_search_btn = rootView.findViewById(R.id.submit_serach);
         submit_search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -434,7 +420,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
                         {
                             showallposts(snapshot);
-                            Toast.makeText(getContext(), "option A - no location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "2) option A - no location", Toast.LENGTH_SHORT).show();
 
                         }
                         else
@@ -457,6 +443,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 });
             }
         });
+
+
+
 
         submit_filter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -512,7 +501,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 //
                         if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
                         {
-                            Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "3) option A - location Exist", Toast.LENGTH_SHORT).show();
                             showallposts(snapshot);
 
                         }
@@ -576,6 +565,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
         progressDialog.setTitle(getString(R.string.loading));
+        Toast.makeText(getContext(), "heyyy", Toast.LENGTH_SHORT).show();
 
 
         query.addValueEventListener(new ValueEventListener() {
@@ -583,8 +573,18 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 progressDialog.show();
                 postList.clear();
-                nofilters(snapshot);
-                Collections.reverse(postList);
+                if (location_original.getLatitude()!=0.0 && location_original.getLongitude()!=0.0) // #case no location
+                {
+                    showallposts(snapshot);
+                    Toast.makeText(getContext(), "CUSTOM==option A - no location", Toast.LENGTH_SHORT).show();
+                    flagBack=0;
+                }
+                else
+                {
+                    showallpostsNoLocation(snapshot);
+                    Toast.makeText(getContext(), "CUSTOM==option B - no location", Toast.LENGTH_SHORT).show();
+
+                }                Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
@@ -641,8 +641,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
-            if(post.desc.contains(keyword.getText().toString()) &&
+            if(post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
                     (post.getCategory().equals(spinner.getSelectedItem().toString()) ||
                             spinner.getSelectedItem().toString().equals("All Categories") ||
                             spinner.getSelectedItem().toString().equals(spinner.getItemAtPosition(0))) )// if post contain search
@@ -653,14 +652,13 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                         postList.add(post);
-                        Toast.makeText(getContext(), "" + post.getDate() + "-" + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
                     postList.add(post);
                 }
             }
-            else  if(!post.desc.contains(keyword.getText().toString()))
+            else  if(!post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()))
             {
 
             }
@@ -701,7 +699,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 e.printStackTrace();
             }
 
-            if(post.desc.contains(keyword.getText().toString()) &&
+            if(post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
                     (post.getCategory().equals(spinner.getSelectedItem().toString()) ||
                             spinner.getSelectedItem().toString().equals("All Categories") ||
                             spinner.getSelectedItem().toString().equals(spinner.getItemAtPosition(0))) && (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress()*1000))// if post contain search
@@ -712,14 +710,13 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                         postList.add(post);
-                        Toast.makeText(getContext(), "" + post.getDate() + "-" + TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show();
                     }
                     }
                 else {
                         postList.add(post);
                     }
                 }
-            else  if(!post.desc.contains(keyword.getText().toString()))
+            else  if(!post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()))
             {
 
             }
@@ -764,7 +761,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         progressDialog2.dismiss();
         location_original.setLatitude(location.getLatitude());
         location_original.setLongitude(location.getLongitude());
-      Toast.makeText(getContext(), "Location: "+location_original.getLatitude()+","+location_original.getLongitude(), Toast.LENGTH_SHORT).show();
         if (location_original!=null)
         {
             manager.removeUpdates(this);

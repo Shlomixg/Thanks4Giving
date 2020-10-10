@@ -98,4 +98,5 @@
     <string name="comments_summery">Receive notifications on comments in your posts.</string>
     <string name="new_comment">"You have a new post comment from "</string>
     <string name="new_comment_title">Check your post comments!</string>
+    <string name="location_loading">We are looking for your Location..</string>
 </resources>
