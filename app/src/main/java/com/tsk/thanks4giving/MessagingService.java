@@ -26,6 +26,7 @@ public class MessagingService extends FirebaseMessagingService {
             String postID = remoteMessage.getData().get("postID");
 
             Intent resultIntent = new Intent(this, MainActivity.class);
+            resultIntent.setAction("fromNotif");
             resultIntent.putExtra("post", postID);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(resultIntent);
