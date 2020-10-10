@@ -178,8 +178,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         default_address_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Not Working yet", Toast.LENGTH_SHORT).show();
-                /*flag_location = 1;
+                flag_location = 1;
                 users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -194,7 +193,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                });*/
+                });
             }
         });
 
