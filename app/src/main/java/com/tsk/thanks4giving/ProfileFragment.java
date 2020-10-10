@@ -43,6 +43,8 @@ public class ProfileFragment extends Fragment {
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
+    final DatabaseReference posts = mDatabase.child("posts");
+
 
     private static final String ARG_USER_UID = "userUid";
 
@@ -123,6 +125,22 @@ public class ProfileFragment extends Fragment {
         active_items_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//
+//                posts.child("")addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        Post post = snapshot.getValue(Post.class);
+//                        if (post != null ) {
+//                            Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show();
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                    }
+//                });
+
                 showUserPosts(mUserUid, 1);
             }
         });
@@ -178,5 +196,7 @@ public class ProfileFragment extends Fragment {
         RecyclerViewFragment rvFragment = new RecyclerViewFragment();
         rvFragment.setArguments(bundle);
         transaction.replace(R.id.flProfileContent, rvFragment, "USER_POSTS_FRAG").commit();
+
+
     }
 }
