@@ -75,6 +75,8 @@ dependencies {
     // Awesome Validation
     implementation 'com.basgeekball:awesome-validation:4.2'
 
+    implementation "com.android.volley:volley:1.1.1"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

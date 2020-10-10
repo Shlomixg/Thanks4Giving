@@ -370,7 +370,6 @@ public class PostFragment extends Fragment {
                             posts.child(postID).child("status").setValue(0);
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
@@ -411,9 +410,9 @@ public class PostFragment extends Fragment {
                     });
                     final JSONObject rootObject = new JSONObject();
                     try {
-                        Log.d("fcm", "--- Post id: " + postID);
                         rootObject.put("to", "/topics/" + topic[0]);
-                        rootObject.put("data", new JSONObject().put("message", textToSend).put("postID", postID));
+                        rootObject.put("data", new JSONObject().put("message", textToSend).put("postID",postID));
+                        rootObject.put("data", new JSONObject().put("priority", "high"));
                         String url = "https://fcm.googleapis.com/fcm/send";
 
                         RequestQueue queue = Volley.newRequestQueue(getContext());

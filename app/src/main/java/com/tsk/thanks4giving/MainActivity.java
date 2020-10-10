@@ -45,7 +45,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "job scheduler";
     final String NEW_POST_FRAG = "New Post Fragment";
     final String RECYCLER_FRAG = "Recycler View Fragment";
     final String SIGNUP_FRAG = "Signup Fragment";
@@ -84,6 +83,19 @@ public class MainActivity extends AppCompatActivity {
         boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
         if (autoLocation)
             scheduleJob();
+
+        Intent intent = this.getIntent();
+        if(intent != null)
+        {
+            String idPOST = intent.getExtras().getString("post");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("PostId", idPOST);
+            PostFragment postFragment = new PostFragment();
+            postFragment.setArguments(bundle);
+            transaction.replace(R.id.flContent, postFragment, "POST_FRAG").addToBackStack(null).commit();
+        }
 
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
