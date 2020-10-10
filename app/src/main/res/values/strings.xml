@@ -17,7 +17,8 @@
     <string name="login">Login</string>
     <string name="post_new_item">Post new item</string>
     <string name="description">Description</string>
-    <string name="get_address_with_gps_location">Get Address with GPS location</string>
+    <string name="get_address_with_gps_location">GPS</string>
+    <string name="get_default_address">Default</string>
     <string name="take_picture">Take Picture</string>
     <string name="picture_from_gallery">Picture from gallery</string>
     <string name="share">Share</string>

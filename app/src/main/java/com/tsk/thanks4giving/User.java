@@ -17,33 +17,29 @@ public class User {
 
     }
 
-    public User(String uid, String name, String email, String gender, String address,String coordinates ,String profilePhoto) {
+    public User(String uid, String name, String email, String gender, String address, String coordinates, String profilePhoto) {
         this.uid = uid;
         this.name = name;
         this.email = email;
         this.gender = gender;
         this.address = address;
-        this.coordinates=coordinates;
+        this.coordinates = coordinates;
         this.profilePhoto = profilePhoto;
         this.postsUid = new ArrayList<String>();
     }
 
     /* Getters */
 
+    public String getUid() {
+        return uid;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getProfilePhoto() {
-        return profilePhoto;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public String getUid() {
-        return uid;
     }
 
     public String getGender() {
@@ -54,11 +50,23 @@ public class User {
         return address;
     }
 
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
+
     public ArrayList<String> getPostsUid() {
         return postsUid;
     }
 
     /* Setters */
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -66,14 +74,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setProfilePhoto(String profilePhoto) {
-        this.profilePhoto = profilePhoto;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public void setGender(String gender) {
@@ -84,14 +84,15 @@ public class User {
         address = Address;
     }
 
-    public void setPostsUid(ArrayList<String> postsUid) {
-        this.postsUid = postsUid;
-    }
-    public String getCoordinates() {
-        return coordinates;
-    }
-
     public void setCoordinates(String coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
+    public void setPostsUid(ArrayList<String> postsUid) {
+        this.postsUid = postsUid;
     }
 }

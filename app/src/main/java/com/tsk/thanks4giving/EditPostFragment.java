@@ -143,7 +143,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
             Toast.makeText(getActivity(), postID, Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
         }
         browse_btn = rootView.findViewById(R.id.gallery_btn);
-        camera_btn = rootView.findViewById(R.id.pic_btn);
+        camera_btn = rootView.findViewById(R.id.shoot_pic_btn);
         addressTv = rootView.findViewById(R.id.item_pickup_address_et);//##
         Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         addressTv.setFocusable(false);

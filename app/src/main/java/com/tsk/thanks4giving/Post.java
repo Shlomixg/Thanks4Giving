@@ -12,12 +12,9 @@ public class Post {
     public String coordinates;
     public String locationMethod;
     public String date;
-    public int status; // 1 = available 0 = not available
-    public String category; // items general category
+    public int status; // 1 = available, 0 = not available
+    public String category; // Items general category
     public String postImage; // Item image
-    public ArrayList<String> likes; // List of users which liked the post
-    public ArrayList<Comment> comments; // List of Comment objects
-    public ArrayList<String> watching; // List ID's watching this post
 
     public Post() {
 
@@ -35,35 +32,24 @@ public class Post {
         this.date = date;
         this.category = category;
         this.postImage = postImage;
-        this.likes = new ArrayList<String>();
-        this.comments = new ArrayList<Comment>();
-        this.watching = new ArrayList<String>();
     }
 
     /* Getters */
 
-    public String getDesc() {
-        return desc;
-    }
-
     public String getPostID() {
         return postID;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public String getUserUid() {
         return userUid;
     }
 
-    public int getStatus() {
-        return status;
+    public String getTitle() {
+        return title;
     }
 
-    public String getDate() {
-        return date;
+    public String getDesc() {
+        return desc;
     }
 
     public String getAddress() {
@@ -78,6 +64,14 @@ public class Post {
         return locationMethod;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -86,23 +80,7 @@ public class Post {
         return postImage;
     }
 
-    public ArrayList<String> getWatching() {
-        return watching;
-    }
-
-    public ArrayList<String> getLikes() {
-        return likes;
-    }
-
-    public ArrayList<Comment> getComments() {
-        return comments;
-    }
-
     /* Setters */
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
 
     public void setPostID(String postID) {
         this.postID = postID;
@@ -116,28 +94,8 @@ public class Post {
         this.title = title;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public void setPostImage(String postImage) {
-        this.postImage = postImage;
-    }
-
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public void setLikes(ArrayList<String> likes) {
-        this.likes = likes;
-    }
-
-    public void setWatching(ArrayList<String> watching) {
-        this.watching = watching;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public void setAddress(String address) {
@@ -154,5 +112,17 @@ public class Post {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setPostImage(String postImage) {
+        this.postImage = postImage;
     }
 }

@@ -305,8 +305,7 @@ public class EditProfileFragment extends Fragment {
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
             uploadPicture();
-        }
-        else   if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+        } else if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             address_et.setText(place.getAddress());
             String temp = String.valueOf(place.getLatLng());

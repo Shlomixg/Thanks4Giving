@@ -83,7 +83,6 @@ public class SignupFragment extends Fragment {
         });
 
 
-
         // TODO: Add selecting or take pictures for image
 
         String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
@@ -123,9 +122,9 @@ public class SignupFragment extends Fragment {
 
                                 if (imageUri == null) {
                                     if (gender.equals("Female"))
-                                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/thanks4giving-2020.appspot.com/o/ProfileImages%2F6df9e87b-c233-4db8-b343-53270ffef96e?alt=media&token=8c963c47-8ec3-490e-a3a4-a52693515ecc");
                                     else {
-                                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
+                                        imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/thanks4giving-2020.appspot.com/o/ProfileImages%2Fc829a8fc-bade-4cbe-a29f-192c65c45f1b?alt=media&token=b6fb766c-09b0-416b-9e6a-8786226694e6");
                                     }
                                 }
 
@@ -138,7 +137,7 @@ public class SignupFragment extends Fragment {
                                                                    public void onComplete(@NonNull Task<Void> task) {
                                                                        // Saving to DB
                                                                        String userUid = fbUser.getUid();
-                                                                       User user = new User(userUid, name, mail, gender, address,coordinates, imageUri.toString());
+                                                                       User user = new User(userUid, name, mail, gender, address, coordinates, imageUri.toString());
                                                                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                                                        mDatabase.child("users").child(fbUser.getUid()).setValue(user);
 
@@ -170,11 +169,11 @@ public class SignupFragment extends Fragment {
     public void setSnackbar(FirebaseUser firebaseUser) {
         Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-       if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             address_et.setText(place.getAddress());
             String temp = String.valueOf(place.getLatLng());

@@ -23,13 +23,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,7 +84,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     ImageView image;
     TextInputEditText item_name_et, desc_et, address_et;
     AutoCompleteTextView categoryDropdown;
-    Button btn_gps, camera_btn, browse_btn;
+    MaterialButton gps_btn, default_address_btn, camera_btn, browse_btn;
     ImageButton confirm_btn;
     LovelyProgressDialog progressDialog;
 
@@ -135,10 +135,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         desc_et = rootView.findViewById(R.id.item_desc_et);
         address_et = rootView.findViewById(R.id.item_pickup_address_et);
         categoryDropdown = rootView.findViewById(R.id.item_category_spinner);
-        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
+        gps_btn = rootView.findViewById(R.id.gpsLocation_btn);
+        default_address_btn = rootView.findViewById(R.id.default_address_btn);
         image = rootView.findViewById(R.id.newPostImage);
         browse_btn = rootView.findViewById(R.id.gallery_btn);
-        camera_btn = rootView.findViewById(R.id.pic_btn);
+        camera_btn = rootView.findViewById(R.id.shoot_pic_btn);
         confirm_btn = rootView.findViewById(R.id.confirm_btn);
 
         Places.initialize(getContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
@@ -158,7 +159,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 new ArrayAdapter<>(getContext(), R.layout.spinner_text, categories);
         categoryDropdown.setAdapter(adapter);
 
-        btn_gps.setOnClickListener(new View.OnClickListener() {
+        gps_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 flag_location = 0;
@@ -171,6 +172,29 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     }
                 } else
                     manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NewPostFragment.this);
+            }
+        });
+
+        default_address_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Not Working yet", Toast.LENGTH_SHORT).show();
+                /*flag_location = 1;
+                users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.getValue(User.class);
+                        if (user != null) {
+                            address_et.setText(user.address);
+                            coordinates = user.coordinates;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });*/
             }
         });
 
@@ -227,12 +251,15 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
+        // TODO: Delete?
         users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                address = user.getAddress();
-                Toast.makeText(getActivity().getApplicationContext(), user.getAddress(), Toast.LENGTH_SHORT).show();
+                if (user != null) {
+                    address = user.address;
+                    Toast.makeText(getContext(), user.address, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -244,17 +271,13 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
+                .setTitle(getString(R.string.saved_location) + address) // set text for dialog
                 .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
         ; // TODO: Move to strings
-
-        progressDialog.setTitle(getString(R.string.saved_location) + address); // set text for dialog
-
 
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
 
                 // TODO: Add title & desc to post
                 final String postID = posts.push().getKey();
@@ -332,6 +355,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .show();
     }
 
+    // TODO: Why we need it here?
     @Override
     public void onLocationChanged(Location location) {
         final double lat = location.getLatitude();
@@ -386,6 +410,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             address_et.setText(place.getAddress());
+
             String temp = String.valueOf(place.getLatLng());
             coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {

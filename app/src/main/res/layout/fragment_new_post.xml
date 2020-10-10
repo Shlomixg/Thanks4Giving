@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:padding="15dp"
         android:orientation="vertical">
 
         <TextView
@@ -59,38 +59,6 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/item_pickup_address_tf"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Pickup address">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/item_pickup_address_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_address_location"
-                android:drawablePadding="10dp"
-                android:inputType="text" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/gpsLocation_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:drawableLeft="@drawable/ic_location_on"
-            android:padding="3dp"
-            android:text="@string/get_address_with_gps_location"
-            android:textColor="@color/colorWhite"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_pickup_address_et" />
-
-        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/item_category_tf"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
@@ -108,47 +76,88 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/item_pickup_address_tf"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pickup address">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/item_pickup_address_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_address_location"
+                android:drawablePadding="10dp"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/gpsLocation_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_location_on"
+                android:text="@string/get_address_with_gps_location"
+                android:textColor="@color/colorWhite"
+                android:layout_marginEnd="5dp"
+                app:iconTint="@color/colorWhite"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/default_address_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:icon="@drawable/ic_address_location"
+                android:text="@string/get_default_address"
+                android:textColor="@color/colorWhite"
+                app:iconTint="@color/colorWhite"
+                />
+
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/newPostImage"
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:layout_margin="5dp"
             android:contentDescription="Item Photo"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_category_spinner" />
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:id="@+id/picBtnsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/newPostImage">
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/pic_btn"
-                android:layout_width="200dp"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/shoot_pic_btn"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:drawableLeft="@drawable/ic_camera_alt"
-                android:padding="3dp"
+                app:icon="@drawable/ic_camera_alt"
                 android:text="@string/take_picture"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                app:iconTint="@color/colorWhite"
+                />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/gallery_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_insert_photo"
-                android:padding="3dp"
+                app:icon="@drawable/ic_insert_photo"
                 android:text="@string/picture_from_gallery"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                app:iconTint="@color/colorWhite"
+                />
 
         </LinearLayout>
 
@@ -157,9 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_check"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:src="@drawable/ic_check" />
 
     </LinearLayout>
 

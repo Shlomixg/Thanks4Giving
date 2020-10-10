@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                currentUser = mAuth.getCurrentUser();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if (currentUser != null) { // Sign up or login
                     if (commentSwitch) {

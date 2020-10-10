@@ -28,7 +28,7 @@ public class MessagingService extends FirebaseMessagingService {
             stackBuilder.addNextIntentWithParentStack(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //if the application is not in foreground post notification
+            // if the application is not in foreground post notification
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Notification.Builder builder = new Notification.Builder(this);
 

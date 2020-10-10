@@ -106,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@id/newPostImage">
 
         <Button
-            android:id="@+id/pic_btn"
+            android:id="@+id/shoot_pic_btn"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"

@@ -7,6 +7,10 @@ public class Comment {
     public String text;
     public String date;
 
+    public Comment() {
+
+    }
+
     public Comment(String userID, String userName, String text, String date) {
         this.userID = userID;
         this.userName = userName;
@@ -14,28 +18,32 @@ public class Comment {
         this.date = date;
     }
 
-    public Comment() {
-
-    }
+    /* Getters */
 
     public String getUserID() {
         return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    /* Setters */
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setText(String text) {
@@ -44,9 +52,5 @@ public class Comment {
 
     public String getDate() {
         return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }
