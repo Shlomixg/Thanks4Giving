@@ -72,6 +72,8 @@ dependencies {
     // Ribbons
     implementation "com.github.skydoves:androidribbon:1.0.3"
 
+    implementation "com.android.volley:volley:1.1.1"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

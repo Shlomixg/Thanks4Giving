@@ -482,7 +482,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             showallpostsNoLocation(snapshot);
                         }
                         Collections.reverse(postList);
-                        // adapter=new PostAdapter(postList);
                         adapter.notifyDataSetChanged();
                     }
 

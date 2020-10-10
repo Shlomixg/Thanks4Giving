@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresh"
@@ -19,10 +20,10 @@
 
             <com.xw.repo.BubbleSeekBar
                 android:id="@+id/BubbleSeekBar"
-                android:layout_width="325dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1"
+                android:layout_weight="4"
                 android:visibility="gone"
                 app:bsb_bubble_color="#BD574F"
                 app:bsb_bubble_text_color="@color/colorWhite"
@@ -40,24 +41,27 @@
 
             <Button
                 android:id="@+id/search_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:padding="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_baseline_search_24" />
+                android:background="@drawable/ic_baseline_search_24"/>
 
             <Button
                 android:id="@+id/filter_btn"
-                android:layout_width="40sp"
-                android:layout_height="40dp"
+                android:layout_width="10sp"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:background="@drawable/filter_icon" />
+                android:padding="10dp"
+                android:background="@drawable/ic_baseline_filter_list_24" />
 
             <Button
                 android:id="@+id/location_filter"
-                android:layout_width="45sp"
-                android:layout_height="40dp"
+                android:layout_width="30sp"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:background="@drawable/ic_baseline_location_searching_24" />
+                android:padding="10dp"
+                android:background="@drawable/ic_baseline_gps_fixed_24" />
 
         </LinearLayout>
 
@@ -70,17 +74,16 @@
             <LinearLayout
                 android:id="@+id/linear_filter"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
                 <Spinner
                     android:id="@+id/category_spinner_filter"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_weight="2"
                     android:padding="5dp"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +92,7 @@
 
                 <Spinner
                     android:id="@+id/time_spinner_filter"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
@@ -98,7 +101,8 @@
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn" />
+                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -112,8 +116,8 @@
                     android:id="@+id/submit_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="50dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="50dp"
                     android:gravity="center"
                     android:padding="15dp"
                     android:text="@string/submit_filter"
@@ -124,7 +128,7 @@
                     android:id="@+id/clean_filter_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:gravity="center"
                     android:text="@string/cleanfilters"
                     android:textColor="@color/colorWhite"
@@ -137,11 +141,11 @@
                     android:layout_height="wrap_content"
                     android:padding="15dp"
                     android:src="@drawable/ic_baseline_close_24"
+                    android:background="@color/colorWhite"
                     android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:id="@+id/linear_current_filter"
@@ -154,20 +158,20 @@
                     android:id="@+id/current"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="18dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="18dp"
                     android:background="#833131"
                     android:padding="3dp"
                     android:text="Current Filters: "
                     android:textColor="@color/colorWhite"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="italic" />
 
                 <Button
                     android:id="@+id/filter1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="@string/submit_filter"
@@ -189,7 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
-                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
                     android:background="@null"
                     android:padding="15dp"
                     android:src="@drawable/ic_baseline_edit_24"
@@ -210,13 +214,13 @@
                     android:id="@+id/current_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="30dp"
                     android:background="#833131"
                     android:padding="3dp"
                     android:text="Your search: "
                     android:textColor="@color/colorWhite"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="italic"
                     android:visibility="gone" />
 
@@ -224,7 +228,7 @@
                     android:id="@+id/your_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:padding="10dp"
                     android:textColor="@color/colorWhite"
@@ -235,7 +239,8 @@
                     android:id="@+id/search_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
                     android:text="Search" />
 
                 <EditText
@@ -262,13 +267,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:visibility="gone">
 
                 <Button
                     android:id="@+id/submit_serach"
                     android:layout_width="120dp"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:gravity="center"
                     android:text="@string/submit_filter"
                     android:textColor="@color/colorWhite"
@@ -279,9 +285,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
+                    android:layout_gravity="end"
                     android:src="@drawable/ic_baseline_close_24"
+                    android:background="@color/colorWhite"
                     android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
             </LinearLayout>
 
