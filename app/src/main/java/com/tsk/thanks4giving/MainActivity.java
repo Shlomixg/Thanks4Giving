@@ -84,18 +84,6 @@ public class MainActivity extends AppCompatActivity {
         if (autoLocation)
             scheduleJob();
 
-        Intent intent = this.getIntent();
-        if (intent.getAction().equals("fromNotif")) {
-            String idPOST = intent.getExtras().getString("post");
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("PostId", idPOST);
-            PostFragment postFragment = new PostFragment();
-            postFragment.setArguments(bundle);
-            transaction.replace(R.id.flContent, postFragment, "POST_FRAG").addToBackStack(null).commit();
-        }
-
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
@@ -178,8 +166,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
         // Setting the first fragment
-        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+        Intent intent = this.getIntent();
+        if (intent.hasExtra("post")) {
+            String postID = intent.getStringExtra("post");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("PostId", postID);
+            PostFragment postFragment = new PostFragment();
+            postFragment.setArguments(bundle);
+            transaction.replace(R.id.flContent, postFragment, "POST_FRAG").addToBackStack(null).commit();
+        } else {
+            setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+        }
     }
 
     @Override

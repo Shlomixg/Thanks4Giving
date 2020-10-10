@@ -76,7 +76,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     Spinner spinner, times_spinner;
     Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter;
     ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
-    LinearLayout filters, search, filter_submit, search_submit, linear_current_filter,all_buttons_layout;
+    LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout;
     LovelyProgressDialog progressDialog2;
 
     long diff;
@@ -107,7 +107,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         query = posts;
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
-        all_buttons_layout=rootView.findViewById(R.id.all_buttons_layout);
+        all_buttons_layout = rootView.findViewById(R.id.all_buttons_layout);
         refreshLayout = rootView.findViewById(R.id.refresh);
         adapter = new PostAdapter(postList);
         recycler = rootView.findViewById(R.id.recycler);
@@ -137,7 +137,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
-
 
 
                 }
@@ -618,7 +617,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     private void nofilters(DataSnapshot snapshot) {
 
 
-
     }
 
 
@@ -683,8 +681,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     public void filterLocation(DataSnapshot snapshot) {
 
         postList.clear();
-
-
 
 
     }
