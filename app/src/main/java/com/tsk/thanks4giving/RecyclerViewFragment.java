@@ -528,7 +528,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 }
             });
 
-            final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
             progressDialog.setTitle(getString(R.string.loading));
 
             query.addValueEventListener(new ValueEventListener() {

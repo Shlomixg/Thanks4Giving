@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".SignupFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingVertical="5dp"
         android:paddingHorizontal="12dp"
-        tools:context=".SignupFragment">
+        android:paddingVertical="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,9 +72,7 @@
                         android:text="@string/take_picture"
                         android:textColor="@color/colorWhite"
                         app:icon="@drawable/ic_camera"
-                        app:iconTint="@color/colorWhite"
-                        app:layout_constraintStart_toEndOf="@id/signup_user_image"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:iconTint="@color/colorWhite" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/signup_gallery_btn"
@@ -82,13 +81,9 @@
                         android:text="@string/picture_from_gallery"
                         android:textColor="@color/colorWhite"
                         app:icon="@drawable/ic_gallery"
-                        app:iconTint="@color/colorWhite"
-
-                        app:layout_constraintStart_toEndOf="@id/signup_user_image"
-                        app:layout_constraintTop_toBottomOf="@+id/signup_shoot_pic_btn" />
+                        app:iconTint="@color/colorWhite" />
 
                 </LinearLayout>
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -188,17 +183,17 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/signup_confirm_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="15dp"
-                android:text="@string/confirm_and_sign_up"
+                android:text="@string/confirm_sign_up"
                 android:textColor="@color/colorWhite"
                 android:textSize="20sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/signup_move_login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -206,7 +201,7 @@
                 android:layout_marginTop="5dp"
                 android:background="#00000000"
                 android:padding="5dp"
-                android:text="Already Have an Account? Login"
+                android:text="@string/already_have_account"
                 android:textColor="#000000" />
 
         </LinearLayout>

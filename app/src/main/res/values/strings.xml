@@ -30,7 +30,7 @@
     <string name="sign_up">Sign-up</string>
     <string name="full_name">Full Name</string>
     <string name="sign_password_hint">Password (6 digits or more)</string>
-    <string name="confirm_and_sign_up">Confirm And Sign Up</string>
+    <string name="confirm_sign_up">Sign Up</string>
     <string name="welcome_guest">Welcome guest</string>
 
     <string-array name="categories">
@@ -126,5 +126,12 @@
     <string name="validate_gender">Select gender</string>
     <string name="validate_email">Insert valid email</string>
     <string name="validate_pass">Min length: 6</string>
+    <string name="already_have_account">Already Have an Account? Login</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_loading_title">Loading data...</string>
+    <string name="dialog_loading_msg">Please wait</string>
+    <string name="dialog_uploading_title">Uploading photo...</string>
+    <string name="dialog_creating_user">Creating new user</string>
+    <string name="dialog_updating_user">Updating data</string>
 
 </resources>

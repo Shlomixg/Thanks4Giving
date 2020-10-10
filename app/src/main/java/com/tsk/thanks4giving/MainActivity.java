@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putString("PostId", postID);
             PostFragment postFragment = new PostFragment();
             postFragment.setArguments(bundle);
-            transaction.replace(R.id.flContent, postFragment, "POST_FRAG").addToBackStack(null).commit();
+            transaction.replace(R.id.flContent, postFragment, "POST_FRAG").commit();
         } else {
             setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
         }

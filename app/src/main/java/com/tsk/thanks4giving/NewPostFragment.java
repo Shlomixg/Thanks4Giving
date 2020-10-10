@@ -158,6 +158,13 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 new ArrayAdapter<>(getContext(), R.layout.spinner_text, categories);
         categoryDropdown.setAdapter(adapter);
 
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         gps_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,8 +260,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
                 .setTitle(getString(R.string.saved_location) + address) // set text for dialog
-                .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
-        ; // TODO: Move to strings
+                .setIcon(R.drawable.ic_baseline_location_on_40); // TODO: Change to app icon or wait icon
 
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -297,7 +303,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
             }
         });
-        return rootView;
     }
 
     private void takePicture() {

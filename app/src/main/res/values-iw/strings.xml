@@ -29,7 +29,7 @@
     <string name="sign_up">הרשמה</string>
     <string name="full_name">שם מלא</string>
     <string name="sign_password_hint">סיסמה (6 תווים לפחות)</string>
-    <string name="confirm_and_sign_up">הרשמה</string>
+    <string name="confirm_sign_up">הרשמה</string>
     <string name="welcome_guest">ברוך הבא אורח</string>
     <string name="need_permissions">יש צורך בהרשאות לפתיחת מצלמה או גלריה</string>
     <string name="welcome_back">, טוב שחזרת</string>
@@ -94,4 +94,11 @@
     <string name="validate_gender">יש לבחור מין</string>
     <string name="validate_email">יש להזין מייל תקין</string>
     <string name="validate_pass">אורך מינימלי: 6 תווים</string>
+    <string name="already_have_account">קיים משתמש? התחברות</string>
+    <string name="cancel">ביטול</string>
+    <string name="dialog_loading_title">המידע נטען...</string>
+    <string name="dialog_loading_msg">אנא להמתין</string>
+    <string name="dialog_uploading_title">מעלה תמונה...</string>
+    <string name="dialog_creating_user">יוצרים משתמש חדש</string>
+    <string name="dialog_updating_user">מעדכנים נתונים</string>
 </resources>
