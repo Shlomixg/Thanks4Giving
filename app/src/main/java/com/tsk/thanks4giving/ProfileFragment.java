@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
+import java.util.Collections;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
@@ -39,7 +41,9 @@ public class ProfileFragment extends Fragment {
     FloatingActionButton fab;
     MaterialCardView active_items_card, delivered_items_card;
     LovelyProgressDialog progressDialog;
-
+    TextView active_items_label,delivered_items_label;
+    int delivered_items=0;
+    int available_items=0;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     DatabaseReference ref;
@@ -88,6 +92,8 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         profile_civ = rootView.findViewById(R.id.profile_user_image);
+        active_items_label= rootView.findViewById(R.id.active_items_label);
+        delivered_items_label=rootView.findViewById(R.id.delivered_items_label);
         name_tv = rootView.findViewById(R.id.profile_user_name_tv);
         email_tv = rootView.findViewById(R.id.profile_user_email_tv);
         gender_tv = rootView.findViewById(R.id.profile_user_gender_tv);
@@ -95,6 +101,31 @@ public class ProfileFragment extends Fragment {
         active_items_card = rootView.findViewById(R.id.active_items_card);
         delivered_items_card = rootView.findViewById(R.id.delivered_items_card);
         fab = rootView.findViewById(R.id.profile_fab);
+
+        posts.orderByChild("uid").equalTo(mUserUid);
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post post = ds.getValue(Post.class);
+                    if (post.getUserUid().equals(mUserUid) && post.getStatus() == 1) {
+                        available_items++;
+                    } else if (post.getUserUid().equals(mUserUid) && post.getStatus() == 0) {
+                        delivered_items++;
+
+                    }
+                    active_items_label.setText(""+available_items);
+                    delivered_items_label.setText(""+delivered_items);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
 
         if (currentUser == null) {
             fab.setVisibility(View.GONE);
@@ -125,21 +156,7 @@ public class ProfileFragment extends Fragment {
         active_items_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//
-//                posts.child("")addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        Post post = snapshot.getValue(Post.class);
-//                        if (post != null ) {
-//                            Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show();
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                    }
-//                });
+
 
                 showUserPosts(mUserUid, 1);
             }
