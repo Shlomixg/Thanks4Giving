@@ -82,4 +82,5 @@
     <string name="fourth_slide_desc">אם זה אי-פעם יפריע לך תוכל בקלות לכבות את זה דרך ההגדרות.</string>
     <string name="fifth_slide_title">סיימנו ומוכנים לצאת לדרך!</string>
     <string name="fifth_slide_desc">תודה שהורדתם את האפליקציה שלנו, ותודה שנתתם!</string>
+    <string name="title_activity_introduction">הקדמה</string>
 </resources>

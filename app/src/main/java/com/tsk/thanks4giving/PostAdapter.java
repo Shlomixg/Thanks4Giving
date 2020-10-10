@@ -134,11 +134,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 .setRibbonView(new RibbonView.Builder(context)
                         .setText(context.getResources().getString(R.string.ribbon_text))
                         .setTextColor(context.getColor(R.color.colorWhite))
-                        .setTextSize(22)
-                        .setPaddingTop(20)
-                        .setPaddingBottom(20)
-                        .setPaddingLeft(290)
-                        .setPaddingRight(290)
+                        .setTextSize(18)
+                        .setPaddingTop(21)
+                        .setPaddingBottom(21)
+                        .setPaddingLeft(250)
+                        .setPaddingRight(250)
                         .setRibbonBackgroundColor(context.getColor(R.color.quantum_googred))
                         .build())
                 .setShimmer(new Shimmer.AlphaHighlightBuilder()
@@ -187,23 +187,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.itemDescTV.setText(post.desc);
         holder.itemDateTV.setText(post.date);
 
-        // If post is delivered, no need to track status changes
-        if (status == 1) {
-            posts.child(postID).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Post post = snapshot.getValue(Post.class);
-                    if (post != null && post.status == 0) {
-                        holder.ribbonLayout.setRibbonBottom(ribbonView);
-                    }
+        posts.child(postID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Post post = snapshot.getValue(Post.class);
+                if (post != null && post.status == 0) {
+                    holder.ribbonLayout.setRibbonBottom(ribbonView);
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
-        }
+            }
+        });
+
 
         likes.child(postID).addValueEventListener(new ValueEventListener() {
             @Override

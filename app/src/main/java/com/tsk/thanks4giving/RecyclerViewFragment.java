@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -338,12 +337,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         postList.clear();
                         if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
                             showAllPosts(snapshot);
-                            Toast.makeText(getContext(), "2) option A - no location", Toast.LENGTH_SHORT).show();
                         } else {
                             showallpostsNoLocation(snapshot);
-                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(getContext(), "1) option A - location Exist", Toast.LENGTH_SHORT).show();
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
@@ -391,11 +387,8 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         postList.clear();
                         if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
                             showAllPosts(snapshot);
-                            Toast.makeText(getContext(), "2) option A - no location", Toast.LENGTH_SHORT).show();
-
                         } else {
                             showallpostsNoLocation(snapshot);
-                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
                         }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
@@ -457,11 +450,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             search.setVisibility(View.VISIBLE);
 //
                         if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
-                            Toast.makeText(getContext(), "3) option A - location Exist", Toast.LENGTH_SHORT).show();
                             showAllPosts(snapshot);
                         } else {
                             showallpostsNoLocation(snapshot);
-                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
                         }
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
@@ -487,10 +478,8 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         postList.clear();
                         if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
                             showAllPosts(snapshot);
-                            Toast.makeText(getContext(), "option A - location Exist", Toast.LENGTH_SHORT).show();
                         } else {
                             showallpostsNoLocation(snapshot);
-                            Toast.makeText(getContext(), "option B - no location", Toast.LENGTH_SHORT).show();
                         }
                         Collections.reverse(postList);
                         // adapter=new PostAdapter(postList);
@@ -506,7 +495,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity().findViewById(android.R.id.content).getContext());
         progressDialog.setTitle(getString(R.string.loading));
-        Toast.makeText(getContext(), "heyyy", Toast.LENGTH_SHORT).show();
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -515,11 +503,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 postList.clear();
                 if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
                     showAllPosts(snapshot);
-                    Toast.makeText(getContext(), "CUSTOM==option A - no location", Toast.LENGTH_SHORT).show();
                     flagBack = 0;
                 } else {
                     showallpostsNoLocation(snapshot);
-                    Toast.makeText(getContext(), "CUSTOM==option B - no location", Toast.LENGTH_SHORT).show();
                 }
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();

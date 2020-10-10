@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -96,7 +95,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     LocationManager manager;
     File file;
     Uri imageUri;
-    String path, path2, location_method, randomKey;
+    String image_path, location_method, randomKey;
     String coordinates, address, uid;
 
     FirebaseUser currentFBUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -250,23 +249,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        // TODO: Delete?
-        users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                if (user != null) {
-                    address = user.address;
-                    Toast.makeText(getContext(), user.address, Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
         progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
@@ -290,7 +272,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 final Post post = new Post(postID, uid, item_name_et.getText().toString(),
                         desc_et.getText().toString(), address_et.getText().toString(),
                         coordinates, location_method, format.format(date), 1,
-                        categoryDropdown.getText().toString(), path2);
+                        categoryDropdown.getText().toString(), image_path);
 
                 posts.child(postID).setValue(post);
 
@@ -414,7 +396,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -470,7 +451,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        path2 = uri.toString();
+                        image_path = uri.toString();
                     }
                 });
     }

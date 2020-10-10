@@ -24,24 +24,22 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
 
-
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="screen" android:scheme="thanks4giving"/>
             </intent-filter>
+
         </activity>
 
         <activity
             android:name=".IntroActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

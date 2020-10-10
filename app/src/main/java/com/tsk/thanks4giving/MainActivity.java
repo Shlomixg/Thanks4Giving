@@ -61,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
     CircleImageView profile_pic_iv;
     public static boolean commentSwitch = true;
 
-    FirebaseUser currentUser;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+    FirebaseUser currentUser;
+    FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, IntroActivity.class);
             startActivity(intent);
             SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putBoolean("firstRun", false);
-            editor.commit();
+            editor.putBoolean("firstRun", false).apply();
         }
 
         boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
+                currentUser = mAuth.getCurrentUser();
                 navigationView.getMenu().clear();
                 if (currentUser != null) { // Sign up or login
                     if (commentSwitch) {
