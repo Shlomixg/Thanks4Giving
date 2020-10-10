@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +22,14 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +54,8 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -66,6 +75,8 @@ public class EditProfileFragment extends Fragment {
     String randomKey, profile_photo_path;
     File file;
     Uri imageUri;
+    int flag_location;
+    String coordinates;
 
     int flag = 0;
 
@@ -196,8 +207,17 @@ public class EditProfileFragment extends Fragment {
                         .check();
             }
         });
-
-
+        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        address_et.setFocusable(false);
+        address_et.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag_location = 1;
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
+                startActivityForResult(intent, 200);
+            }
+        });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,6 +249,7 @@ public class EditProfileFragment extends Fragment {
 
                 fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
                 ref.child("gender").setValue(gender);
+                ref.child("coordinates").setValue(coordinates);
                 if (!address.isEmpty()) ref.child("address").setValue(address);
                 getActivity().getSupportFragmentManager().popBackStack();
             }
@@ -284,6 +305,15 @@ public class EditProfileFragment extends Fragment {
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             userImage.setImageURI(imageUri);
             uploadPicture();
+        }
+        else   if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            address_et.setText(place.getAddress());
+            String temp = String.valueOf(place.getLatLng());
+            coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
+        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

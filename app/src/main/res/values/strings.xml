@@ -109,4 +109,6 @@
     <string name="fifth_slide_title">All done and ready to go!</string>
     <string name="fifth_slide_desc">Thank you for downloading our app, and thank you for giving!</string>
     <string name="ribbon_text">Delivered!</string>
+    <string name="location_loading">We are looking for your Location..</string>
+    <string name="saved_location">"Would you like to use "</string>
 </resources>

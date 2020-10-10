@@ -84,18 +84,20 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     ImageView image;
     TextInputEditText item_name_et, desc_et, address_et;
     AutoCompleteTextView categoryDropdown;
-    Button btn_gps, camera_btn, browse_btn; //##
-    ImageButton confirm_btn; //%
+    Button btn_gps, camera_btn, browse_btn;
+    ImageButton confirm_btn;
+    LovelyProgressDialog progressDialog;
 
     final int WRITE_PERMISSION_REQUEST = 1, LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
     int flag_location = 0;
-    Handler handler = new Handler(); //##
-    Geocoder geocoder; //##
-    LocationManager manager; //##
+    Handler handler = new Handler();
+    Geocoder geocoder;
+    LocationManager manager;
     File file;
     Uri imageUri;
-    String path, path2, coordinates, location_method, randomKey;
+    String path, path2, location_method, randomKey;
+    String coordinates, address, uid;
 
     FirebaseUser currentFBUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -108,6 +110,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
         storageReference = FirebaseStorage.getInstance().getReference();
+        uid = currentFBUser.getUid();
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -224,13 +227,35 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
+        users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                address = user.getAddress();
+                Toast.makeText(getActivity().getApplicationContext(), user.getAddress(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
+        ; // TODO: Move to strings
+
+        progressDialog.setTitle(getString(R.string.saved_location) + address); // set text for dialog
+
+
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
 
-                final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 final String postID = posts.push().getKey();
 

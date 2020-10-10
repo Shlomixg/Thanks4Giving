@@ -1,5 +1,6 @@
 package com.tsk.thanks4giving;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +19,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -29,6 +37,9 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Arrays;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignupFragment extends Fragment {
@@ -38,6 +49,8 @@ public class SignupFragment extends Fragment {
     Button confirm_btn, login_btn;
     AutoCompleteTextView genderEditTextDropdown;
     Uri imageUri;
+    String coordinates;
+    int flag_location;
 
     FirebaseAuth mAuth;
 
@@ -55,6 +68,21 @@ public class SignupFragment extends Fragment {
         genderEditTextDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
         confirm_btn = rootView.findViewById(R.id.signup_confirm_btn);
         login_btn = rootView.findViewById(R.id.signup_move_login_btn);
+
+
+        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        address_et.setFocusable(false);
+        address_et.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag_location = 1;
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
+                startActivityForResult(intent, 200);
+            }
+        });
+
+
 
         // TODO: Add selecting or take pictures for image
 
@@ -110,7 +138,7 @@ public class SignupFragment extends Fragment {
                                                                    public void onComplete(@NonNull Task<Void> task) {
                                                                        // Saving to DB
                                                                        String userUid = fbUser.getUid();
-                                                                       User user = new User(userUid, name, mail, gender, address, imageUri.toString());
+                                                                       User user = new User(userUid, name, mail, gender, address,coordinates, imageUri.toString());
                                                                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                                                        mDatabase.child("users").child(fbUser.getUid()).setValue(user);
 
@@ -142,5 +170,18 @@ public class SignupFragment extends Fragment {
     public void setSnackbar(FirebaseUser firebaseUser) {
         Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+       if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            address_et.setText(place.getAddress());
+            String temp = String.valueOf(place.getLatLng());
+            coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
+        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
 }

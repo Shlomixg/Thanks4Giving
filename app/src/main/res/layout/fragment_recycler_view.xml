@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
+                android:visibility="gone"
                 app:bsb_bubble_color="#BD574F"
                 app:bsb_bubble_text_color="@color/colorWhite"
                 app:bsb_max="200"
@@ -50,6 +51,13 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:background="@drawable/filter_icon" />
+
+            <Button
+                android:id="@+id/location_filter"
+                android:layout_width="45sp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_baseline_location_searching_24" />
 
         </LinearLayout>
 
@@ -124,7 +132,7 @@
 
 
                 <ImageButton
-                    android:id="@+id/close_all_filter"
+                    android:id="@+id/close_all_filters"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
@@ -275,8 +283,8 @@
                     android:textColor="@color/colorWhite"
                     android:textSize="20sp" />
 
-
             </LinearLayout>
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
