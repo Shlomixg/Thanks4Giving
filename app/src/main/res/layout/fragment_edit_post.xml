@@ -28,7 +28,7 @@
 
 
     <EditText
-        android:id="@+id/item_desc_et"
+        android:id="@+id/post_desc_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
-        android:id="@+id/item_pickup_address_et"
+        android:id="@+id/post_pickup_address_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -53,10 +53,10 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_desc_et" />
+        app:layout_constraintTop_toBottomOf="@id/post_desc_et" />
 
     <Button
-        android:id="@+id/gpsLocation_btn"
+        android:id="@+id/post_gps_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -68,10 +68,10 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_pickup_address_et"/>
+        app:layout_constraintTop_toBottomOf="@id/post_pickup_address_et"/>
 
     <Spinner
-        android:id="@+id/item_category_spinner"
+        android:id="@+id/post_category_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
@@ -81,10 +81,10 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
+        app:layout_constraintTop_toBottomOf="@+id/post_gps_btn"/>
 
     <ImageView
-        android:id="@+id/newPostImage"
+        android:id="@+id/post_item_image"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_margin="5dp"
@@ -93,7 +93,7 @@
         app:layout_constraintBottom_toTopOf="@id/picBtnsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_category_spinner"/>
+        app:layout_constraintTop_toBottomOf="@id/post_category_spinner"/>
 
     <LinearLayout
         android:id="@+id/picBtnsLayout"
@@ -103,10 +103,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/newPostImage">
+        app:layout_constraintTop_toBottomOf="@id/post_item_image">
 
         <Button
-            android:id="@+id/shoot_pic_btn"
+            android:id="@+id/post_camera_btn"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
@@ -116,7 +116,7 @@
             android:textColor="@color/colorWhite" />
 
         <Button
-            android:id="@+id/gallery_btn"
+            android:id="@+id/post_gallery_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -128,7 +128,7 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/confirm_btn"
+        android:id="@+id/post_confirm_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"

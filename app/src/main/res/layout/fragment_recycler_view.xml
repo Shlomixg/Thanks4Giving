@@ -89,7 +89,7 @@
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn" />
+                    app:layout_constraintTop_toBottomOf="@+id/post_gps_btn" />
 
                 <Spinner
                     android:id="@+id/time_spinner_filter"
@@ -102,7 +102,7 @@
                     android:textAlignment="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/gpsLocation_btn"/>
+                    app:layout_constraintTop_toBottomOf="@+id/post_gps_btn"/>
 
             </LinearLayout>
 

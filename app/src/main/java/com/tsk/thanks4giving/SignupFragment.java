@@ -78,10 +78,11 @@ public class SignupFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     MaterialButton camera_btn, gallery_btn, confirm_btn, login_btn;
     AutoCompleteTextView genderDropdown;
-    String coordinates, randomKey, profile_photo_path;
-    File file;
+
     int flag_location;
+    File file;
     Uri imageUri;
+    String coordinates, randomKey, profile_photo_path;
 
     FirebaseAuth mAuth;
     StorageReference storageReference;

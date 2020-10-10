@@ -142,9 +142,9 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
             postID = getArguments().getString("postId");
             Toast.makeText(getActivity(), postID, Toast.LENGTH_SHORT).show(); //TODO  ask to give permission
         }
-        browse_btn = rootView.findViewById(R.id.gallery_btn);
-        camera_btn = rootView.findViewById(R.id.shoot_pic_btn);
-        addressTv = rootView.findViewById(R.id.item_pickup_address_et);//##
+        browse_btn = rootView.findViewById(R.id.post_gallery_btn);
+        camera_btn = rootView.findViewById(R.id.post_camera_btn);
+        addressTv = rootView.findViewById(R.id.post_pickup_address_et);//##
         Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         addressTv.setFocusable(false);
         addressTv.setOnClickListener(new View.OnClickListener() {
@@ -156,18 +156,18 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                 startActivityForResult(intent, 200);
             }
         });
-        btn_gps = rootView.findViewById(R.id.gpsLocation_btn);
-        descriptionET = rootView.findViewById(R.id.item_desc_et); //##
-        image = rootView.findViewById(R.id.newPostImage);
-        spinner = rootView.findViewById(R.id.item_category_spinner);
-        confirm_btn = rootView.findViewById(R.id.confirm_btn);
+        btn_gps = rootView.findViewById(R.id.post_gps_btn);
+        descriptionET = rootView.findViewById(R.id.post_desc_et); //##
+        image = rootView.findViewById(R.id.post_item_image);
+        spinner = rootView.findViewById(R.id.post_category_spinner);
+        confirm_btn = rootView.findViewById(R.id.post_confirm_btn);
 
         currentFBUser = mAuth.getCurrentUser();
 
         String[] a = getResources().getStringArray(R.array.categories);
 
         final ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(getActivity(), R.layout.spinner_text, a) {
+                new ArrayAdapter<String>(getActivity(), R.layout.dropdown_menu_categories_item, a) {
                     @Override
                     public boolean isEnabled(int position) {
                         // Disable the second item from Spinner
@@ -187,7 +187,7 @@ public class EditPostFragment extends Fragment implements LocationListener, Adap
                         return view;
                     }
                 };
-        adapter.setDropDownViewResource(R.layout.spinner_text);
+        adapter.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
         spinner.setSelection(0, false);

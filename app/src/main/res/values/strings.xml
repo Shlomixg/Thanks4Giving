@@ -126,6 +126,11 @@
     <string name="validate_gender">Select gender</string>
     <string name="validate_email">Insert valid email</string>
     <string name="validate_pass">Min length: 6</string>
+
+    <string name="validate_item_name">Insert item name</string>
+    <string name="validate_desc">Insert description of the item</string>
+    <string name="validate_category">Select category of the item</string>
+
     <string name="already_have_account">Already Have an Account? Login</string>
     <string name="cancel">Cancel</string>
     <string name="dialog_loading_title">Loading data...</string>
@@ -133,5 +138,11 @@
     <string name="dialog_uploading_title">Uploading photo...</string>
     <string name="dialog_creating_user">Creating new user</string>
     <string name="dialog_updating_user">Updating data</string>
+    <string name="item_name">Item Name</string>
+    <string name="item_category">Category</string>
+    <string name="item_pickup_address">Pickup address</string>
+    <string name="dialog_uploading_post">Uploading post</string>
+    <string name="confirm_post">Confirm</string>
+
 
 </resources>

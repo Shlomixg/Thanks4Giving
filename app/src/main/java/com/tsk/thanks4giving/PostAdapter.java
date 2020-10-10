@@ -40,6 +40,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     private ArrayList<Post> list;
     private PostClickListener listener;
     final String PROFILE_FRAG = "Profile Fragment";
+    final String NEW_POST_FRAG = "New Post Fragment";
     Post post;
 
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -246,10 +247,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) context;
                 Bundle bundle = new Bundle();
-                bundle.putString("postId", postID);
-                EditPostFragment fragment = new EditPostFragment();
+                bundle.putString("postID", postID);
+                NewPostFragment fragment = new NewPostFragment();
                 fragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, NEW_POST_FRAG).addToBackStack(null).commit();
             }
         });
 

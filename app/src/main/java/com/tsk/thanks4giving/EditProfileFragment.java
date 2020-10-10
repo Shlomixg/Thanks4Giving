@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +110,7 @@ public class EditProfileFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         profile_image = rootView.findViewById(R.id.edit_profile_user_image);
         fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
         address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
@@ -134,7 +133,7 @@ public class EditProfileFragment extends Fragment {
                     coordinates = user.coordinates;
                     if (user.profilePhoto != null) {
                         profile_photo_path = user.profilePhoto;
-                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(profile_image);
+                        Glide.with(getContext()).load(user.profilePhoto).centerCrop().into(profile_image);
                     }
                     progressLoadingDialog.dismiss();
                 }

@@ -130,7 +130,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
-                        Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show(); // TODO: Delete
                         if (post.getUserUid().equals(mUserUid))
                             postList.add(post);
                         adapter.notifyDataSetChanged();
@@ -305,7 +305,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             return view;
                         }
                     };
-            adapter1.setDropDownViewResource(R.layout.spinner_text);
+            adapter1.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
             spinner.setAdapter(adapter1);
             spinner.setSelection(0, false);
             final ArrayAdapter<String> adapter2 =
@@ -329,7 +329,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             return view;
                         }
                     };
-            adapter2.setDropDownViewResource(R.layout.spinner_text);
+            adapter2.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
             times_spinner.setAdapter(adapter2);
             times_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

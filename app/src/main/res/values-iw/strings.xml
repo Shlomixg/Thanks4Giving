@@ -94,6 +94,11 @@
     <string name="validate_gender">יש לבחור מין</string>
     <string name="validate_email">יש להזין מייל תקין</string>
     <string name="validate_pass">אורך מינימלי: 6 תווים</string>
+
+    <string name="validate_item_name">יש להזין שם החפץ</string>
+    <string name="validate_desc">יש להזין תיאור החפץ ומצבו</string>
+    <string name="validate_category">יש לבחור את קטגוריית החפץ</string>
+
     <string name="already_have_account">קיים משתמש? התחברות</string>
     <string name="cancel">ביטול</string>
     <string name="dialog_loading_title">המידע נטען...</string>
@@ -101,4 +106,10 @@
     <string name="dialog_uploading_title">מעלה תמונה...</string>
     <string name="dialog_creating_user">יוצרים משתמש חדש</string>
     <string name="dialog_updating_user">מעדכנים נתונים</string>
+    <string name="item_name">שם החפץ</string>
+    <string name="item_category">קטגוריה</string>
+    <string name="item_pickup_address">כתובת איסוף</string>
+    <string name="dialog_uploading_post">הפוסט בהעלאה</string>
+    <string name="confirm_post">אישור</string>
+
 </resources>
