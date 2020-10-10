@@ -96,6 +96,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     final String RECYCLER_FRAG = "Recycler View Fragment";
     String path, path2;
     String coordinates, location_method, randomKey;
+    LovelyProgressDialog progressDialog;
 
     FirebaseUser currentFBUser;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -103,12 +104,17 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     DatabaseReference users = database.getReference("users");
     DatabaseReference posts = database.getReference("posts");
     private StorageReference storageReference;
+    String uid;
+    String address;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
         storageReference = FirebaseStorage.getInstance().getReference();
+        currentFBUser = mAuth.getCurrentUser();
+        uid = currentFBUser.getUid();
+
 
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
@@ -149,7 +155,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         spinner = rootView.findViewById(R.id.category_spinner);
         confirm_btn = rootView.findViewById(R.id.confirm_btn);
 
-        currentFBUser = mAuth.getCurrentUser();
 
         String[] a = getResources().getStringArray(R.array.categories);
 
@@ -248,13 +253,41 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
+        users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                address=user.getAddress();
+
+                        Toast.makeText(getActivity().getApplicationContext(), user.getAddress(), Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
+        ; // TODO: Move to strings
+
+        progressDialog.setTitle(getString(R.string.saved_location)+address); // set text for dialog
+
+
+
+
+
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 path = "android.resource://com.tsk.thanks4giving/" + R.drawable.profile_man; // here
 
-                final String uid = currentFBUser.getUid();
                 // TODO: Add title & desc to post
                 final String postID = posts.push().getKey();
 
