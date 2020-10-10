@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SignupFragment">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="12dp"
+        tools:context=".SignupFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,30 +23,74 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Welcome"
-                android:textSize="42sp" />
+                android:textSize="36sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign up to start enjoy stuff"
-                android:textSize="18sp" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/signup_user_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:src="@drawable/profile_man"
-                app:civ_border_color="#fece2f"
-                app:civ_border_width="2dp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="20dp"
+            android:layout_marginVertical="12dp"
             android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/signup_user_image"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="1dp"
+                    android:src="@drawable/profile_man"
+                    app:civ_border_color="#fece2f"
+                    app:civ_border_width="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/signup_user_image"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/signup_camera_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/take_picture"
+                        android:textColor="@color/colorWhite"
+                        app:icon="@drawable/ic_camera"
+                        app:iconTint="@color/colorWhite"
+                        app:layout_constraintStart_toEndOf="@id/signup_user_image"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/signup_gallery_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/picture_from_gallery"
+                        android:textColor="@color/colorWhite"
+                        app:icon="@drawable/ic_gallery"
+                        app:iconTint="@color/colorWhite"
+
+                        app:layout_constraintStart_toEndOf="@id/signup_user_image"
+                        app:layout_constraintTop_toBottomOf="@+id/signup_shoot_pic_btn" />
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/signup_fullname_tf"
@@ -87,7 +131,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Gender">
+                android:hint="@string/gender">
 
                 <!-- Google themselves instruct us to use the deprecated editable attribute here! -->
                 <AutoCompleteTextView
@@ -141,7 +185,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <Button

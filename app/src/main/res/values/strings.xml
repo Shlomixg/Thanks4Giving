@@ -57,6 +57,13 @@
         <item name="Last week">Last week</item>
         <item name="All posts">All posts</item>
     </string-array>
+
+    <string-array name="genders">
+        <item name="Male">Male</item>
+        <item name="Female">Female</item>
+        <item name="Other">Other</item>
+    </string-array>
+
     <string name="need_permissions">Need permissions to open camera or gallery</string>
     <string name="welcome_back">, Welcome back</string>
     <string name="login_fail">Login failed</string>
@@ -113,4 +120,11 @@
     <string name="location_loading">We are looking for your Location..</string>
     <string name="saved_location">"Would you like to use "</string>
     <string name="title_activity_introduction">Introduction</string>
+
+    <string name="validate_name">Insert your name</string>
+    <string name="validate_address">Insert a valid address</string>
+    <string name="validate_gender">Select gender</string>
+    <string name="validate_email">Insert valid email</string>
+    <string name="validate_pass">Min length: 6</string>
+
 </resources>

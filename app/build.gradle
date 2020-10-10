@@ -72,6 +72,9 @@ dependencies {
     // Ribbons
     implementation "com.github.skydoves:androidribbon:1.0.3"
 
+    // Awesome Validation
+    implementation 'com.basgeekball:awesome-validation:4.2'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

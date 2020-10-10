@@ -22,6 +22,7 @@ public class MessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d("fcm", "Message data payload: " + remoteMessage.getData());
+            Log.d("fcm", "Message data payload: " + remoteMessage.getData().get("postid"));
 
             Intent resultIntent = new Intent(this, MainActivity.class);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);

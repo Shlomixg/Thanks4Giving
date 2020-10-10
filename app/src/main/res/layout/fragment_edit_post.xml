@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
-        android:drawableLeft="@drawable/ic_location_on"
+        android:drawableLeft="@drawable/ic_gps"
         android:padding="3dp"
         android:text="@string/get_address_with_gps_location"
         android:textColor="@color/colorWhite"
@@ -110,7 +110,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
-            android:drawableLeft="@drawable/ic_camera_alt"
+            android:drawableLeft="@drawable/ic_camera"
             android:padding="3dp"
             android:text="@string/take_picture"
             android:textColor="@color/colorWhite" />
@@ -120,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_insert_photo"
+            android:drawableLeft="@drawable/ic_gallery"
             android:padding="3dp"
             android:text="@string/picture_from_gallery"
             android:textColor="@color/colorWhite" />

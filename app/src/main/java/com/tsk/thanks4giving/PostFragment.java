@@ -411,8 +411,9 @@ public class PostFragment extends Fragment {
                     });
                     final JSONObject rootObject = new JSONObject();
                     try {
+                        Log.d("fcm", "--- Post id: " + postID);
                         rootObject.put("to", "/topics/" + topic[0]);
-                        rootObject.put("data", new JSONObject().put("message", textToSend));
+                        rootObject.put("data", new JSONObject().put("message", textToSend).put("postID", postID));
                         String url = "https://fcm.googleapis.com/fcm/send";
 
                         RequestQueue queue = Volley.newRequestQueue(getContext());

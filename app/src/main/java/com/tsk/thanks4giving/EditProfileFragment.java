@@ -102,9 +102,9 @@ public class EditProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        storageReference = FirebaseStorage.getInstance().getReference();
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
-        storageReference = FirebaseStorage.getInstance().getReference();
         userImage = rootView.findViewById(R.id.edit_profile_user_image);
         fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
         address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
@@ -296,7 +296,6 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
             assert data != null;
             imageUri = data.getData();

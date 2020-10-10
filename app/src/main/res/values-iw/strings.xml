@@ -29,7 +29,7 @@
     <string name="sign_up">הרשמה</string>
     <string name="full_name">שם מלא</string>
     <string name="sign_password_hint">סיסמה (6 תווים לפחות)</string>
-    <string name="confirm_and_sign_up">אישור והרשמה</string>
+    <string name="confirm_and_sign_up">הרשמה</string>
     <string name="welcome_guest">ברוך הבא אורח</string>
     <string name="need_permissions">יש צורך בהרשאות לפתיחת מצלמה או גלריה</string>
     <string name="welcome_back">, טוב שחזרת</string>
@@ -57,6 +57,11 @@
         <item name="Clothes">בגדים</item>
         <item name="Games">משחקים</item>
     </string-array>
+    <string-array name="genders">
+        <item name="Male">זכר</item>
+        <item name="Female">נקבה</item>
+        <item name="Other">אחר</item>
+    </string-array>
     <string name="must_be_logged">צריך להיות מחובר על מנת להשתמש במאפיין זה</string>
     <string name="no_empty_comment">לא ניתן לפרסם תגובה ריקה</string>
     <string name="auto_location">מיקום</string>
@@ -83,4 +88,10 @@
     <string name="fifth_slide_title">סיימנו ומוכנים לצאת לדרך!</string>
     <string name="fifth_slide_desc">תודה שהורדתם את האפליקציה שלנו, ותודה שנתתם!</string>
     <string name="title_activity_introduction">הקדמה</string>
+
+    <string name="validate_name">יש להזין שם</string>
+    <string name="validate_address">יש להין כתובת תקינה</string>
+    <string name="validate_gender">יש לבחור מין</string>
+    <string name="validate_email">יש להזין מייל תקין</string>
+    <string name="validate_pass">אורך מינימלי: 6 תווים</string>
 </resources>

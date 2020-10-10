@@ -8,7 +8,7 @@
             app:title="@string/allow_auto_location"
             android:summary="@string/auto_location_summery"
             app:defaultValue="0"
-            android:icon="@drawable/ic_location_on"/>
+            android:icon="@drawable/ic_gps"/>
 
     </PreferenceCategory>
 
