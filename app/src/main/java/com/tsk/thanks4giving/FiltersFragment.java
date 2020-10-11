@@ -76,7 +76,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 progressDialog = new LovelyProgressDialog(getContext())
                         .setTopColorRes(R.color.colorPrimary)
                         .setCancelable(false)
-                        .setIcon(R.drawable.ic_address_location)
+                        .setIcon(R.drawable.ic_launcher_foreground)
                         .setTitle(R.string.location_loading)
                         .setMessage(R.string.location_permission);
 
