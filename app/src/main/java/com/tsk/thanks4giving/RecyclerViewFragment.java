@@ -461,7 +461,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             } else if (category != -1 &&
                                     times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
-                                filter1.setText(categories[category]);
+                                filter1.setText(categories[category+1]);
                                 filter1.animate().rotation(filter1.getRotation() + 360).start();
                                 filter2.setVisibility(View.GONE);
                                 filter1.setVisibility(View.VISIBLE);
@@ -474,7 +474,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 filter2.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
-                                filter1.setText(categories[category]);
+                                filter1.setText(categories[category+1]);
                                 filter1.animate().rotation(filter1.getRotation() + 360).start();
                                 filter2.setText(times_spinner.getSelectedItem().toString());
                                 filter2.animate().rotation(filter2.getRotation() + 360).start();

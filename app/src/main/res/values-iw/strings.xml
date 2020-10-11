@@ -111,7 +111,7 @@
         <item name="Sport">ספורט</item>
         <item name="Clothes">בגדים</item>
         <item name="Games">משחקים</item>
-        <item name="צעצועים">צעצועים</item>
+        <item name="Toys">צעצועים</item>
     </string-array>
 
     <string-array name="categories_for_filter">
@@ -121,7 +121,7 @@
         <item name="Sport">ספורט</item>
         <item name="Clothes">בגדים</item>
         <item name="Games">משחקים</item>
-        <item name="צעצועים">צעצועים</item>
+        <item name="Toys">צעצועים</item>
     </string-array>
 
     <string-array name="times">
