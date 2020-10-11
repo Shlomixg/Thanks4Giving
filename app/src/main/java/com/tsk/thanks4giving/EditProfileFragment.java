@@ -98,7 +98,7 @@ public class EditProfileFragment extends Fragment {
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_like)
-                .setTitle(R.string.dialog_loading_title) // TODO: Move to strings
+                .setTitle(R.string.dialog_loading_title)
                 .setMessage(R.string.dialog_loading_msg);
         progressLoadingDialog.show();
 
@@ -263,7 +263,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
                 .setTitle(R.string.dialog_updating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -356,7 +356,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
                 .setTitle(R.string.dialog_uploading_title); // TODO: Move to strings
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();

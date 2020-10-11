@@ -50,7 +50,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     final DatabaseReference posts = database.getReference().child("posts");
     final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference likes = database.getReference().child("likes");
-    Drawable like, like_fill, follow, follow_fill;
+    Drawable like, like_fill, delivered;
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -125,8 +125,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         like = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like, null);
         like_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like_fill, null);
-        follow = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_bookmark, null);
-        follow_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_bookmark_fill, null);
 
         post = list.get(position);
         final String postID = post.postID, userID = post.userUid;

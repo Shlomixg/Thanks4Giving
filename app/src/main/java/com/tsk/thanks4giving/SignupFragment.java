@@ -235,7 +235,7 @@ public class SignupFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
                 .setTitle(R.string.dialog_creating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
