@@ -64,7 +64,7 @@
     <string name="no_empty_comment">Cannot post empty comment</string>
     <string name="EditingPost">Editing Post</string>
     <string name="submit_filter">Submit</string>
-    <string name="keywordhint">What are you looking for ?</string>
+    <string name="keyword_hint">What are you looking for?</string>
     <string name="clear_filters">Clear Filters</string>
     <string name="auto_location">Location</string>
     <string name="allow_auto_location">Automatic location updates</string>
@@ -131,14 +131,6 @@
         <item name="Clothes">Clothes</item>
         <item name="Games">Games</item>
         <item name="Toys">Toys</item>
-    </string-array>
-
-    <string-array name="times">
-        <item name="Time">Time</item>
-        <item name="Today">Today</item>
-        <item name="Last 3 days">Last 3 days</item>
-        <item name="Last week">Last week</item>
-        <item name="All posts">All posts</item>
     </string-array>
 
     <string-array name="genders">

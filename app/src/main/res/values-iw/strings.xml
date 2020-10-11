@@ -62,7 +62,7 @@
     <string name="EditingPost">עריכת פוסט</string>
     <string name="new_comment_title">בדוק את התגובות בפוסט שלך!</string>
     <string name="submit_filter">החל</string>
-    <string name="keywordhint">מה אתה מחפש?</string>
+    <string name="keyword_hint">מה אתה מחפש?</string>
     <string name="clear_filters">נקה סינונים</string>
     <string name="first_slide_title">שלום! ברוך הבא ל- Thanks4Giving!</string>
     <string name="first_slide_desc">בעזרת האפליקציה הזו אנו מקווים שאנשים ימסרו את הדברים שהם לא צריכים שאחרים אולי יצטרכו.</string>
@@ -99,6 +99,7 @@
     <string name="item_pickup_address">כתובת איסוף</string>
     <string name="dialog_uploading_post">הפוסט בהעלאה</string>
     <string name="confirm_post">אישור</string>
+    <string name="filter_by_location">סינון לפי מרחק</string>
 
     <string name="location_loading">אנו מחפשים את מיקומך…</string>
     <string name="saved_location">האם תרצה להשתמש ב-</string>
@@ -123,14 +124,6 @@
         <item name="Clothes">בגדים</item>
         <item name="Games">משחקים</item>
         <item name="Toys">צעצועים</item>
-    </string-array>
-
-    <string-array name="times">
-        <item name="Time">Time</item>
-        <item name="Today">Today</item>
-        <item name="Last 3 days">Last 3 days</item>
-        <item name="Last week">Last week</item>
-        <item name="All posts">All posts</item>
     </string-array>
 
     <string-array name="genders">

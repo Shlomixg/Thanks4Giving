@@ -496,7 +496,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final LovelyProgressDialog uploadPicProgressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_uploading_title)
                 .setMessage(R.string.dialog_loading_msg);
         uploadPicProgressDialog.show();

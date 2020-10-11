@@ -14,12 +14,23 @@
         android:paddingHorizontal="12dp"
         android:paddingVertical="10dp">
 
-        <EditText
-            android:id="@+id/keyword"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/keyword_tf"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:hint="@string/keywordhint" />
+            android:layout_marginTop="5dp"
+            android:hint="@string/keyword_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/keyword_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="10dp"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/category_spinner_filter_tf"
@@ -27,8 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            android:hint="@string/item_category"
-            android:padding="5dp">
+            android:hint="@string/item_category">
 
             <AutoCompleteTextView
                 android:id="@+id/category_spinner_filter_et"
@@ -43,15 +53,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="5dp"
+            android:orientation="vertical">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/location_filter"
-                android:layout_width="wrap_content"
+                android:id="@+id/location_filter_btn"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
                 android:text="@string/filter_by_location"
                 android:textColor="@color/colorWhite"
                 app:icon="@drawable/ic_gps"
@@ -63,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_weight="4"
-                android:visibility="gone"
+                android:visibility="invisible"
                 app:bsb_bubble_color="#BD574F"
                 app:bsb_bubble_text_color="@color/colorWhite"
                 app:bsb_max="200"
@@ -84,11 +93,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/sub"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply_filters_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -98,7 +107,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/clean_filter_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

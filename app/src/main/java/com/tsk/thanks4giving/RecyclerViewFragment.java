@@ -2,6 +2,7 @@ package com.tsk.thanks4giving;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,20 +213,19 @@ public class RecyclerViewFragment extends Fragment {
             String desc = post.desc.toLowerCase();
             String title = post.title.toLowerCase();
 
+            Log.d("category", "Category: " + category);
+            Log.d("category", "Post Category: " + post.category);
+
             // if post contain search
-            if (desc.contains(word) || title.contains(word) && (post.category == category || category == -1)) {
-                if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
-                    if (desc.contains(word) && (location_original.distanceTo(location2) <= distance))
+            if (desc.contains(word) || title.contains(word)) {
+                if (post.category == category || category == -1) {
+                    if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
+                        if (location_original.distanceTo(location2) <= distance)
+                            postList.add(post);
+                    } else
                         postList.add(post);
-                } else postList.add(post);
+                }
             }
-//            if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
-//                if ( (desc.contains(word) || title.contains(word) ) && (location_original.distanceTo(location2) <= distance))
-//                    postList.add(post);
-//            } else {
-//                if (post.desc.contains(word))
-//                    postList.add(post);
-//            }
         }
     }
 
