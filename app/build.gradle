@@ -31,6 +31,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.media:media:1.2.0"
     implementation 'androidx.preference:preference:1.1.1'
+    // Testing libraries
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Google libraries
     implementation "com.google.android.material:material:1.2.1"
@@ -38,43 +42,27 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.5.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
     implementation 'com.google.firebase:firebase-messaging:20.3.0'
-
     // Google Places
     implementation 'com.google.android.libraries.places:places:2.4.0'
-
     // External libraries
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.yarolegovich:lovely-dialog:1.1.1'
-
     // Bubble SeekBar
     implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
-
-    // Watermark
-    implementation 'com.huangyz0918:androidwm:0.2.3'
-
     // Dexter
     implementation 'com.karumi:dexter:6.2.1'
-
     // ImageViewer
     implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.1'
-
-    // Testing libraries
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
     // App Intro
     implementation 'com.github.AppIntro:AppIntro:6.0.0'
-
     // Ribbons
     implementation "com.github.skydoves:androidribbon:1.0.3"
-
     // Awesome Validation
     implementation 'com.basgeekball:awesome-validation:4.2'
-
+    // Volley
     implementation "com.android.volley:volley:1.1.1"
 
 }

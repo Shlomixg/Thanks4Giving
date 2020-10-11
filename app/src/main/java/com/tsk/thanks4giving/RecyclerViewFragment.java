@@ -9,7 +9,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,7 +33,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,11 +41,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.xw.repo.BubbleSeekBar;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,10 +60,8 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
-
     SwipeRefreshLayout refreshLayout;
     BubbleSeekBar bubbleSeekBar;
-
     EditText keyword;
     TextView current_text, search_tv, current_search;
     Spinner times_spinner;
@@ -81,12 +71,10 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     LovelyProgressDialog progressDialog2;
     AutoCompleteTextView categoryDropdown;
     int category = -1;
-
     long diff;
     int flagBack = -1, required_days, LOCATION_PERMISSION_REQUEST = 2;
     Location location_original = new Location("dummyProvider");
     LocationManager manager; //##
-
     Query query;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference posts = database.getReference().child("posts");
@@ -394,7 +382,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 @Override
                 public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
                 }
-
                 @Override
                 public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
 
@@ -616,7 +603,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     }
 
     private void nofilters(DataSnapshot snapshot) {
-
     }
 
     private void showAllPosts(DataSnapshot snapshot) { // show posts by filters and search
@@ -651,26 +637,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
             }
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        Log.d("ddd", "event reached fragment");
-        // TODO: refresh posts list with new location
-        location_original.setLongitude(event.location.getLongitude());
-        location_original.setLatitude(event.location.getLatitude());
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     public void filterLocation(DataSnapshot snapshot) {

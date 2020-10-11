@@ -1,17 +1,6 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/auto_location">
-
-        <SwitchPreferenceCompat
-            app:key="locationPref"
-            app:title="@string/allow_auto_location"
-            android:summary="@string/auto_location_summery"
-            app:defaultValue="0"
-            android:icon="@drawable/ic_gps"/>
-
-    </PreferenceCategory>
-
     <PreferenceCategory app:title="@string/notifications">
 
         <SwitchPreferenceCompat

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.TaskStackBuilder;
+import androidx.lifecycle.Lifecycle;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -43,7 +44,7 @@ public class MessagingService extends FirebaseMessagingService {
                 manager.createNotificationChannel(channel);
                 builder.setChannelId("id_1");
             }
-            builder.setContentTitle(getString(R.string.new_comment_title)).setContentText(remoteMessage.getData().get("message")).setSmallIcon(R.drawable.ic_comment);
+            builder.setContentTitle(getString(R.string.new_comment_title)).setContentText(remoteMessage.getData().get("message")).setSmallIcon(R.drawable.ic_giftbox_outline);
             builder.setContentIntent(resultPendingIntent);
             builder.setAutoCancel(true);
             manager.notify(1, builder.build());

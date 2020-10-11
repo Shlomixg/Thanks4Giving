@@ -17,6 +17,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,13 +33,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -78,14 +78,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
-        if (autoLocation)
-            scheduleJob();
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getActiveNetwork() == null)
+        {
+            //TODO instead of recycler fragment set text view "This app needs network connection to work properly and show posts"
+        }
 
+        scheduleJob();
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
-
         setSupportActionBar(toolbar);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -150,17 +152,13 @@ public class MainActivity extends AppCompatActivity {
                     invalidateOptionsMenu();
 
                     user_name_tv.setText(currentUser.getDisplayName());
-                    Glide.with(MainActivity.this)
-                            .load(currentUser.getPhotoUrl())
-                            .centerCrop().into(profile_pic_iv);
+                    Glide.with(MainActivity.this).load(currentUser.getPhotoUrl()).centerCrop().into(profile_pic_iv);
                 } else {
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
 
                     user_name_tv.setText(getString(R.string.guest));
-                    Glide.with(getApplicationContext())
-                            .load(R.drawable.profile_man)
-                            .centerCrop().into(profile_pic_iv);
+                    Glide.with(getApplicationContext()).load(R.drawable.profile_man).centerCrop().into(profile_pic_iv);
                 }
             }
         };
@@ -185,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(authStateListener);
+        EventBus.getDefault().register(this);
         currentUser = mAuth.getCurrentUser();
     }
 
@@ -247,28 +246,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        EventBus.getDefault().unregister(this);
         mAuth.removeAuthStateListener(authStateListener);
     }
 
     public void scheduleJob() {
-        ComponentName componentName = new ComponentName(this, LocationJobService.class);
+        ComponentName componentName = new ComponentName(this, GoogleConnectionRefreshService.class);
         JobInfo jobInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             jobInfo = new JobInfo.Builder(123, componentName)
-                    .setPeriodic(60 * 1000, 5 * 60 * 1000)
+                    .setPeriodic(60 * 1000, 60 * 1000)
                     .setPersisted(false)
                     .build();
         } else {
             jobInfo = new JobInfo.Builder(123, componentName)
-                    .setPeriodic(5 * 60 * 1000)
+                    .setPeriodic(60 * 1000)
                     .setPersisted(false)
                     .build();
         }
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode = scheduler.schedule(jobInfo);
-        if (resultCode == JobScheduler.RESULT_SUCCESS)
+        if (resultCode == JobScheduler.RESULT_SUCCESS) {
             Log.d("ddd", "Job scheduled");
-        else Log.d("ddd", "Job scheduling failed");
+        } else {
+            Log.d("ddd", "Job scheduling failed");
+        }
     }
 
     public static void setCommentSwitch(boolean val) {
@@ -285,6 +287,14 @@ public class MainActivity extends AppCompatActivity {
             messaging.unsubscribeFromTopic(topic);
             Log.d("fcm", "Switch: " + topic + " unsubscribed");
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Log.d("ddd", "event reached fragment, message:" + event.msg);
+        //Refresh connection with google servers
+        this.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
+        this.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
     }
 
 }

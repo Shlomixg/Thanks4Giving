@@ -1,6 +1,7 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -344,7 +345,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     }
 
     public void uploadPost(final String postID) {
-
         LovelyProgressDialog uploadProgressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
@@ -362,10 +362,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date();
-
-        final Post post = new Post(postID, userUid, item_name, item_desc, address,
-                coordinates, location_method, format.format(date), 1, category, image_path);
-
+        final Post post = new Post(postID, userUid, item_name, item_desc, address, coordinates, location_method, format.format(date), 1, category, image_path);
         posts.child(postID).setValue(post);
 
         // Add post id to user data
@@ -379,15 +376,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     users.child(userUid).setValue(user);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
         uploadProgressDialog.dismiss();
-
         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
     }
 
