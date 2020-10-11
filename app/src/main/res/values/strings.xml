@@ -65,7 +65,7 @@
     <string name="EditingPost">Editing Post</string>
     <string name="submit_filter">Submit</string>
     <string name="keywordhint">What are you looking for ?</string>
-    <string name="cleanfilters">Clean Filters</string>
+    <string name="clear_filters">Clear Filters</string>
     <string name="auto_location">Location</string>
     <string name="allow_auto_location">Automatic location updates</string>
     <string name="auto_location_summery">Allow the app to get automatic location updates on next start.</string>

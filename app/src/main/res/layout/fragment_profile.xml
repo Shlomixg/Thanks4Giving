@@ -94,8 +94,8 @@
         android:id="@+id/items_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-100dp"
         android:layout_below="@+id/profile_header"
+        android:layout_marginTop="-100dp"
         android:padding="20dp">
 
         <com.google.android.material.card.MaterialCardView
@@ -159,7 +159,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_baseline_done_outline_24"/>
+                    android:src="@drawable/ic_baseline_done_outline_24" />
 
                 <TextView
                     android:id="@+id/delivered_items_label"
@@ -168,7 +168,7 @@
                     android:layout_centerInParent="true"
                     android:includeFontPadding="false"
                     android:text="123"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/delivered_items_desc"
@@ -178,34 +178,29 @@
                     android:layout_centerHorizontal="true"
                     android:includeFontPadding="false"
                     android:text="Delivered Items"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
             </RelativeLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-    <!--
-    android:text="@string/profile_send_message_btn"
-    android:text="@string/profile_edit_btn"
-    -->
+
     <FrameLayout
         android:id="@+id/flProfileContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/items_cards"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-    </FrameLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/profile_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_send_message"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_send_message" />
 
 </RelativeLayout>

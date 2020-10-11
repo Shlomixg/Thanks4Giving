@@ -1,37 +1,16 @@
 package com.tsk.thanks4giving;
 
-import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,20 +22,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.xw.repo.BubbleSeekBar;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class RecyclerViewFragment extends Fragment {
 
@@ -72,28 +41,13 @@ public class RecyclerViewFragment extends Fragment {
     PostAdapter adapter;
 
     SwipeRefreshLayout refreshLayout;
-    BubbleSeekBar bubbleSeekBar;
-
-    EditText keyword;
-    TextView current_text, search_tv, current_search;
-    Spinner times_spinner;
-    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter;
-    ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
-    LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout;
-    LovelyProgressDialog progressDialog2;
-    AutoCompleteTextView categoryDropdown;
-    FloatingActionButton search_floating;
+    String keyword;
+    FloatingActionButton search_fab;
     final String RECYCLER_FRAG = "Recycler View Fragment";
-    private int category = -1; // TODO: Check it!
-    private String time = "";
     String word = "";
-    int distance = -1;
+    int distance = -1, category = -1;
 
-
-    long diff;
-    int flagBack = -1, required_days = -1, LOCATION_PERMISSION_REQUEST = 2;
     Location location_original = new Location("dummyProvider");
-    LocationManager manager; //##
 
     Query query;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -117,19 +71,33 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         query = posts;
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
-        all_buttons_layout = rootView.findViewById(R.id.all_buttons_layout);
-
-        keyword = rootView.findViewById(R.id.keyword);
-
         refreshLayout = rootView.findViewById(R.id.refresh);
+        recycler = rootView.findViewById(R.id.recycler);
+        search_fab = rootView.findViewById(R.id.search_floating);
 
         adapter = new PostAdapter(postList);
-        recycler = rootView.findViewById(R.id.recycler);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
-        if (getArguments() != null && getArguments().getInt("flag") != 2) {
-            all_buttons_layout.setVisibility(View.GONE);
+
+        if (getArguments() == null) {
+            posts.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        Post post = ds.getValue(Post.class);
+                        postList.add(post);
+                        adapter.notifyDataSetChanged();
+                        Collections.reverse(postList);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        } else if (getArguments().getInt("flag") != 2) {
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -156,91 +124,21 @@ public class RecyclerViewFragment extends Fragment {
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
-            adapter.setListener(new PostAdapter.PostClickListener() {
-                @Override
-                public void onClickListener(int pos, View v) {
-                    String postId = postList.get(pos).postID;
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("PostId", postId);
-                    PostFragment postFragment = new PostFragment();
-                    postFragment.setArguments(bundle);
-                    transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
-                }
 
-                @Override
-                public void onLongClickListener(int pos, View v) {
-                }
-            });
-            recycler.setAdapter(adapter);
         }
-        if (getArguments() == null || getArguments().getInt("flag") == 2) {
-
-            if (getArguments() != null) {
-                keyword.setText(getArguments().getString("keyword"));
-                word = getArguments().getString("keyword");
-                time = getArguments().getString("time");
-                distance = getArguments().getInt("distance");
-//                category = getArguments().getInt("category");
-                location_original.setLatitude(getArguments().getDouble("lat"));
-                location_original.setLongitude(getArguments().getDouble("long"));
-//                postList = getArguments().getParcelableArrayList("array");
-                Toast.makeText(getContext(), getArguments().getString("keyword")
-                        + getArguments().getString("time")
-                        + getArguments().getString("category")
-                        + getArguments().getDouble("lat")
-                        + getArguments().getDouble("long") + " ===" + distance, Toast.LENGTH_SHORT).show();
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (postList != null)
-                            postList.clear();
-//                        Toast.makeText(getContext(),"thissssss = " +word, Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(getContext(),"thissssss time = " +time, Toast.LENGTH_SHORT).show();
-                        switch (time) {
-                            case "Today":
-                                required_days = 0;
-                                break;
-                            case "Last 3 days":
-                                required_days = 2;
-                                break;
-                            case "Last week":
-                                required_days = 6;
-                                break;
-                            case "All posts":
-                                required_days = -1;
-                                break;
-                            case "Time":
-                                required_days = -1;
-                                break;
-                            default:
-                        }
-                        showallpostsNoFilters(snapshot, word, time);
-                        Collections.reverse(postList);
-                        adapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-            }
-            search_floating = rootView.findViewById(R.id.search_floating);
-            search_floating.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setFragment(new FiltersFragment(), "");
-//                    spinner.setSelection(3); // reset spinner
-//                    times_spinner.setSelection(2);
-                }
-            });
+        // if filtered
+        else if (getArguments().getInt("flag") == 2) {
+            word = getArguments().getString("keyword");
+            distance = getArguments().getInt("distance");
+            category = getArguments().getInt("category");
+            location_original.setLatitude(getArguments().getDouble("lat"));
+            location_original.setLongitude(getArguments().getDouble("long"));
 
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     postList.clear();
-                    showallpostsNoFilters(snapshot, word, time);
+                    filterPosts(snapshot, word);
                     Collections.reverse(postList);
                     adapter.notifyDataSetChanged();
                 }
@@ -250,38 +148,6 @@ public class RecyclerViewFragment extends Fragment {
                 }
             });
 
-//
-//
-//            submit_search_btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    search_keyword.setText(keyword.getText().toString());
-//                    search_keyword.setVisibility(View.VISIBLE);
-//                    current_search.setVisibility(View.VISIBLE); //%%
-//                    keyword.setVisibility(View.GONE);
-//                    search_tv.setVisibility(View.GONE);
-//                    search_keyword.animate().rotation(search_keyword.getRotation() + 360).start();
-//                    edit_current_search.setVisibility(View.VISIBLE);
-//                    search_submit.setVisibility(View.GONE);
-//                    if (search_keyword.getText().toString().equals("")) {
-//                        search.setVisibility(View.VISIBLE);
-//                        keyword.setVisibility(View.VISIBLE);
-//                        search_tv.setVisibility(View.VISIBLE);
-//                        current_search.setVisibility(View.GONE);
-//                        search_keyword.setVisibility(View.GONE);
-//                        search_submit.setVisibility(View.VISIBLE);
-//                        edit_current_search.setVisibility(View.GONE);
-//                    }
-//
-//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                            postList.clear();
-//                            if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
-//                                showAllPosts(snapshot);
-//                            } else {
-//                                showallpostsNoLocation(snapshot);
-//
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -290,7 +156,7 @@ public class RecyclerViewFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             postList.clear();
-                            showallpostsNoFilters(snapshot, word, time);
+                            filterPosts(snapshot, word);
                             Collections.reverse(postList);
                             adapter.notifyDataSetChanged();
                         }
@@ -302,10 +168,37 @@ public class RecyclerViewFragment extends Fragment {
                 }
             });
         }
+
+        adapter.setListener(new PostAdapter.PostClickListener() {
+            @Override
+            public void onClickListener(int pos, View v) {
+                String postId = postList.get(pos).postID;
+                FragmentManager fragmentManager = getParentFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putString("PostId", postId);
+                PostFragment postFragment = new PostFragment();
+                postFragment.setArguments(bundle);
+                transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
+            }
+
+            @Override
+            public void onLongClickListener(int pos, View v) {
+            }
+        });
+        recycler.setAdapter(adapter);
+
+        search_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setFragment(new FiltersFragment(), "Filters Fragment");
+            }
+        });
+
         return rootView;
     }
 
-    private void showallpostsNoFilters(DataSnapshot snapshot, String word, String time1) {
+    private void filterPosts(DataSnapshot snapshot, String word) {
 
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post post = ds.getValue(Post.class);
@@ -314,54 +207,42 @@ public class RecyclerViewFragment extends Fragment {
             Location location2 = new Location("dummyProvider");
             location2.setLatitude(Double.parseDouble(a[0]));
             location2.setLongitude(Double.parseDouble(a[1]));
+            word = word.toLowerCase();
 
-            SimpleDateFormat myFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date date = new Date();
-            String inputString2 = myFormat.format(date);
-            try {
-                Date date1 = myFormat.parse(post.date);
-                Date date2 = myFormat.parse(inputString2);
-                diff = date2.getTime() - date1.getTime();// calculate the difference
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
-                    (post.category == category || category == -1)) { // if post contain search
-//            Toast.makeText(getContext(), ""+required_days+","+TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS), Toast.LENGTH_SHORT).show(); // TODO: Delete
-//            Toast.makeText(getContext(),"dis = " +location_original.distanceTo(location2), Toast.LENGTH_SHORT).show();
+            String desc = post.desc.toLowerCase();
+            String title = post.title.toLowerCase();
+
+            // if post contain search
+            if (desc.contains(word) || title.contains(word) && (post.category == category || category == -1)) {
                 if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
-                    if (required_days != -1) {
-                        if (post.getDesc().contains(word) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days && (location_original.distanceTo(location2) <= distance))
-                            postList.add(post);
-                    } else if (post.getDesc().contains(word) && (location_original.distanceTo(location2) <= distance))
+                    if (desc.contains(word) && (location_original.distanceTo(location2) <= distance))
                         postList.add(post);
-
-                } else {
-                    if (required_days != -1) {
-                        if (post.getDesc().contains(word) && TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days)
-                            postList.add(post);
-                    } else if (post.getDesc().contains(word))
-                        postList.add(post);
-
-                }
+                } else postList.add(post);
             }
+//            if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
+//                if ( (desc.contains(word) || title.contains(word) ) && (location_original.distanceTo(location2) <= distance))
+//                    postList.add(post);
+//            } else {
+//                if (post.desc.contains(word))
+//                    postList.add(post);
+//            }
         }
-
-        private void setFragment (Fragment fragment, String FRAG){
-            // Prevent opening the same fragment twice
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            List<Fragment> list = fragmentManager.getFragments();
-            // Get last fragment
-            if (!list.isEmpty()) {
-                Fragment topFragment = list.get(list.size() - 1);
-                if (topFragment != null && topFragment.getTag().equals(FRAG)) {
-                    fragmentManager.popBackStack();
-                }
-            }
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.flContent, fragment, FRAG);
-            if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
-            transaction.commit();
-        }
-
     }
+
+    private void setFragment(Fragment fragment, String FRAG) {
+        // Prevent opening the same fragment twice
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        List<Fragment> list = fragmentManager.getFragments();
+        // Get last fragment
+        if (!list.isEmpty()) {
+            Fragment topFragment = list.get(list.size() - 1);
+            if (topFragment != null && topFragment.getTag().equals(FRAG)) {
+                fragmentManager.popBackStack();
+            }
+        }
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.flContent, fragment, FRAG);
+        if (!FRAG.equals(RECYCLER_FRAG)) transaction.addToBackStack(null);
+        transaction.commit();
+    }
+}
