@@ -135,7 +135,8 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 bundle.putDouble("lat", location_original.getLatitude());
                 bundle.putDouble("long", location_original.getLongitude());
                 bundle.putString("keyword", keyword.getText().toString());
-                bundle.putInt("distance", bubbleSeekBar.getProgress() * 1000);
+                if (bubbleSeekBar.getVisibility()==View.VISIBLE)
+                     bundle.putInt("distance", bubbleSeekBar.getProgress() * 1000);
 
 //                bundle.putParcelableArrayList("array", postList);
                 bundle.putInt("flag", 2);

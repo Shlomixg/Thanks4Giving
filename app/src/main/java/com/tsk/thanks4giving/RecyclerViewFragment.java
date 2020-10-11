@@ -75,9 +75,9 @@ public class RecyclerViewFragment extends Fragment {
     BubbleSeekBar bubbleSeekBar;
 
     EditText keyword;
-    TextView current_text, search_tv, current_search;
+    TextView current_text, search_tv, current_search,current_distance;
     Spinner times_spinner;
-    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter,your_search;
+    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter,your_search,your_distance;
     ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
     LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout,linear_search;
     LovelyProgressDialog progressDialog2;
@@ -124,8 +124,12 @@ public class RecyclerViewFragment extends Fragment {
         linear_current_filter=rootView.findViewById(R.id.linear_current_filter);
         keyword = rootView.findViewById(R.id.keyword);
         your_search=rootView.findViewById(R.id.your_search);
+        current_distance=rootView.findViewById(R.id.current_distance);
+        your_distance=rootView.findViewById(R.id.your_distance);
         filter1=rootView.findViewById(R.id.filter1);
         filter2=rootView.findViewById(R.id.filter2);
+        search_floating = rootView.findViewById(R.id.search_floating);
+
 
         refreshLayout = rootView.findViewById(R.id.refresh);
         adapter = new PostAdapter(postList);
@@ -136,6 +140,7 @@ public class RecyclerViewFragment extends Fragment {
         if (getArguments() != null && getArguments().getInt("flag") != 2)  {
 
             all_buttons_layout.setVisibility(View.GONE);
+            search_floating.setVisibility(View.GONE);
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -175,13 +180,32 @@ public class RecyclerViewFragment extends Fragment {
                 location_original.setLatitude(getArguments().getDouble("lat"));
                 location_original.setLongitude(getArguments().getDouble("long"));
 
-                if (word!=null && !word.equals(""))
+                if (word!=null && !word.equals("") &&distance>0) //together
                 {
-                    Toast.makeText(getContext(), "yess", Toast.LENGTH_SHORT).show();
                     linear_search.setVisibility(View.VISIBLE);
                     your_search.setText(word);
                     your_search.animate().rotation(your_search.getRotation() + 360).start();
 
+                    your_distance.setVisibility(View.VISIBLE);
+                    your_distance.setText(distance/1000 +" km");
+                    your_distance.animate().rotation(your_search.getRotation() + 360).start();
+                }
+                else if (word!=null && !word.equals("") &&distance==0) //only word
+                {
+                    linear_search.setVisibility(View.VISIBLE);
+                    your_search.setText(word);
+                    your_search.animate().rotation(your_search.getRotation() + 360).start();
+                    current_distance.setVisibility(View.GONE);
+                    your_distance.setVisibility(View.GONE);
+                }
+                else if (word==null | word.equals("") &&distance>0)
+                {
+                    linear_search.setVisibility(View.VISIBLE);
+                    your_search.setVisibility(View.GONE);
+                    current_distance.setVisibility(View.VISIBLE);
+                    your_distance.setVisibility(View.VISIBLE);
+                    your_distance.setText(distance/1000 +" km");
+                    your_distance.animate().rotation(your_distance.getRotation() + 360).start();
                 }
                 else
                 {
@@ -198,7 +222,6 @@ public class RecyclerViewFragment extends Fragment {
                     filter1.animate().rotation(filter1.getRotation() + 360).start();
                     filter2.animate().rotation(filter2.getRotation() + 360).start();
                     Toast.makeText(getContext(), "11", Toast.LENGTH_SHORT).show();
-
 
                 }
                 else if (!time.equals("Time") && category==0) // only time
@@ -272,7 +295,6 @@ public class RecyclerViewFragment extends Fragment {
                     }
                 });
             }
-            search_floating = rootView.findViewById(R.id.search_floating);
             search_floating.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

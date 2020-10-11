@@ -127,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="20dp"
                     android:background="#833131"
                     android:padding="3dp"
                     android:text="Your search: "
@@ -138,6 +138,30 @@
 
                 <Button
                     android:id="@+id/your_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="12sp"
+                    />
+                <TextView
+                    android:id="@+id/current_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="#833131"
+                    android:padding="3dp"
+                    android:text="Distance: "
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    />
+
+                <Button
+                    android:id="@+id/your_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
