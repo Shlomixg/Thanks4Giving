@@ -21,6 +21,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
+
             Log.d("fcm", "Message data payload: " + remoteMessage.getData());
             Log.d("fcm", "Message data payload: " + remoteMessage.getData().get("postID"));
             String postID = remoteMessage.getData().get("postID");
@@ -35,6 +36,7 @@ public class MessagingService extends FirebaseMessagingService {
             // if the application is not in foreground post notification
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Notification.Builder builder = new Notification.Builder(this);
+            builder.setPriority(Notification.PRIORITY_MAX);
 
             if (Build.VERSION.SDK_INT >= 26) {
                 NotificationChannel channel = new NotificationChannel("id_1", "name_1", NotificationManager.IMPORTANCE_HIGH);

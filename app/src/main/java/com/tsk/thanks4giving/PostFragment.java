@@ -387,6 +387,10 @@ public class PostFragment extends Fragment {
                 else if (text.isEmpty())
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
                 else {
+                    //Refresh connection with google servers in case the connection got dropped.
+                    getContext().sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
+                    getContext().sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
+
                     String uid = currentUser.getUid();
                     String userName = currentUser.getDisplayName();
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -527,4 +531,6 @@ public class PostFragment extends Fragment {
         String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
+
+
 }
