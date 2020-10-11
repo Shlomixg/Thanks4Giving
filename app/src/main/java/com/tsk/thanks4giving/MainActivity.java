@@ -112,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_settings:
                         setFragment(new SettingsFragment(), SETTINGS_FRAG);
                         break;
+                    case R.id.nav_my_profile:
+                        String currUserUid = currentUser.getUid();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("userUid", currUserUid);
+                        ProfileFragment fragment = new ProfileFragment();
+                        fragment.setArguments(bundle);
+                        setFragment(fragment, PROFILE_FRAG);
+                        break;
                     default:
                         setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
                         navigationView.setCheckedItem(item);
@@ -231,14 +239,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.new_post:
                 setFragment(new NewPostFragment(), NEW_POST_FRAG);
-                break;
-            case R.id.my_profile:
-                String currUserUid = currentUser.getUid();
-                Bundle bundle = new Bundle();
-                bundle.putString("userUid", currUserUid);
-                ProfileFragment fragment = new ProfileFragment();
-                fragment.setArguments(bundle);
-                setFragment(fragment, PROFILE_FRAG);
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -6,9 +6,4 @@
         android:icon="@drawable/ic_add"
         android:title="@string/new_post"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/my_profile"
-        android:icon="@drawable/ic_account_box"
-        android:title="@string/my_profile"
-        app:showAsAction="ifRoom" />
 </menu>

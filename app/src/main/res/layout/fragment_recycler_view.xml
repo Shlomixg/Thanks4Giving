@@ -24,8 +24,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:padding="5dp"
+            android:backgroundTint="?attr/colorAccent"
             android:src="@drawable/ic_baseline_search_245" />
 
     </RelativeLayout>

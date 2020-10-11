@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="5dp">
+        android:padding="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,12 +28,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Welcome Back"
+                android:textColor="@color/colorBlackWhite"
                 android:textSize="42sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign in to continue enjoy stuff"
+                android:textColor="@color/colorBlackWhite"
                 android:textSize="18sp" />
 
         </LinearLayout>
@@ -111,7 +112,7 @@
                 android:background="#00000000"
                 android:padding="5dp"
                 android:text="@string/new_user_signup"
-                android:textColor="#000000" />
+                android:textColor="@color/colorPrimary" />
 
         </LinearLayout>
 
