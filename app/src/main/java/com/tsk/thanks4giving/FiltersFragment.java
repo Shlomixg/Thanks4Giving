@@ -247,9 +247,11 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onClick(View v) {
-                    categoryDropdown.clearListSelection(); // reset spinner
+//                    categoryDropdown.clearListSelection();
+                    categoryDropdown.setSelection(0);// reset spinner
                     times_spinner.setSelection(0); // reset spinner
                     linear_current_filter.setVisibility(View.GONE); // hide all current result layout
+                    keyword.setText("");
                 }
             });
 
@@ -294,17 +296,17 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 }
             });
 
-            edit_current_search.setOnClickListener(new View.OnClickListener() { // listener for edit search button - pencil
-                @Override
-                public void onClick(View v) {
-                    edit_current_search.setVisibility(View.GONE); // hide edit button
-                    search_keyword.setVisibility(View.GONE); // hide  the current keyword.
-                    current_search.setVisibility(View.GONE); // hide the text view in red for results
-                    search_tv.setVisibility(View.VISIBLE); // show search textview near edittext again
-                    keyword.setVisibility(View.VISIBLE); // show edit text again
-                    search_submit.setVisibility(View.VISIBLE); // show submit layout again
-                }
-            });
+//            edit_current_search.setOnClickListener(new View.OnClickListener() { // listener for edit search button - pencil
+//                @Override
+//                public void onClick(View v) {
+//                    edit_current_search.setVisibility(View.GONE); // hide edit button
+//                    search_keyword.setVisibility(View.GONE); // hide  the current keyword.
+//                    current_search.setVisibility(View.GONE); // hide the text view in red for results
+//                    search_tv.setVisibility(View.VISIBLE); // show search textview near edittext again
+//                    keyword.setVisibility(View.VISIBLE); // show edit text again
+//                    search_submit.setVisibility(View.VISIBLE); // show submit layout again
+//                }
+//            });
 
             edit_current_filters.setOnClickListener(new View.OnClickListener() { //listener for edit filters button
                 @Override
