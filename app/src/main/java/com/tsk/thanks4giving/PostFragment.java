@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,14 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -51,11 +48,9 @@ import com.skydoves.androidribbon.RibbonView;
 import com.skydoves.androidribbon.ShimmerRibbonView;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.stfalcon.imageviewer.loader.ImageLoader;
-
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,7 +61,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostFragment extends Fragment {
@@ -82,11 +76,9 @@ public class PostFragment extends Fragment {
     RibbonLayout ribbonLayout;
     int category;
     Context context;
-
     RecyclerView commentsRecycler;
     CommentAdapter adapter;
     ArrayList<Comment> commentList = new ArrayList<>();
-
     Location location;
     Geocoder geocoder;
 
@@ -150,8 +142,6 @@ public class PostFragment extends Fragment {
         if (getArguments() != null) {
             Bundle bundle = this.getArguments();
             postID = bundle.getString("PostId");
-        } else {
-            // TODO: Error handling
         }
 
         final ShimmerRibbonView ribbonView = new ShimmerRibbonView.Builder(getContext())
@@ -224,17 +214,15 @@ public class PostFragment extends Fragment {
                                 username_tv.setText(user.name);
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
                     });
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-            } // TODO: error handling
+            }
         });
 
         likes.child(postID).addValueEventListener(new ValueEventListener() {
@@ -245,7 +233,6 @@ public class PostFragment extends Fragment {
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
                     like_btn.setIcon(context.getDrawable(R.drawable.ic_like_fill));
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -263,7 +250,6 @@ public class PostFragment extends Fragment {
                 }
                 adapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -333,10 +319,8 @@ public class PostFragment extends Fragment {
                                 like_btn.setIcon(getResources().getDrawable(R.drawable.ic_like_fill, null));
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            // TODO: Error handling
                         }
                     });
                 } else {
@@ -360,7 +344,7 @@ public class PostFragment extends Fragment {
                 sendIntent.setType("image/*");
                 Bitmap bitmap = loadBitmapFromView(post_image_view, post_image_view.getWidth(), post_image_view.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + desc_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + title_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store");
                 startActivity(sendIntent);
             }
         });
@@ -378,7 +362,6 @@ public class PostFragment extends Fragment {
                             posts.child(postID).child("status").setValue(0);
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
@@ -445,7 +428,6 @@ public class PostFragment extends Fragment {
                                 headers.put("Authorization", "key=" + SK);
                                 return headers;
                             }
-
                             @Override
                             public byte[] getBody() throws AuthFailureError {
                                 return rootObject.toString().getBytes();
@@ -500,10 +482,8 @@ public class PostFragment extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -537,6 +517,4 @@ public class PostFragment extends Fragment {
         String url = "https://www.waze.com/ul?ll=" + latitude + "%2C" + longitude + "&navigate=yes";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
-
-
 }

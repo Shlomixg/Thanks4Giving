@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
         progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like) // TODO: Change to app icon
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.dialog_loading_title)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -174,7 +174,6 @@ public class ProfileFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.d("Profile Log", "--- Profile display failed");
                 Log.d("Profile Log", "--- Error: " + error);
-                // TODO: Add error handling
                 progressDialog.dismiss();
             }
         });
@@ -191,5 +190,4 @@ public class ProfileFragment extends Fragment {
         rvFragment.setArguments(bundle);
         transaction.replace(R.id.flProfileContent, rvFragment, "USER_POSTS_FRAG").commit();
     }
-
 }

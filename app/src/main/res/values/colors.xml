@@ -5,7 +5,14 @@
     <color name="colorPrimaryDark">#FEC404</color>
     <color name="colorAccent">#2FA4FE</color>
 
-    <color name="colorWhite">#FFFFFF</color>
     <color name="colorWhiteBlack">#fff</color>
     <color name="colorBlackWhite">#000</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="slide1">#0338FA</color>
+    <color name="slide2">#1A4BFF</color>
+    <color name="slide3">#2754F8</color>
+    <color name="slide4">#4168F4</color>
+    <color name="slide5">#5679F8</color>
+
 </resources>

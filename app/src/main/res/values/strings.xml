@@ -79,11 +79,11 @@
     <string name="second_slide_title">First of all if you want to browse you can do so freely!</string>
     <string name="second_slide_desc">If you want to post comments, like or post your own items you will have to sign up. Notice that the address you provide will be used to set your location so it is important to give the real address.</string>
     <string name="third_slide_title">Posts can be filtered by category and by location.</string>
-    <string name="third_slide_desc">To get the best location filter you can enable automatic location updates from the settings.</string>
+    <string name="third_slide_desc">To get to the filter menu click the magnifying glass at the bottom corner.</string>
     <string name="fourth_slide_title">You will get push notifications when someone comments on a post of yours.</string>
     <string name="fourth_slide_desc">If that ever bothers you it can be easily turned off from the settings.</string>
-    <string name="fifth_slide_title">Once you have successfully given an item you posted click the label icon.</string>
-    <string name="fifth_slide_desc">Thats it, you\'re ready to start. Thank you for downloading our app, and thank you for giving!</string>
+    <string name="fifth_slide_title">Once you have successfully given an item you posted click the present icon.</string>
+    <string name="fifth_slide_desc">That\'s it, you\'re ready to start. Thank you for downloading our app, and thank you for giving!</string>
     <string name="ribbon_text">Delivered!</string>
     <string name="location_loading">We are looking for your Location..</string>
     <string name="saved_location">"Would you like to use "</string>
@@ -114,6 +114,15 @@
     <string name="new_user_signup">New User? Signup</string>
     <string name="filter_by_location">Filter by Distance</string>
     <string name="no_internet">No internet connection.</string>
+    <string name="gallery_permissions">We need permissions to open the gallery.</string>
+    <string name="camera_permissions">We need permission to open the camera.</string>
+    <string name="apply">Apply</string>
+    <string name="welcomeback">Welcome Back</string>
+    <string name="sign_in_to_continue_enjoy_stuff">Log in to continue enjoying</string>
+    <string name="active_items">Active Items</string>
+    <string name="delivered_items">Delivered Items</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_up_to_start_enjoy_stuff">Sign up to start enjoying</string>
 
     <string-array name="categories">
         <item name="Electronics">Electronics</item>

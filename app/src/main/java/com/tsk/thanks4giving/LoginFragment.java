@@ -7,16 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
-import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -24,7 +21,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.List;
 
 public class LoginFragment extends Fragment {
@@ -41,19 +37,16 @@ public class LoginFragment extends Fragment {
         password_et = rootView.findViewById(R.id.login_password_et);
         confirm_btn = rootView.findViewById(R.id.login_confirm_btn);
         signup_btn = rootView.findViewById(R.id.login_move_signup_btn);
-
         return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         final AwesomeValidation mValidation = new AwesomeValidation(ValidationStyle.TEXT_INPUT_LAYOUT);
 
         mValidation.addValidation(getActivity(), R.id.login_email_tf, Patterns.EMAIL_ADDRESS, R.string.validate_name);
         mValidation.addValidation(getActivity(), R.id.login_password_tf, "^.{6,}$", R.string.validate_pass);
-
         AwesomeValidation.disableAutoFocusOnFirstFailure();
 
         signup_btn.setOnClickListener(new View.OnClickListener() {

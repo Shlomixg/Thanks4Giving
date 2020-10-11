@@ -1,7 +1,6 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -25,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
@@ -45,7 +43,6 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -54,7 +51,6 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -69,7 +65,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -83,18 +78,16 @@ import java.util.UUID;
 public class NewPostFragment extends Fragment implements LocationListener, AdapterView.OnItemSelectedListener {
 
     final String RECYCLER_FRAG = "Recycler View Fragment";
-
     private static final String ARG_POST_ID = "postID";
     private String mPostID;
-
     final int LOCATION_PERMISSION_REQUEST = 2;
     static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
+
     ImageView image;
     TextInputEditText item_name_et, item_desc_et, address_et;
     MaterialButton gps_btn, default_address_btn, camera_btn, browse_btn, confirm_btn;
     AutoCompleteTextView categoryDropdown;
     LovelyProgressDialog progressDialog;
-
     int category, flag_location = 0;
     Handler handler = new Handler();
     Geocoder geocoder;
@@ -144,7 +137,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             progressDialog = new LovelyProgressDialog(getContext())
                     .setTopColorRes(R.color.colorPrimary)
                     .setCancelable(false)
-                    .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                    .setIcon(R.drawable.ic_launcher_foreground)
                     .setTitle(R.string.dialog_loading_title)
                     .setMessage(R.string.dialog_loading_msg);
             progressDialog.show();
@@ -190,10 +183,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                         progressDialog.dismiss();
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-
                 }
             });
         }
@@ -213,7 +204,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
         categoryDropdown.setAdapter(adapter);
-        // Dumb way to bind the selected item to it's value
         categoryDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -265,10 +255,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                             coordinates = user.coordinates;
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
             }
@@ -287,12 +275,11 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
                             @Override
                             public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Camera"); // TODO: Strings with explanation
+                                showSettingsDialog(getString(R.string.camera_permissions));
                             }
 
                             @Override
                             public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
                                 permissionToken.continuePermissionRequest();
                             }
                         })
@@ -313,25 +300,17 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
                             @Override
                             public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Browse"); // TODO: Strings with explanation
+                                showSettingsDialog(getString(R.string.gallery_permissions));
                             }
 
                             @Override
                             public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
                                 permissionToken.continuePermissionRequest();
                             }
                         })
                         .check();
             }
         });
-
-        // TODO: DELETE?
-//        progressDialog = new LovelyProgressDialog(getContext())
-//                .setTopColorRes(R.color.colorPrimary)
-//                .setCancelable(false)
-//                .setTitle(getString(R.string.saved_location) + address)
-//                .setIcon(R.drawable.ic_gps); // TODO: Change to app icon or wait icon
 
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,7 +329,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .setCancelable(false)
                 .setTitle(getString(R.string.dialog_uploading_post))
                 .setMessage(R.string.dialog_loading_msg)
-                .setIcon(R.drawable.ic_gps); // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_launcher_foreground);
         uploadProgressDialog.show();
 
         if (flag_location == 0) location_method = "GPS";
@@ -378,7 +357,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
         uploadProgressDialog.dismiss();
@@ -415,13 +393,12 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_like)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();
     }
 
-    // TODO: Why we need it here?
     @Override
     public void onLocationChanged(Location location) {
         final double lat = location.getLatitude();
@@ -496,7 +473,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final LovelyProgressDialog uploadPicProgressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.dialog_uploading_title)
                 .setMessage(R.string.dialog_loading_msg);
         uploadPicProgressDialog.show();
@@ -524,7 +501,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                 double progress = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
-                uploadPicProgressDialog.setMessage("Progress " + (int) progress + " %"); // TODO: does it work?
+                uploadPicProgressDialog.setMessage("Progress " + (int) progress + " %");
                 if ((int) progress == 100)
                     uploadPicProgressDialog.dismiss();
             }
@@ -544,26 +521,21 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-
     }
 }

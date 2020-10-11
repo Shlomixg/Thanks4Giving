@@ -69,11 +69,11 @@
     <string name="second_slide_title">קודם כל אם תרצה לעיין תוכל לעשות זאת בחופשיות!</string>
     <string name="second_slide_desc">אם תרצה לפרסם תגובות, לייקים או פוסטים משל עצמך תצטרך להירשם . שים לב שהכתובת שתיתן תשמש לקביעת המיקום שלך ולכן חשוב שתהיה אמיתית</string>
     <string name="third_slide_title">ניתן לסנן פוסטים לפי קטגוריה ומיקום.</string>
-    <string name="third_slide_desc">בשביל לקבל את הסינון לפי מיקום הטוב ביותר תוכל לאפשר קבלת עדכוני מיקום אוטומטיים מההגדרות.</string>
+    <string name="third_slide_desc">בשביל להגיע לתפריט הסינונים לחץ על זכוכית המגדלת בפינה התחתונה.</string>
     <string name="fourth_slide_title">תקבל התראות פוש כאשר מישהו מפרסם תגובה על פוסט שלך.</string>
     <string name="ribbon_text">נמסר!</string>
     <string name="fourth_slide_desc">אם זה אי-פעם יפריע לך תוכל בקלות לכבות את זה דרך ההגדרות.</string>
-    <string name="fifth_slide_title">כאשר מסרת בהצלחה פריט שפרסמת לחץ על האייקון של התווית.</string>
+    <string name="fifth_slide_title">כאשר מסרת בהצלחה פריט שפרסמת לחץ על האייקון של המתנה.</string>
     <string name="fifth_slide_desc">זהו זה, אתה מוכן להתחיל. תודה שהורדת את האפליקציה שלנו, ותודה שנתת!</string>
     <string name="title_activity_introduction">הקדמה</string>
 
@@ -131,5 +131,15 @@
         <item name="Female">נקבה</item>
         <item name="Other">אחר</item>
     </string-array>
+    <string name="no_internet">אין חיבור לאינטרנט.</string>
+    <string name="gallery_permissions">אנו זקוקים להרשאה כדי לפתוח את הגלריה.</string>
+    <string name="camera_permissions">אנו זקוקים להרשאה כדי לפתוח את המצלמה.</string>
+    <string name="apply">החל</string>
+    <string name="welcomeback">ברוך השב</string>
+    <string name="sign_in_to_continue_enjoy_stuff">התחבר כדי להמשיך ולהנות</string>
+    <string name="active_items">פריטים פעילים</string>
+    <string name="delivered_items">פריטים שנמסרו</string>
+    <string name="welcome">ברוך הבא</string>
+    <string name="sign_up_to_start_enjoy_stuff">הירשם כדי להתחיל להנות</string>
 
 </resources>

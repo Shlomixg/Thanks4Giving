@@ -1,11 +1,6 @@
 package com.tsk.thanks4giving;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
-
-public class Post implements Parcelable {
+public class Post{
 
     public String postID;
     public String userUid; // UID of the user that posted
@@ -127,15 +122,5 @@ public class Post implements Parcelable {
 
     public void setPostImage(String postImage) {
         this.postImage = postImage;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
     }
 }
