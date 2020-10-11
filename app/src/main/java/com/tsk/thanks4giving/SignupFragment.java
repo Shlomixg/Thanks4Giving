@@ -12,6 +12,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -63,6 +64,7 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -78,8 +80,7 @@ public class SignupFragment extends Fragment {
     TextInputEditText fullname_et, address_et, email_et, password_et;
     MaterialButton camera_btn, gallery_btn, confirm_btn, login_btn;
     AutoCompleteTextView genderDropdown;
-
-    int flag_location;
+    int gender, flag_location;
     File file;
     Uri imageUri;
     String coordinates, randomKey, profile_photo_path;
@@ -125,9 +126,16 @@ public class SignupFragment extends Fragment {
 
         final String[] GENDERS = getResources().getStringArray(R.array.genders);
 
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
         genderDropdown.setAdapter(adapter);
+        genderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                gender = position;
+            }
+        });
+
 
         return rootView;
     }
@@ -218,13 +226,11 @@ public class SignupFragment extends Fragment {
     }
 
     private void register() {
-        final String[] GENDERS = getResources().getStringArray(R.array.genders);
 
         final String mail = email_et.getText().toString();
         final String pass = password_et.getText().toString();
         final String name = fullname_et.getText().toString();
         final String address = address_et.getText().toString();
-        final String gender = genderDropdown.getText().toString();
 
         // Sign up new user
         mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -243,7 +249,7 @@ public class SignupFragment extends Fragment {
                     if (fbUser != null) {
 
                         if (imageUri == null) {
-                            if (gender.equals(GENDERS[1]))
+                            if (gender == 1) // If female
                                 imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
                             else {
                                 imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
@@ -275,7 +281,7 @@ public class SignupFragment extends Fragment {
                                                         .centerCrop()
                                                         .into(user_photo_civ);
                                                 progressDialog.dismiss();
-                                                Snackbar.make(getActivity().findViewById(android.R.id.content),getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
+                                                Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
 
                                                 // Close fragment
                                                 FragmentManager fragmentManager = getParentFragmentManager();

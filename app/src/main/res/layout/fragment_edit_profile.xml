@@ -107,14 +107,15 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/gender">
 
-                <!-- Google themselves instruct us to use the deprecated editable attribute here! -->
                 <AutoCompleteTextView
                     android:id="@+id/edit_profile_gender_dropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_gender"
                     android:drawablePadding="10dp"
-                    android:editable="false" /> <!-- Do not Delete! -->
+                    android:inputType="none" />
+
+                <!-- android:editable="false" /> Do not Delete! BACKUP -->
 
             </com.google.android.material.textfield.TextInputLayout>
 

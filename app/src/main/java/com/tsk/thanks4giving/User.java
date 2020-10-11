@@ -7,7 +7,7 @@ public class User {
     public String uid;
     public String name;
     public String email;
-    public String gender;
+    public int gender;
     public String address;
     public String coordinates;
     public String profilePhoto;
@@ -17,7 +17,7 @@ public class User {
 
     }
 
-    public User(String uid, String name, String email, String gender, String address, String coordinates, String profilePhoto) {
+    public User(String uid, String name, String email, int gender, String address, String coordinates, String profilePhoto) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -42,7 +42,7 @@ public class User {
         return email;
     }
 
-    public String getGender() {
+    public int getGender() {
         return gender;
     }
 
@@ -76,7 +76,7 @@ public class User {
         this.email = email;
     }
 
-    public void setGender(String gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 

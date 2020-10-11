@@ -179,7 +179,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                         item_desc_et.setText(post.desc);
                         address_et.setText(post.address);
                         coordinates = post.coordinates;
-                        categoryDropdown.setText(post.category);
+                        categoryDropdown.setText(post.category, false);
+                        image_path = post.postImage;
                         Glide.with(getContext()).load(post.postImage).centerCrop().into(image);
 
                         progressDialog.dismiss();
@@ -205,7 +206,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        String[] categories = getResources().getStringArray(R.array.categories);
+        final String[] categories = getResources().getStringArray(R.array.categories);
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
         categoryDropdown.setAdapter(adapter);

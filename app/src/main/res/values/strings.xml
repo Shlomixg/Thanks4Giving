@@ -42,7 +42,7 @@
         <item name="Games">Games</item>
     </string-array>
     <string-array name="categories_for_filter">
-        <item name="Choose Category">Choose Category</item>
+        <item name="Choose Category">Choose Category</item> <!-- TODO: DELETE! -->
         <item name="All Categories">All Categories</item>
         <item name="Electronics">Electronics</item>
         <item name="Furniture">Furniture</item>

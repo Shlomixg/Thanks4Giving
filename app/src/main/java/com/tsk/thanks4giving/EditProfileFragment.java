@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -80,7 +81,7 @@ public class EditProfileFragment extends Fragment {
     String coordinates, randomKey, profile_photo_path;
     File file;
     Uri imageUri;
-    int flag_location;
+    int gender, flag_location;
 
     LovelyProgressDialog progressLoadingDialog;
 
@@ -120,6 +121,8 @@ public class EditProfileFragment extends Fragment {
         save_btn = rootView.findViewById(R.id.edit_profile_save_btn);
         cancel_btn = rootView.findViewById(R.id.edit_profile_cancel_btn);
 
+        final String[] GENDERS = getResources().getStringArray(R.array.genders);
+
         // Loading existing data into UI
         ref = mDatabase.child("users").child(fbUser.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -129,7 +132,8 @@ public class EditProfileFragment extends Fragment {
                 if (user != null) {
                     fullname_et.setText(user.name);
                     address_et.setText(user.address);
-                    genderDropdown.setText(user.gender, false);
+                    genderDropdown.setText(GENDERS[user.gender], false);
+                    gender = user.gender;
                     coordinates = user.coordinates;
                     if (user.profilePhoto != null) {
                         profile_photo_path = user.profilePhoto;
@@ -160,10 +164,15 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        final String[] GENDERS = getResources().getStringArray(R.array.genders);
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
         genderDropdown.setAdapter(adapter);
+        genderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                gender = position;
+            }
+        });
 
         return rootView;
     }
@@ -259,7 +268,6 @@ public class EditProfileFragment extends Fragment {
         progressDialog.show();
 
         String name = fullname_et.getText().toString();
-        String gender = genderDropdown.getText().toString();
         String address = address_et.getText().toString();
 
         fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(name).setPhotoUri(imageUri).build());

@@ -209,10 +209,6 @@ public class PostFragment extends Fragment {
                             if (user != null) {
                                 if (user.profilePhoto != null) {
                                     Glide.with(PostFragment.this).load(user.profilePhoto).centerCrop().into(profile_photo_civ);
-                                } else if (user.gender.equals("Female")) {
-                                    Glide.with(PostFragment.this).load(R.drawable.profile_woman).centerCrop().into(profile_photo_civ);
-                                } else {
-                                    Glide.with(PostFragment.this).load(R.drawable.profile_man).centerCrop().into(profile_photo_civ);
                                 }
                                 username_tv.setText(user.name);
                             }

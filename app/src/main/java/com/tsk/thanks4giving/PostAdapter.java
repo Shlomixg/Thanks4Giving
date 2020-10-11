@@ -159,12 +159,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     if (user.profilePhoto != null) {
                         Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profile_photo_civ);
                     }
-                    // TODO: Remove else if after fixing the signup upload
-                    else if (user.gender.equals("Female")) {
-                        Glide.with(context).load(R.drawable.profile_woman).centerCrop().into(holder.profile_photo_civ);
-                    } else {
-                        Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profile_photo_civ);
-                    }
                     holder.userNameTV.setText(user.name);
                 }
             }
