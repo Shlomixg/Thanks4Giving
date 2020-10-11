@@ -32,6 +32,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -521,7 +522,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 showallpostsNoLocation(snapshot);
                             }
                             Collections.reverse(postList);
-                            // adapter=new PostAdapter(postList);
                             adapter.notifyDataSetChanged();
                         }
 
@@ -538,19 +538,20 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    progressDialog.show();
-                    postList.clear();
-                    if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
-                        showAllPosts(snapshot);
-                        flagBack = 0;
-                    } else {
-                        showallpostsNoLocation(snapshot);
+                    if(getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                        progressDialog.show();
+                        postList.clear();
+                        if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) { // #case no location
+                            showAllPosts(snapshot);
+                            flagBack = 0;
+                        } else {
+                            showallpostsNoLocation(snapshot);
+                        }
+                        Collections.reverse(postList);
+                        adapter.notifyDataSetChanged();
+                        progressDialog.dismiss();
                     }
-                    Collections.reverse(postList);
-                    adapter.notifyDataSetChanged();
-                    progressDialog.dismiss();
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                 }

@@ -1,8 +1,10 @@
 package com.tsk.thanks4giving;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -78,6 +80,7 @@ public class PostFragment extends Fragment {
     LinearLayout shareWrapper, ribbonWrapper;
     RibbonLayout ribbonLayout;
     int category;
+    Context context;
 
     RecyclerView commentsRecycler;
     CommentAdapter adapter;
@@ -118,7 +121,7 @@ public class PostFragment extends Fragment {
         desc_tv = rootView.findViewById(R.id.post_item_desc);
         post_date_tv = rootView.findViewById(R.id.post_date);
         username_tv = rootView.findViewById(R.id.post_user_name);
-
+        context = container.getContext();
         like_btn = rootView.findViewById(R.id.post_like_btn);
         comment_btn = rootView.findViewById(R.id.post_comment_btn);
         ribbon_btn = rootView.findViewById(R.id.ribbon_btn);
@@ -237,7 +240,7 @@ public class PostFragment extends Fragment {
                 int size = (int) snapshot.getChildrenCount();
                 like_btn.setText("" + size);
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
-                    like_btn.setIcon(getResources().getDrawable(R.drawable.ic_like_fill, null));
+                    like_btn.setIcon(context.getDrawable(R.drawable.ic_like_fill));
             }
 
             @Override
