@@ -33,7 +33,7 @@
     <string name="welcome_guest">ברוך הבא אורח</string>
     <string name="need_permissions">יש צורך בהרשאות לפתיחת מצלמה או גלריה</string>
     <string name="welcome_back">, טוב שחזרת</string>
-    <string name="login_fail">התחברות נכשלה</string>
+    <string name="login_fail">ההתחברות נכשלה</string>
     <string name="logged_out">התנתקת</string>
     <string name="guest">אורח</string>
     <string name="signup_fail">הרשמה נכשלה</string>
@@ -104,6 +104,7 @@
     <string name="saved_location">האם תרצה להשתמש ב-</string>
     <string name="pref_theme_title" translatable="false">ערכת נושא</string>
     <string name="pref_theme_summary">בחר ערכת נושא מועדפת</string>
+    <string name="new_user_signup">רשומים? להתחברות</string>
 
     <string-array name="categories">
         <item name="Electronics">אלקטרוניקה</item>

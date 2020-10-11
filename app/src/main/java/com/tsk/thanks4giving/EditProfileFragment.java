@@ -105,7 +105,6 @@ public class EditProfileFragment extends Fragment {
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
     }
 
     @Override
@@ -145,9 +144,7 @@ public class EditProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("EditProfile Log", "--- Profile loading failed");
-                Log.d("EditProfile Log", "--- Error: " + error);
-                // TODO: Add error handling
+                Log.d("EditProfile Log", "--- Profile loading failed. Error: " + error);
                 progressLoadingDialog.dismiss();
             }
         });
@@ -263,7 +260,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_updating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -324,7 +321,7 @@ public class EditProfileFragment extends Fragment {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_like)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();
@@ -356,7 +353,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_uploading_title); // TODO: Move to strings
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();

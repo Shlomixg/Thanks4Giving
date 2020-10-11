@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         if (!list.isEmpty()) {
             Fragment topFragment = list.get(list.size() - 1);
             if (topFragment != null && topFragment.getTag().equals(FRAG)) {
-                fragmentManager.popBackStack();
+                fragmentManager.popBackStackImmediate();
             }
         }
         FragmentTransaction transaction = fragmentManager.beginTransaction();

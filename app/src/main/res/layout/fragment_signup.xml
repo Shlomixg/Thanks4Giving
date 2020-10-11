@@ -40,58 +40,12 @@
             android:layout_marginVertical="12dp"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/signup_user_image"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="1dp"
-                    android:src="@drawable/profile_man"
-                    app:civ_border_color="#fece2f"
-                    app:civ_border_width="2dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/signup_user_image"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/signup_camera_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/take_picture"
-                        android:textColor="@color/colorWhite"
-                        app:icon="@drawable/ic_camera"
-                        app:iconTint="@color/colorWhite" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/signup_gallery_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/picture_from_gallery"
-                        android:textColor="@color/colorWhite"
-                        app:icon="@drawable/ic_gallery"
-                        app:iconTint="@color/colorWhite" />
-
-                </LinearLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/signup_fullname_tf"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/full_name">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -109,6 +63,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/address">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -126,6 +81,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/gender">
 
                 <AutoCompleteTextView
@@ -143,6 +99,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/sign_email_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -160,6 +117,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/sign_password_hint"
                 app:counterEnabled="true"
                 app:passwordToggleEnabled="true">
@@ -179,6 +137,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
 

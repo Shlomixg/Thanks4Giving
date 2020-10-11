@@ -111,6 +111,7 @@
     <string name="item_pickup_address">Pickup address</string>
     <string name="dialog_uploading_post">Uploading post</string>
     <string name="confirm_post">Confirm</string>
+    <string name="new_user_signup">New User? Signup</string>
 
     <string-array name="categories">
         <item name="Electronics">Electronics</item>

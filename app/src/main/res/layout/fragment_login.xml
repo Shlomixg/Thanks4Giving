@@ -10,8 +10,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,6 +50,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/sign_email_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -66,6 +68,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:hint="@string/sign_password_hint"
                 app:counterEnabled="true"
                 app:passwordToggleEnabled="true">
@@ -80,26 +83,16 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/login_forgot_pass_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="#00000000"
-                android:padding="5dp"
-                android:text="Forgot password?"
-                android:textColor="#000000"
-                android:textSize="12sp" />
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_confirm_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,7 +102,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="20sp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_move_signup_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -117,7 +110,7 @@
                 android:layout_marginTop="5dp"
                 android:background="#00000000"
                 android:padding="5dp"
-                android:text="New User? Signup"
+                android:text="@string/new_user_signup"
                 android:textColor="#000000" />
 
         </LinearLayout>

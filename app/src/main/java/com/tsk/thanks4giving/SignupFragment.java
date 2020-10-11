@@ -1,6 +1,7 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -101,14 +102,11 @@ public class SignupFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
-        profile_image = rootView.findViewById(R.id.signup_user_image);
         fullname_et = rootView.findViewById(R.id.signup_fullname_et);
         address_et = rootView.findViewById(R.id.signup_address_et);
         email_et = rootView.findViewById(R.id.signup_email_et);
         password_et = rootView.findViewById(R.id.signup_password_et);
         genderDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
-        camera_btn = rootView.findViewById(R.id.signup_camera_btn);
-        gallery_btn = rootView.findViewById(R.id.signup_gallery_btn);
         confirm_btn = rootView.findViewById(R.id.signup_confirm_btn);
         login_btn = rootView.findViewById(R.id.signup_move_login_btn);
 
@@ -136,7 +134,6 @@ public class SignupFragment extends Fragment {
             }
         });
 
-
         return rootView;
     }
 
@@ -153,58 +150,6 @@ public class SignupFragment extends Fragment {
         mValidation.addValidation(getActivity(), R.id.signup_password_tf, "^.{6,}$", R.string.validate_pass);
 
         AwesomeValidation.disableAutoFocusOnFirstFailure();
-
-        camera_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(getContext())
-                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .withListener(new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                                takePicture();
-                            }
-
-                            @Override
-                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Camera"); // TODO: Strings with explanation
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
-                                permissionToken.continuePermissionRequest();
-                            }
-                        })
-                        .check();
-            }
-        });
-
-        gallery_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(getContext())
-                        .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .withListener(new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                                selectPicture();
-                            }
-
-                            @Override
-                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Browse"); // TODO: Strings with explanation
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
-                                permissionToken.continuePermissionRequest();
-                            }
-                        })
-                        .check();
-            }
-        });
 
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,19 +171,18 @@ public class SignupFragment extends Fragment {
     }
 
     private void register() {
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_giftbox_outline)
+                .setTitle(R.string.dialog_creating_user)
+                .setMessage(R.string.dialog_loading_msg);
+        progressDialog.show();
 
         final String mail = email_et.getText().toString();
         final String pass = password_et.getText().toString();
         final String name = fullname_et.getText().toString();
-
         final String address = address_et.getText().toString();
-        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
-                .setTopColorRes(R.color.colorPrimary)
-                .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline) // TODO: Change to app icon or wait icon
-                .setTitle(R.string.dialog_creating_user)
-                .setMessage(R.string.dialog_loading_msg);
-        progressDialog.show();
 
         // Sign up new user
         mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -255,7 +199,7 @@ public class SignupFragment extends Fragment {
                             else {
                                 profile_photo_path = "https://i.imgur.com/LEKWEA2.png";
                             }
-                        } else uploadPicture();
+                        }
 
                         // Updating full name & photo
                         fbUser.updateProfile(new UserProfileChangeRequest.Builder()
@@ -282,19 +226,22 @@ public class SignupFragment extends Fragment {
                                                         .into(user_photo_civ);
                                                 progressDialog.dismiss();
                                                 Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
-
                                                 // Close fragment
                                                 FragmentManager fragmentManager = getParentFragmentManager();
+                                                List<Fragment> list = fragmentManager.getFragments();
+                                                // Get last fragment
+                                                for (int i = 0; i < list.size() - 1; i++) {
+                                                    fragmentManager.popBackStackImmediate();
+                                                }
                                                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                                                transaction.replace(R.id.flContent, new RecyclerViewFragment(), "Recycler View Fragment").addToBackStack(null).commit();
+                                                transaction.replace(R.id.flContent, new RecyclerViewFragment(), "Recycler View Fragment").commit();
                                             }
                                         }
                                 );
                     }
                 } else {
                     String error = task.getException().getMessage();
-                    Log.d("Signup Log", "--- Sign up failed");
-                    Log.d("Signup Log", "--- Error: " + error);
+                    Log.d("Signup Log", "--- Sign up failed. Error: " + error);
                     progressDialog.dismiss();
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                 }
@@ -302,105 +249,17 @@ public class SignupFragment extends Fragment {
         });
     }
 
-    public void setSnackbar(FirebaseUser firebaseUser) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + firebaseUser.getDisplayName() + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
-    }
-
-    private void takePicture() {
-        Random r = new Random();
-        int low = 10, high = 1000000, result = r.nextInt(high - low) + low;
-        file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); // eran
-        imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // eran
-        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-    }
-
-    private void selectPicture() {
-        Intent selectIntent = new Intent();
-        selectIntent.setType("image/*");
-        selectIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-        startActivityForResult(Intent.createChooser(selectIntent, "Select Image"), PICK_IMAGE);
-    }
-
-    public void showSettingsDialog(String explanation) {
-        new LovelyStandardDialog(getContext())
-                .setTopColorRes(R.color.colorPrimary)
-                .setCancelable(false)
-                .setPositiveButton(R.string.settings, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_like)
-                .setTitle(R.string.attention)
-                .setMessage(explanation)
-                .show();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
-            assert data != null;
-            imageUri = data.getData();
-            profile_image.setImageURI(imageUri);
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            profile_image.setImageURI(imageUri);
-        } else if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == 200 && resultCode == AutocompleteActivity.RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             address_et.setText(place.getAddress());
             String temp = String.valueOf(place.getLatLng());
             coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void uploadPicture() {
-        randomKey = UUID.randomUUID().toString();
-        StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);
-
-        riversRef.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        try {
-                            downloadFile(randomKey);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // TODO: Handle unsuccessful uploads
-                        Log.d("Signup", "Failed to upload image");
-                        Log.d("Signup", "Exception: " + exception);
-                    }
-                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-
-            }
-        });
-    }
-
-    private void downloadFile(String randomKey) throws IOException {
-        StorageReference imageRef = storageReference.child("ProfileImages").child(randomKey);
-        imageRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        profile_photo_path = uri.toString();
-                    }
-                });
-    }
-
 }
