@@ -84,6 +84,7 @@ public class RecyclerViewFragment extends Fragment {
             posts.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    postList.clear();
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
                         postList.add(post);
@@ -110,6 +111,7 @@ public class RecyclerViewFragment extends Fragment {
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    postList.clear();
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
                         if (post.getUserUid().equals(mUserUid))
@@ -199,7 +201,7 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     private void filterPosts(DataSnapshot snapshot, String word) {
-
+        postList.clear();
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post post = ds.getValue(Post.class);
             String coordinates = post.coordinates;

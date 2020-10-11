@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
-    TextView user_name_tv;
+    TextView user_name_tv, midTV;
+    ImageView midIV;
+    LinearLayout midLO;
     CircleImageView profile_pic_iv;
     public static boolean commentSwitch = true;
 
@@ -78,16 +82,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getActiveNetwork() == null)
-        {
-            //TODO instead of recycler fragment set text view "This app needs network connection to work properly and show posts"
-        }
-
         scheduleJob();
         drawerLayout = findViewById(R.id.drawer);
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigation_view);
+
         setSupportActionBar(toolbar);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -153,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                     user_name_tv.setText(currentUser.getDisplayName());
                     Glide.with(MainActivity.this).load(currentUser.getPhotoUrl()).centerCrop().into(profile_pic_iv);
-                } else {
+                } else { // Logout or guest user
                     navigationView.inflateMenu(R.menu.guest_main_menu);
                     invalidateOptionsMenu();
 
@@ -163,9 +162,19 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // Setting the first fragment
         Intent intent = this.getIntent();
-        if (intent.hasExtra("post")) {
+        // Setting the first fragment
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getActiveNetwork() == null)
+        {
+            midLO = findViewById(R.id.textView_area);
+            midIV = findViewById(R.id.mid_image);
+            midTV = findViewById(R.id.mid_text);
+            midLO.setVisibility(View.VISIBLE);
+            midIV.setImageResource(R.drawable.ic_baseline_cloud_off_24);
+            midTV.setText(getString(R.string.no_internet));
+        }
+        else if (intent.hasExtra("post")) {
             String postID = intent.getStringExtra("post");
             FragmentManager fragmentManager = getSupportFragmentManager();
             Bundle bundle = new Bundle();
@@ -273,6 +282,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        Log.d("ddd", "event reached fragment, message:" + event.msg);
+        //Refresh connection with google servers
+        this.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
+        this.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
+    }
+
     public static void setCommentSwitch(boolean val) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getUid();
@@ -288,13 +305,4 @@ public class MainActivity extends AppCompatActivity {
             Log.d("fcm", "Switch: " + topic + " unsubscribed");
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(MessageEvent event) {
-        Log.d("ddd", "event reached fragment, message:" + event.msg);
-        //Refresh connection with google servers
-        this.sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
-        this.sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
-    }
-
 }

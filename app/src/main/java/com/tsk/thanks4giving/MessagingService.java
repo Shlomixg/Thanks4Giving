@@ -7,10 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.core.app.TaskStackBuilder;
-import androidx.lifecycle.Lifecycle;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -34,7 +31,6 @@ public class MessagingService extends FirebaseMessagingService {
             stackBuilder.addNextIntentWithParentStack(resultIntent);
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            // if the application is not in foreground post notification
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Notification.Builder builder = new Notification.Builder(this);
             builder.setPriority(Notification.PRIORITY_MAX);
@@ -48,11 +44,6 @@ public class MessagingService extends FirebaseMessagingService {
             builder.setContentIntent(resultPendingIntent);
             builder.setAutoCancel(true);
             manager.notify(1, builder.build());
-        }
-
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.d("fcm", "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
     }
 }

@@ -27,6 +27,32 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
+            <LinearLayout
+                android:id="@+id/textView_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/mid_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:id="@+id/mid_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="20sp"/>
+
+            </LinearLayout>
+
         </FrameLayout>
 
     </LinearLayout>

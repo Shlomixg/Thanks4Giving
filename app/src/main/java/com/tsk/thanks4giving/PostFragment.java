@@ -52,6 +52,7 @@ import com.skydoves.androidribbon.ShimmerRibbonView;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.stfalcon.imageviewer.loader.ImageLoader;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -103,6 +104,7 @@ public class PostFragment extends Fragment {
     final String[] topic = new String[1];
     final String PROFILE_FRAG = "Profile Fragment";
     final String NEW_POST_FRAG = "New Post Fragment";
+    final String MESSAGE  = "refresh connection with google servers";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -393,10 +395,6 @@ public class PostFragment extends Fragment {
                 else if (text.isEmpty())
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.no_empty_comment), Snackbar.LENGTH_SHORT).show();
                 else {
-                    //Refresh connection with google servers in case the connection got dropped.
-                    getContext().sendBroadcast(new Intent("com.google.android.intent.action.GTALK_HEARTBEAT"));
-                    getContext().sendBroadcast(new Intent("com.google.android.intent.action.MCS_HEARTBEAT"));
-
                     String uid = currentUser.getUid();
                     String userName = currentUser.getDisplayName();
                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -404,6 +402,8 @@ public class PostFragment extends Fragment {
                     Comment newComment = new Comment(uid, userName, text, format.format(date));
                     comments.child(postID).push().setValue(newComment);
                     comment_et.setText("");
+
+                    EventBus.getDefault().post(new MessageEvent(MESSAGE));
 
                     // Send notification to post owner, everything from here and until the end of this OnClickListener should be done with cloud functions!
                     String textToSend = getString(R.string.new_comment) + userName;
