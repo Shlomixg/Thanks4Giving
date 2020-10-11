@@ -143,6 +143,7 @@
     <string name="item_pickup_address">Pickup address</string>
     <string name="dialog_uploading_post">Uploading post</string>
     <string name="confirm_post">Confirm</string>
+    <string name="filter_by_location">Filter by Distance</string>
 
 
 </resources>
