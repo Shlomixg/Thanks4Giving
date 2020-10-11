@@ -270,7 +270,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            // TODO: Error handling
                         }
                     });
                 } else {
