@@ -259,7 +259,7 @@ public class SignupFragment extends Fragment {
 
                         // Updating full name & photo
                         fbUser.updateProfile(new UserProfileChangeRequest.Builder()
-                                .setPhotoUri(imageUri)
+                                .setPhotoUri(Uri.parse(profile_photo_path))
                                 .setDisplayName(name).build())
                                 .addOnCompleteListener(
                                         new OnCompleteListener<Void>() {
