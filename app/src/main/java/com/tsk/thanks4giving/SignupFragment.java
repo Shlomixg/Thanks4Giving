@@ -12,9 +12,9 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +64,7 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -73,40 +74,45 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignupFragment extends Fragment {
 
+    static final int REQUEST_IMAGE_CAPTURE = 2;
+    static final int PICK_IMAGE = 3;
     CircleImageView profile_image;
     TextInputEditText fullname_et, address_et, email_et, password_et;
     MaterialButton camera_btn, gallery_btn, confirm_btn, login_btn;
-    AutoCompleteTextView genderEditTextDropdown;
-    String coordinates;
-    int flag_location;
-    Uri imageUri;
+    AutoCompleteTextView genderDropdown;
+    int gender, flag_location;
     File file;
-    String randomKey, profile_photo_path;
-    static final int REQUEST_IMAGE_CAPTURE = 2;
-    static final int PICK_IMAGE = 3;
+    Uri imageUri;
+    String coordinates, randomKey, profile_photo_path;
 
     FirebaseAuth mAuth;
     StorageReference storageReference;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
 
-        View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_signup, container, false);
         profile_image = rootView.findViewById(R.id.signup_user_image);
         fullname_et = rootView.findViewById(R.id.signup_fullname_et);
         address_et = rootView.findViewById(R.id.signup_address_et);
         email_et = rootView.findViewById(R.id.signup_email_et);
         password_et = rootView.findViewById(R.id.signup_password_et);
-        genderEditTextDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
+        genderDropdown = rootView.findViewById(R.id.signup_gender_dropdown);
         camera_btn = rootView.findViewById(R.id.signup_camera_btn);
         gallery_btn = rootView.findViewById(R.id.signup_gallery_btn);
         confirm_btn = rootView.findViewById(R.id.signup_confirm_btn);
         login_btn = rootView.findViewById(R.id.signup_move_login_btn);
 
-        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        Places.initialize(getContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         address_et.setFocusable(false);
         address_et.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,9 +126,16 @@ public class SignupFragment extends Fragment {
 
         final String[] GENDERS = getResources().getStringArray(R.array.genders);
 
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
-        genderEditTextDropdown.setAdapter(adapter);
+        genderDropdown.setAdapter(adapter);
+        genderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                gender = position;
+            }
+        });
+
 
         return rootView;
     }
@@ -130,8 +143,6 @@ public class SignupFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final String[] GENDERS = getResources().getStringArray(R.array.genders);
 
         final AwesomeValidation mValidation = new AwesomeValidation(ValidationStyle.TEXT_INPUT_LAYOUT);
 
@@ -142,7 +153,6 @@ public class SignupFragment extends Fragment {
         mValidation.addValidation(getActivity(), R.id.signup_password_tf, "^.{6,}$", R.string.validate_pass);
 
         AwesomeValidation.disableAutoFocusOnFirstFailure();
-
 
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,77 +218,84 @@ public class SignupFragment extends Fragment {
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (mValidation.validate()) {
+                    register();
+                }
+            }
+        });
+    }
 
-                    final String mail = email_et.getText().toString();
-                    final String pass = password_et.getText().toString();
-                    final String name = fullname_et.getText().toString();
-                    final String address = address_et.getText().toString();
-                    final String gender = genderEditTextDropdown.getText().toString();
+    private void register() {
 
-                    // Sign up new user
-                    mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
-                                        .setTopColorRes(R.color.colorPrimary)
-                                        .setCancelable(false)
-                                        .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
-                                        .setTitle("Creating new user") // TODO: Move to strings
-                                        .setMessage("Please wait"); // TODO: Move to strings
-                                progressDialog.show();
-                                final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-                                if (fbUser != null) {
+        final String mail = email_et.getText().toString();
+        final String pass = password_et.getText().toString();
+        final String name = fullname_et.getText().toString();
+        final String address = address_et.getText().toString();
 
-                                    if (imageUri == null) {
-                                        if (gender.equals(GENDERS[1]))
-                                            imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
-                                        else {
-                                            imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
-                                        }
-                                    }
-                                    uploadPicture();
+        // Sign up new user
+        mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                            .setTitle(R.string.dialog_creating_user)
+                            .setMessage(R.string.dialog_loading_msg);
+                    progressDialog.show();
 
-                                    // Updating full name & photo
-                                    fbUser.updateProfile(new UserProfileChangeRequest.Builder()
-                                            .setPhotoUri(imageUri)
-                                            .setDisplayName(name).build())
-                                            .addOnCompleteListener(
-                                                    new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            // Saving to DB
-                                                            String userUid = fbUser.getUid();
-                                                            User user = new User(userUid, name, mail, gender, address, coordinates, imageUri.toString());
-                                                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                                                            mDatabase.child("users").child(fbUser.getUid()).setValue(user);
+                    final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (fbUser != null) {
 
-                                                            NavigationView navigationView = getActivity().findViewById(R.id.navigation_view);
-                                                            View header = navigationView.getHeaderView(0);
-                                                            TextView user_name_tv = header.findViewById(R.id.nav_tv_user_name);
-                                                            CircleImageView user_photo_civ = header.findViewById(R.id.nav_profile_image);
-                                                            user_name_tv.setText(name);
-                                                            Glide.with(getContext())
-                                                                    .load(user.profilePhoto)
-                                                                    .centerCrop()
-                                                                    .into(user_photo_civ);
-                                                            progressDialog.dismiss();
-                                                            Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
-                                                            getActivity().onBackPressed(); // Close fragment
-                                                        }
-                                                    }
-                                            );
-                                }
-                            } else {
-                                String error = task.getException().getMessage();
-                                Log.d("Signup Log", "--- Sign up failed");
-                                Log.d("Signup Log", "--- Error: " + error);
-                                Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
+                        if (imageUri == null) {
+                            if (gender == 1) // If female
+                                imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                            else {
+                                imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
                             }
                         }
-                    });
+                        uploadPicture();
+
+                        // Updating full name & photo
+                        fbUser.updateProfile(new UserProfileChangeRequest.Builder()
+                                .setPhotoUri(imageUri)
+                                .setDisplayName(name).build())
+                                .addOnCompleteListener(
+                                        new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                // Saving to DB
+                                                String userUid = fbUser.getUid();
+                                                User user = new User(userUid, name, mail, gender, address, coordinates, imageUri.toString());
+                                                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                                                mDatabase.child("users").child(fbUser.getUid()).setValue(user);
+
+                                                NavigationView navigationView = getActivity().findViewById(R.id.navigation_view);
+                                                View header = navigationView.getHeaderView(0);
+                                                TextView user_name_tv = header.findViewById(R.id.nav_tv_user_name);
+                                                CircleImageView user_photo_civ = header.findViewById(R.id.nav_profile_image);
+                                                user_name_tv.setText(name);
+                                                Glide.with(getContext())
+                                                        .load(user.profilePhoto)
+                                                        .centerCrop()
+                                                        .into(user_photo_civ);
+                                                progressDialog.dismiss();
+                                                Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
+
+                                                // Close fragment
+                                                FragmentManager fragmentManager = getParentFragmentManager();
+                                                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                                transaction.replace(R.id.flContent, new RecyclerViewFragment(), "Recycler View Fragment").addToBackStack(null).commit();
+                                            }
+                                        }
+                                );
+                    }
+                } else {
+                    String error = task.getException().getMessage();
+                    Log.d("Signup Log", "--- Sign up failed");
+                    Log.d("Signup Log", "--- Error: " + error);
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });

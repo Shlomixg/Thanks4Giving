@@ -40,6 +40,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     private ArrayList<Post> list;
     private PostClickListener listener;
     final String PROFILE_FRAG = "Profile Fragment";
+    final String NEW_POST_FRAG = "New Post Fragment";
     Post post;
 
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -158,12 +159,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     if (user.profilePhoto != null) {
                         Glide.with(context).load(user.profilePhoto).centerCrop().into(holder.profile_photo_civ);
                     }
-                    // TODO: Remove else if after fixing the signup upload
-                    else if (user.gender.equals("Female")) {
-                        Glide.with(context).load(R.drawable.profile_woman).centerCrop().into(holder.profile_photo_civ);
-                    } else {
-                        Glide.with(context).load(R.drawable.profile_man).centerCrop().into(holder.profile_photo_civ);
-                    }
                     holder.userNameTV.setText(user.name);
                 }
             }
@@ -246,10 +241,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) context;
                 Bundle bundle = new Bundle();
-                bundle.putString("postId", postID);
-                EditPostFragment fragment = new EditPostFragment();
+                bundle.putString("postID", postID);
+                NewPostFragment fragment = new NewPostFragment();
                 fragment.setArguments(bundle);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, NEW_POST_FRAG).addToBackStack(null).commit();
             }
         });
 

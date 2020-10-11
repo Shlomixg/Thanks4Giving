@@ -97,6 +97,7 @@ public class PostFragment extends Fragment {
 
     final String[] topic = new String[1];
     final String PROFILE_FRAG = "Profile Fragment";
+    final String NEW_POST_FRAG = "New Post Fragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -208,10 +209,6 @@ public class PostFragment extends Fragment {
                             if (user != null) {
                                 if (user.profilePhoto != null) {
                                     Glide.with(PostFragment.this).load(user.profilePhoto).centerCrop().into(profile_photo_civ);
-                                } else if (user.gender.equals("Female")) {
-                                    Glide.with(PostFragment.this).load(R.drawable.profile_woman).centerCrop().into(profile_photo_civ);
-                                } else {
-                                    Glide.with(PostFragment.this).load(R.drawable.profile_man).centerCrop().into(profile_photo_civ);
                                 }
                                 username_tv.setText(user.name);
                             }
@@ -283,10 +280,10 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putString("postId", postID);
-                EditPostFragment fragment = new EditPostFragment();
+                bundle.putString("postID", postID);
+                NewPostFragment fragment = new NewPostFragment();
                 fragment.setArguments(bundle);
-                getParentFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.flContent, fragment, NEW_POST_FRAG).addToBackStack(null).commit();
             }
         });
 

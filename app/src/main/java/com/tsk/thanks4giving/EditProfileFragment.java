@@ -11,9 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +34,9 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,25 +72,21 @@ public class EditProfileFragment extends Fragment {
 
     String TAG = "Profile Frag";
 
-    final int WRITE_PERMISSION_REQUEST = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     static final int PICK_IMAGE = 3;
-    CircleImageView userImage;
-    TextInputEditText fullname_et, address_et, email_et, password_et;
-    Button saveBtn, changePicBtn, cameraBtn, galleryBtn, cancelBtn;
-    AutoCompleteTextView genderEditTextExposedDropdown;
-    String randomKey, profile_photo_path;
+    CircleImageView profile_image;
+    TextInputEditText fullname_et, address_et;
+    MaterialButton camera_btn, gallery_btn, save_btn, cancel_btn;
+    AutoCompleteTextView genderDropdown;
+    String coordinates, randomKey, profile_photo_path;
     File file;
     Uri imageUri;
-    int flag_location;
-    String coordinates;
-
-    int flag = 0;
+    int gender, flag_location;
 
     LovelyProgressDialog progressLoadingDialog;
 
-    FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    FirebaseUser fbUser;
+    DatabaseReference mDatabase;
     DatabaseReference ref;
     StorageReference storageReference;
 
@@ -95,31 +98,30 @@ public class EditProfileFragment extends Fragment {
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_like)
-                .setTitle("Loading data...") // TODO: Move to strings
-                .setMessage("Please wait");
+                .setTitle(R.string.dialog_loading_title) // TODO: Move to strings
+                .setMessage(R.string.dialog_loading_msg);
         progressLoadingDialog.show();
+
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        storageReference = FirebaseStorage.getInstance().getReference();
-        // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_editprofile, container, false);
-        userImage = rootView.findViewById(R.id.edit_profile_user_image);
+
+        final View rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        profile_image = rootView.findViewById(R.id.edit_profile_user_image);
         fullname_et = rootView.findViewById(R.id.edit_profile_name_et);
         address_et = rootView.findViewById(R.id.edit_profile_user_address_et);
-        email_et = rootView.findViewById(R.id.edit_profile_email_et);
-        genderEditTextExposedDropdown = rootView.findViewById(R.id.edit_profile_gender_dropdown);
-        cameraBtn = rootView.findViewById(R.id.change_pic_camera);
-        galleryBtn = rootView.findViewById(R.id.change_pic_gallery);
-        saveBtn = rootView.findViewById(R.id.edit_profile_save_btn);
-        cancelBtn = rootView.findViewById(R.id.edit_profile_cancel_btn);
-        changePicBtn = rootView.findViewById(R.id.edit_profile_picture_btn);
+        genderDropdown = rootView.findViewById(R.id.edit_profile_gender_dropdown);
+        camera_btn = rootView.findViewById(R.id.edit_profile_camera_btn);
+        gallery_btn = rootView.findViewById(R.id.edit_profile_gallery_btn);
+        save_btn = rootView.findViewById(R.id.edit_profile_save_btn);
+        cancel_btn = rootView.findViewById(R.id.edit_profile_cancel_btn);
 
-        String[] GENDERS = new String[]{"Male", "Female", "Other"}; // TODO: Move to strings array
-        final ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
-        genderEditTextExposedDropdown.setAdapter(adapter);
+        final String[] GENDERS = getResources().getStringArray(R.array.genders);
 
         // Loading existing data into UI
         ref = mDatabase.child("users").child(fbUser.getUid());
@@ -130,10 +132,12 @@ public class EditProfileFragment extends Fragment {
                 if (user != null) {
                     fullname_et.setText(user.name);
                     address_et.setText(user.address);
-                    email_et.setText(user.email);
-                    genderEditTextExposedDropdown.setText(user.gender, false);
+                    genderDropdown.setText(GENDERS[user.gender], false);
+                    gender = user.gender;
+                    coordinates = user.coordinates;
                     if (user.profilePhoto != null) {
-                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(userImage);
+                        profile_photo_path = user.profilePhoto;
+                        Glide.with(getContext()).load(user.profilePhoto).centerCrop().into(profile_image);
                     }
                     progressLoadingDialog.dismiss();
                 }
@@ -148,17 +152,46 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        changePicBtn.setOnClickListener(new View.OnClickListener() {
+        Places.initialize(getContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
+        address_et.setFocusable(false);
+        address_et.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootView.findViewById(R.id.pic_btns).setVisibility(View.VISIBLE);
+                flag_location = 1;
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
+                startActivityForResult(intent, 200);
             }
         });
 
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
+        final ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
+        genderDropdown.setAdapter(adapter);
+        genderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                gender = position;
+            }
+        });
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        final AwesomeValidation mValidation = new AwesomeValidation(ValidationStyle.TEXT_INPUT_LAYOUT);
+
+        mValidation.addValidation(getActivity(), R.id.edit_profile_name_tf, RegexTemplate.NOT_EMPTY, R.string.validate_name);
+        mValidation.addValidation(getActivity(), R.id.edit_profile_user_address_tf, "^.{3,}$", R.string.validate_address);
+        mValidation.addValidation(getActivity(), R.id.edit_profile_gender_tf, RegexTemplate.NOT_EMPTY, R.string.validate_gender);
+
+        AwesomeValidation.disableAutoFocusOnFirstFailure();
+
+        camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Check on SDK 23
                 Dexter.withContext(getContext())
                         .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .withListener(new PermissionListener() {
@@ -182,7 +215,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        galleryBtn.setOnClickListener(new View.OnClickListener() {
+        gallery_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Dexter.withContext(getContext())
@@ -207,54 +240,57 @@ public class EditProfileFragment extends Fragment {
                         .check();
             }
         });
-        Places.initialize(getActivity().getApplicationContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
-        address_et.setFocusable(false);
-        address_et.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flag_location = 1;
-                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).build(getActivity());
-                startActivityForResult(intent, 200);
-            }
-        });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
+
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
             }
         });
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = fullname_et.getText().toString();
-                String gender = genderEditTextExposedDropdown.getText().toString();
-                String address = address_et.getText().toString();
-
-                if (!name.isEmpty()) {
-                    fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(fullname_et.getText().toString()).setPhotoUri(imageUri).build());
-                    ref.child("name").setValue(name);
+                if (mValidation.validate()) {
+                    updateUser();
                 }
-
-                if (imageUri == null) {
-                    if (gender.equals("Female"))
-                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
-                    else {
-                        imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
-                    }
-                } else {
-                    ref.child("profilePhoto").setValue(profile_photo_path);
-                }
-
-                fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(imageUri).build());
-                ref.child("gender").setValue(gender);
-                ref.child("coordinates").setValue(coordinates);
-                if (!address.isEmpty()) ref.child("address").setValue(address);
-                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
-        return rootView;
+    }
+
+    private void updateUser() {
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setTitle(R.string.dialog_updating_user)
+                .setMessage(R.string.dialog_loading_msg);
+        progressDialog.show();
+
+        String name = fullname_et.getText().toString();
+        String address = address_et.getText().toString();
+
+        fbUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(name).setPhotoUri(imageUri).build());
+        fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri(Uri.parse(profile_photo_path)).build());
+
+        ref.child("name").setValue(name);
+        ref.child("profilePhoto").setValue(profile_photo_path);
+        ref.child("gender").setValue(gender);
+        ref.child("coordinates").setValue(coordinates);
+        ref.child("address").setValue(address);
+
+        NavigationView navigationView = getActivity().findViewById(R.id.navigation_view);
+        View header = navigationView.getHeaderView(0);
+        TextView user_name_tv = header.findViewById(R.id.nav_tv_user_name);
+        CircleImageView user_photo_civ = header.findViewById(R.id.nav_profile_image);
+        user_name_tv.setText(name);
+        Glide.with(getContext())
+                .load(profile_photo_path)
+                .centerCrop()
+                .into(user_photo_civ);
+        progressDialog.dismiss();
+        Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.hi) + name + getString(R.string.signup_success), Snackbar.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     private void takePicture() {
@@ -299,10 +335,10 @@ public class EditProfileFragment extends Fragment {
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
             assert data != null;
             imageUri = data.getData();
-            userImage.setImageURI(imageUri);
+            profile_image.setImageURI(imageUri);
             uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            userImage.setImageURI(imageUri);
+            profile_image.setImageURI(imageUri);
             uploadPicture();
         } else if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
@@ -311,7 +347,7 @@ public class EditProfileFragment extends Fragment {
             coordinates = temp.substring(temp.indexOf("(") + 1, temp.indexOf(")"));
         } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
-            Toast.makeText(getActivity().getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -320,7 +356,7 @@ public class EditProfileFragment extends Fragment {
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
-                .setTitle("Uploading image..."); // TODO: Move to strings
+                .setTitle(R.string.dialog_uploading_title); // TODO: Move to strings
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);

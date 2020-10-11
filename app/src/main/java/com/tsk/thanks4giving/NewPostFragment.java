@@ -23,9 +23,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
+import com.bumptech.glide.Glide;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
@@ -80,38 +83,49 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
     final String RECYCLER_FRAG = "Recycler View Fragment";
 
+    private static final String ARG_POST_ID = "postID";
+    private String mPostID;
+
+    final int LOCATION_PERMISSION_REQUEST = 2;
+    static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
     ImageView image;
-    TextInputEditText item_name_et, desc_et, address_et;
+    TextInputEditText item_name_et, item_desc_et, address_et;
+    MaterialButton gps_btn, default_address_btn, camera_btn, browse_btn, confirm_btn;
     AutoCompleteTextView categoryDropdown;
-    MaterialButton gps_btn, default_address_btn, camera_btn, browse_btn;
-    ImageButton confirm_btn;
     LovelyProgressDialog progressDialog;
 
-    final int WRITE_PERMISSION_REQUEST = 1, LOCATION_PERMISSION_REQUEST = 2;
-    static final int PICK_IMAGE = 1, REQUEST_IMAGE_CAPTURE = 2;
     int flag_location = 0;
     Handler handler = new Handler();
     Geocoder geocoder;
     LocationManager manager;
     File file;
     Uri imageUri;
-    String image_path, location_method, randomKey;
-    String coordinates, address, uid;
+    String image_path, randomKey;
+    String location_method, coordinates, userUid;
 
-    FirebaseUser currentFBUser = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseUser currentFBUser;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference users = database.getReference("users");
     DatabaseReference posts = database.getReference("posts");
     private StorageReference storageReference;
 
+    public static NewPostFragment newInstance(String userUid, String itemsStatus) {
+        NewPostFragment fragment = new NewPostFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_POST_ID, userUid);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         geocoder = new Geocoder(getContext());
-        storageReference = FirebaseStorage.getInstance().getReference();
-        uid = currentFBUser.getUid();
-
         manager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
+
+        currentFBUser = FirebaseAuth.getInstance().getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference();
+        userUid = currentFBUser.getUid();
 
         List<String> providers = manager.getProviders(false);
         for (String provider : providers) {
@@ -124,22 +138,61 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         criteria.setCostAllowed(true);
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+        if (getArguments() != null) {
+            progressDialog = new LovelyProgressDialog(getContext())
+                    .setTopColorRes(R.color.colorPrimary)
+                    .setCancelable(false)
+                    .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                    .setTitle(R.string.dialog_loading_title)
+                    .setMessage(R.string.dialog_loading_msg);
+            progressDialog.show();
+
+            mPostID = getArguments().getString(ARG_POST_ID);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
-        item_name_et = rootView.findViewById(R.id.item_name_et);
-        desc_et = rootView.findViewById(R.id.item_desc_et);
-        address_et = rootView.findViewById(R.id.item_pickup_address_et);
-        categoryDropdown = rootView.findViewById(R.id.item_category_spinner);
-        gps_btn = rootView.findViewById(R.id.gpsLocation_btn);
-        default_address_btn = rootView.findViewById(R.id.default_address_btn);
-        image = rootView.findViewById(R.id.newPostImage);
-        browse_btn = rootView.findViewById(R.id.gallery_btn);
-        camera_btn = rootView.findViewById(R.id.shoot_pic_btn);
-        confirm_btn = rootView.findViewById(R.id.confirm_btn);
+
+        final View rootView = inflater.inflate(R.layout.fragment_new_post, container, false);
+        item_name_et = rootView.findViewById(R.id.post_name_et);
+        item_desc_et = rootView.findViewById(R.id.post_desc_et);
+        address_et = rootView.findViewById(R.id.post_pickup_address_et);
+        gps_btn = rootView.findViewById(R.id.post_gps_btn);
+        default_address_btn = rootView.findViewById(R.id.post_default_address_btn);
+        categoryDropdown = rootView.findViewById(R.id.post_category_spinner);
+        image = rootView.findViewById(R.id.post_item_image);
+        browse_btn = rootView.findViewById(R.id.post_gallery_btn);
+        camera_btn = rootView.findViewById(R.id.post_camera_btn);
+        confirm_btn = rootView.findViewById(R.id.post_confirm_btn);
+
+        // Loading data of existing post (which is edited)
+        if (mPostID != null && !mPostID.isEmpty()) {
+            posts.child(mPostID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Post post = snapshot.getValue(Post.class);
+                    if (post != null) {
+                        item_name_et.setText(post.title);
+                        item_desc_et.setText(post.desc);
+                        address_et.setText(post.address);
+                        coordinates = post.coordinates;
+                        categoryDropdown.setText(post.category, false);
+                        image_path = post.postImage;
+                        Glide.with(getContext()).load(post.postImage).centerCrop().into(image);
+
+                        progressDialog.dismiss();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
 
         Places.initialize(getContext(), "AIzaSyCJfTtqHj-BCJl5FPrWnYMmNTbqbL0dZYA");
         address_et.setFocusable(false);
@@ -153,10 +206,25 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        String[] categories = getResources().getStringArray(R.array.categories);
+        final String[] categories = getResources().getStringArray(R.array.categories);
         final ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(getContext(), R.layout.spinner_text, categories);
+                new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
         categoryDropdown.setAdapter(adapter);
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        final AwesomeValidation mValidation = new AwesomeValidation(ValidationStyle.TEXT_INPUT_LAYOUT);
+
+        mValidation.addValidation(getActivity(), R.id.post_name_tf, "^.{3,}$", R.string.validate_item_name);
+        mValidation.addValidation(getActivity(), R.id.post_desc_tf, RegexTemplate.NOT_EMPTY, R.string.validate_desc);
+        mValidation.addValidation(getActivity(), R.id.post_category_tf, RegexTemplate.NOT_EMPTY, R.string.validate_category);
+
+        AwesomeValidation.disableAutoFocusOnFirstFailure();
 
         gps_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,7 +246,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             @Override
             public void onClick(View v) {
                 flag_location = 1;
-                users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                users.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = snapshot.getValue(User.class);
@@ -199,7 +267,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         camera_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Check on SDK 23
                 Dexter.withContext(getContext())
                         .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .withListener(new PermissionListener() {
@@ -249,55 +316,71 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        progressDialog = new LovelyProgressDialog(getContext())
-                .setTopColorRes(R.color.colorPrimary)
-                .setCancelable(false)
-                .setTitle(getString(R.string.saved_location) + address) // set text for dialog
-                .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
-        ; // TODO: Move to strings
+        // TODO: DELETE?
+//        progressDialog = new LovelyProgressDialog(getContext())
+//                .setTopColorRes(R.color.colorPrimary)
+//                .setCancelable(false)
+//                .setTitle(getString(R.string.saved_location) + address)
+//                .setIcon(R.drawable.ic_gps); // TODO: Change to app icon or wait icon
 
         confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // TODO: Add title & desc to post
-                final String postID = posts.push().getKey();
-
-                if (flag_location == 0) location_method = "GPS";
-                else location_method = "Google";
-
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                Date date = new Date();
-
-                final Post post = new Post(postID, uid, item_name_et.getText().toString(),
-                        desc_et.getText().toString(), address_et.getText().toString(),
-                        coordinates, location_method, format.format(date), 1,
-                        categoryDropdown.getText().toString(), image_path);
-
-                posts.child(postID).setValue(post);
-
-                // Save post id in user data
-                users.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        User user = snapshot.getValue(User.class);
-                        if (user != null) {
-                            if (user.postsUid == null) user.postsUid = new ArrayList<>();
-                            user.postsUid.add(postID);
-                            users.child(uid).setValue(user);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
+                if (mValidation.validate()) {
+                    final String postID = (mPostID == null || mPostID.isEmpty()) ? posts.push().getKey() : mPostID;
+                    uploadPost(postID);
+                }
             }
         });
-        return rootView;
+    }
+
+    public void uploadPost(final String postID) {
+
+        LovelyProgressDialog uploadProgressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setTitle(getString(R.string.dialog_uploading_post))
+                .setMessage(R.string.dialog_loading_msg)
+                .setIcon(R.drawable.ic_gps); // TODO: Change to app icon or wait icon
+        uploadProgressDialog.show();
+
+        if (flag_location == 0) location_method = "GPS";
+        else location_method = "Google";
+
+        final String item_name = item_name_et.getText().toString();
+        final String item_desc = item_desc_et.getText().toString();
+        final String address = address_et.getText().toString();
+        final String category = categoryDropdown.getText().toString();
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+
+        final Post post = new Post(postID, userUid, item_name, item_desc, address,
+                coordinates, location_method, format.format(date), 1, category, image_path);
+
+        posts.child(postID).setValue(post);
+
+        // Add post id to user data
+        users.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    if (user.postsUid == null) user.postsUid = new ArrayList<>();
+                    user.postsUid.add(postID);
+                    users.child(userUid).setValue(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        uploadProgressDialog.dismiss();
+
+        setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
     }
 
     private void takePicture() {
@@ -408,12 +491,13 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     }
 
     private void uploadPicture() {
-        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+        final LovelyProgressDialog uploadPicProgressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
                 .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
-                .setTitle("Uploading image..."); // TODO: Move to strings
-        progressDialog.show();
+                .setTitle(R.string.dialog_uploading_title)
+                .setMessage(R.string.dialog_loading_msg);
+        uploadPicProgressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("images/" + randomKey);
 
@@ -438,9 +522,9 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                 double progress = (100.00 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
-                progressDialog.setMessage("Progress " + (int) progress + " %"); // TODO: does it work?
+                uploadPicProgressDialog.setMessage("Progress " + (int) progress + " %"); // TODO: does it work?
                 if ((int) progress == 100)
-                    progressDialog.dismiss();
+                    uploadPicProgressDialog.dismiss();
             }
         });
     }

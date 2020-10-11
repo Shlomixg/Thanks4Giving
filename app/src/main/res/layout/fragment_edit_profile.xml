@@ -1,38 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupFragment">
+    tools:context=".EditProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="12dp"
+        android:layout_gravity="center"
         android:paddingVertical="5dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome"
-                android:textSize="36sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sign up to start enjoy stuff"
-                android:textSize="16sp" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,7 +25,7 @@
                 android:layout_height="wrap_content">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/signup_user_image"
+                    android:id="@+id/edit_profile_user_image"
                     android:layout_width="96dp"
                     android:layout_height="96dp"
                     android:layout_gravity="center"
@@ -62,11 +42,11 @@
                     android:layout_marginStart="10dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/signup_user_image"
+                    app:layout_constraintStart_toEndOf="@id/edit_profile_user_image"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/signup_camera_btn"
+                        android:id="@+id/edit_profile_camera_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/take_picture"
@@ -75,7 +55,7 @@
                         app:iconTint="@color/colorWhite" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/signup_gallery_btn"
+                        android:id="@+id/edit_profile_gallery_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/picture_from_gallery"
@@ -88,14 +68,14 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/signup_fullname_tf"
+                android:id="@+id/edit_profile_name_tf"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/full_name">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/signup_fullname_et"
+                    android:id="@+id/edit_profile_name_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_name"
@@ -105,103 +85,68 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/signup_address_tf"
+                android:id="@+id/edit_profile_user_address_tf"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/address">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/signup_address_et"
+                    android:id="@+id/edit_profile_user_address_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_address_location"
-                    android:drawablePadding="10dp"
-                    android:inputType="textPersonName" />
+                    android:drawablePadding="10dp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/signup_gender_tf"
+                android:id="@+id/edit_profile_gender_tf"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/gender">
 
                 <AutoCompleteTextView
-                    android:id="@+id/signup_gender_dropdown"
+                    android:id="@+id/edit_profile_gender_dropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_gender"
                     android:drawablePadding="10dp"
                     android:inputType="none" />
 
+                <!-- android:editable="false" /> Do not Delete! BACKUP -->
+
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/signup_email_tf"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/sign_email_hint">
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/signup_email_et"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_profile_save_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_email"
-                    android:drawablePadding="10dp"
-                    android:inputType="textEmailAddress" />
+                    android:layout_gravity="center"
+                    android:padding="15dp"
+                    android:text="@string/save"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/signup_password_tf"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/sign_password_hint"
-                app:counterEnabled="true"
-                app:passwordToggleEnabled="true">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/signup_password_et"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_profile_cancel_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_password"
-                    android:drawablePadding="10dp"
-                    android:inputType="textPassword" />
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:background="#00000000"
+                    android:padding="5dp"
+                    android:text="@string/cancel"
+                    android:textColor="#000000" />
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/signup_confirm_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="15dp"
-                android:text="@string/confirm_sign_up"
-                android:textColor="@color/colorWhite"
-                android:textSize="20sp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/signup_move_login_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:background="#00000000"
-                android:padding="5dp"
-                android:text="@string/already_have_account"
-                android:textColor="#000000" />
+            </LinearLayout>
 
         </LinearLayout>
 

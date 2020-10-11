@@ -10,29 +10,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/new_post_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/post_new_item"
-            android:textSize="30sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/item_name_tf"
+            android:id="@+id/post_name_tf"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Item Name">
+            android:hint="@string/item_name">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/item_name_et"
+                android:id="@+id/post_name_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_name"
@@ -42,14 +32,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/item_desc_tf"
+            android:id="@+id/post_desc_tf"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/description">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/item_desc_et"
+                android:id="@+id/post_desc_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_name"
@@ -59,32 +49,31 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/item_category_tf"
+            android:id="@+id/post_category_tf"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category">
+            android:hint="@string/item_category">
 
-            <!-- Google themselves instruct us to use the deprecated editable attribute here! -->
             <AutoCompleteTextView
-                android:id="@+id/item_category_spinner"
+                android:id="@+id/post_category_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_gender"
                 android:drawablePadding="10dp"
-                android:editable="false" /> <!-- Do not Delete! -->
+                android:inputType="none" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/item_pickup_address_tf"
+            android:id="@+id/post_pickup_address_tf"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Pickup address">
+            android:hint="@string/item_pickup_address">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/item_pickup_address_et"
+                android:id="@+id/post_pickup_address_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_address_location"
@@ -96,77 +85,84 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/gpsLocation_btn"
+                android:id="@+id/post_gps_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                app:icon="@drawable/ic_gps"
                 android:text="@string/get_address_with_gps_location"
                 android:textColor="@color/colorWhite"
-                android:layout_marginEnd="5dp"
-                app:iconTint="@color/colorWhite"
-                />
+                app:icon="@drawable/ic_gps"
+                app:iconTint="@color/colorWhite" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/default_address_btn"
+                android:id="@+id/post_default_address_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:icon="@drawable/ic_address_location"
                 android:text="@string/get_default_address"
                 android:textColor="@color/colorWhite"
-                app:iconTint="@color/colorWhite"
-                />
+                app:icon="@drawable/ic_address_location"
+                app:iconTint="@color/colorWhite" />
 
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/newPostImage"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_margin="5dp"
+            android:id="@+id/post_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginVertical="5dp"
             android:contentDescription="Item Photo"
             android:scaleType="centerCrop" />
 
         <LinearLayout
-            android:id="@+id/picBtnsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/shoot_pic_btn"
-                android:layout_width="match_parent"
+                android:id="@+id/post_camera_btn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:text="@string/camera"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/colorWhite"
                 app:icon="@drawable/ic_camera"
-                android:text="@string/take_picture"
-                android:textColor="@color/colorWhite"
-                app:iconTint="@color/colorWhite"
-                />
+                app:iconTint="@color/colorWhite" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/gallery_btn"
-                android:layout_width="match_parent"
+                android:id="@+id/post_gallery_btn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                app:icon="@drawable/ic_gallery"
-                android:text="@string/picture_from_gallery"
+                android:text="@string/gallery"
                 android:textColor="@color/colorWhite"
-                app:iconTint="@color/colorWhite"
-                />
+                app:icon="@drawable/ic_gallery"
+                app:iconTint="@color/colorWhite" />
 
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/confirm_btn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:src="@drawable/ic_check" />
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/post_confirm_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="15dp"
+                android:text="@string/confirm_post"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

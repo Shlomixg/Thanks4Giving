@@ -76,9 +76,9 @@ public class ProfileFragment extends Fragment {
         progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like)
-                .setTitle("Loading data...") // TODO: Move to strings
-                .setMessage("Please wait");
+                .setIcon(R.drawable.ic_like) // TODO: Change to app icon
+                .setTitle(R.string.dialog_loading_title)
+                .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
     }
 
@@ -87,7 +87,6 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mUserUid = getArguments().getString(ARG_USER_UID);
         }
-        Toast.makeText(getContext(), "UID: " + mUserUid, Toast.LENGTH_SHORT).show();
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -112,7 +111,6 @@ public class ProfileFragment extends Fragment {
                         available_items++;
                     } else if (post.getUserUid().equals(mUserUid) && post.getStatus() == 0) {
                         delivered_items++;
-
                     }
                     active_items_label.setText("" + available_items);
                     delivered_items_label.setText("" + delivered_items);
@@ -125,7 +123,6 @@ public class ProfileFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
 
         if (currentUser == null) {
             fab.setVisibility(View.GONE);
@@ -169,6 +166,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        final String[] GENDERS = getResources().getStringArray(R.array.genders);
         ref = mDatabase.child("users").child(mUserUid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -176,16 +174,12 @@ public class ProfileFragment extends Fragment {
                 User user = snapshot.getValue(User.class);
                 if (user != null) {
                     if (user.profilePhoto != null) {
-                        Glide.with(getActivity()).load(user.profilePhoto).centerCrop().into(profile_civ);
-                    } else {
-                        // TODO: Load according to gender
-                        String path = "android.resource://com.tsk.thanks4giving/drawable/profile_man";
-                        Glide.with(getActivity()).load(Uri.parse(path)).centerCrop().into(profile_civ);
+                        Glide.with(getContext()).load(user.profilePhoto).centerCrop().into(profile_civ);
                     }
                     name_tv.setText(user.name);
                     email_tv.setText(user.email);
                     address_tv.setText(user.address);
-                    gender_tv.setText(user.gender);
+                    gender_tv.setText(GENDERS[user.gender]);
 
                     progressDialog.dismiss();
                 }
