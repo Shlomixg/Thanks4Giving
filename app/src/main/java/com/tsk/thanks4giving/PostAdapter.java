@@ -42,6 +42,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     final String PROFILE_FRAG = "Profile Fragment";
     final String NEW_POST_FRAG = "New Post Fragment";
     Post post;
+    int category;
 
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -177,8 +178,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 holder.ribbonWrapper.setVisibility(View.GONE);
             }
         }
+
+        final String[] categories = context.getResources().getStringArray(R.array.categories);
+        category = post.category;
+
         holder.itemTitleTV.setText(post.title);
-        holder.itemCategoryTV.setText(post.category);
+        holder.itemCategoryTV.setText(categories[category]);
         holder.itemDescTV.setText(post.desc);
         holder.itemDateTV.setText(post.date);
 
@@ -196,7 +201,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
             }
         });
-
 
         likes.child(postID).addValueEventListener(new ValueEventListener() {
             @Override

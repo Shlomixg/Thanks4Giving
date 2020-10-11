@@ -77,6 +77,7 @@ public class PostFragment extends Fragment {
     EditText comment_et;
     LinearLayout shareWrapper, ribbonWrapper;
     RibbonLayout ribbonLayout;
+    int category;
 
     RecyclerView commentsRecycler;
     CommentAdapter adapter;
@@ -169,6 +170,8 @@ public class PostFragment extends Fragment {
 
         final String[] postImageUri = new String[1];
 
+        final String[] categories = getResources().getStringArray(R.array.categories);
+
         posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -186,8 +189,10 @@ public class PostFragment extends Fragment {
                         waze_btn.setVisibility(View.VISIBLE);
                         google_maps_btn.setVisibility(View.VISIBLE);
                     }
+                    category = post.category;
+
                     title_tv.setText(post.title);
-                    category_tv.setText(post.category);
+                    category_tv.setText(categories[category]);
                     desc_tv.setText(post.desc);
                     post_date_tv.setText(post.date);
                     if (post.status == 0) ribbonLayout.setRibbonBottom(ribbonView);

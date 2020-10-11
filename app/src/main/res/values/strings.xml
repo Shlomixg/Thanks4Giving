@@ -34,15 +34,14 @@
     <string name="welcome_guest">Welcome guest</string>
 
     <string-array name="categories">
-        <item name="Choose Category">Choose Category</item>
         <item name="Electronics">Electronics</item>
         <item name="Furniture">Furniture</item>
         <item name="Sport">Sport</item>
         <item name="Clothes">Clothes</item>
         <item name="Games">Games</item>
     </string-array>
+
     <string-array name="categories_for_filter">
-        <item name="Choose Category">Choose Category</item> <!-- TODO: DELETE! -->
         <item name="All Categories">All Categories</item>
         <item name="Electronics">Electronics</item>
         <item name="Furniture">Furniture</item>
@@ -50,6 +49,7 @@
         <item name="Clothes">Clothes</item>
         <item name="Games">Games</item>
     </string-array>
+
     <string-array name="times">
         <item name="Time">Time </item>
         <item name="Today">Today</item>
