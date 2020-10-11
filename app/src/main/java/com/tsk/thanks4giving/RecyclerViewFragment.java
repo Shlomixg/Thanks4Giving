@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -92,7 +91,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     final DatabaseReference posts = database.getReference().child("posts");
 
     public RecyclerViewFragment() {
-
     }
 
     public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
@@ -111,11 +109,13 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         all_buttons_layout = rootView.findViewById(R.id.all_buttons_layout);
         refreshLayout = rootView.findViewById(R.id.refresh);
+
         adapter = new PostAdapter(postList);
         recycler = rootView.findViewById(R.id.recycler);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
+
         if (getArguments() != null) { // this is a case for profile erea
             all_buttons_layout.setVisibility(View.GONE);
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -144,6 +144,24 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
+            adapter.setListener(new PostAdapter.PostClickListener() {
+                @Override
+                public void onClickListener(int pos, View v) {
+                    String postId = postList.get(pos).postID;
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("PostId", postId);
+                    PostFragment postFragment = new PostFragment();
+                    postFragment.setArguments(bundle);
+                    transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
+                }
+
+                @Override
+                public void onLongClickListener(int pos, View v) {
+                }
+            });
+            recycler.setAdapter(adapter);
         }
 
         if (getArguments() == null) {
@@ -151,8 +169,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     .setTopColorRes(R.color.colorPrimary)
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
-                    .setTitle(getString(R.string.location_loading)) // set text for dialog
-            ;
+                    .setTitle(getString(R.string.location_loading));
 
             String[] b = getResources().getStringArray(R.array.times);
 
@@ -619,7 +636,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
                     (post.category == category || category == -1) &&
                     (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)) { // if post contain search

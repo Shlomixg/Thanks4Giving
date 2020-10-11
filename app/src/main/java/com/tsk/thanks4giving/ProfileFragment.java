@@ -1,20 +1,16 @@
 package com.tsk.thanks4giving;
 
-import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,9 +22,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-
-import java.util.Collections;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
@@ -49,9 +42,7 @@ public class ProfileFragment extends Fragment {
     DatabaseReference ref;
     final DatabaseReference posts = mDatabase.child("posts");
 
-
     private static final String ARG_USER_UID = "userUid";
-
     private String mUserUid;
 
     public ProfileFragment() {
@@ -87,7 +78,6 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mUserUid = getArguments().getString(ARG_USER_UID);
         }
-
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         profile_civ = rootView.findViewById(R.id.profile_user_image);
@@ -102,9 +92,10 @@ public class ProfileFragment extends Fragment {
         fab = rootView.findViewById(R.id.profile_fab);
 
         posts.orderByChild("uid").equalTo(mUserUid);
-        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+        posts.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                available_items = delivered_items = 0;
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
                     if (post.getUserUid().equals(mUserUid) && post.getStatus() == 1) {
@@ -114,11 +105,8 @@ public class ProfileFragment extends Fragment {
                     }
                     active_items_label.setText("" + available_items);
                     delivered_items_label.setText("" + delivered_items);
-
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -153,8 +141,6 @@ public class ProfileFragment extends Fragment {
         active_items_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 showUserPosts(mUserUid, 1);
             }
         });
@@ -184,8 +170,6 @@ public class ProfileFragment extends Fragment {
                     progressDialog.dismiss();
                 }
             }
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.d("Profile Log", "--- Profile display failed");
@@ -194,7 +178,6 @@ public class ProfileFragment extends Fragment {
                 progressDialog.dismiss();
             }
         });
-
         return rootView;
     }
 
@@ -207,7 +190,6 @@ public class ProfileFragment extends Fragment {
         RecyclerViewFragment rvFragment = new RecyclerViewFragment();
         rvFragment.setArguments(bundle);
         transaction.replace(R.id.flProfileContent, rvFragment, "USER_POSTS_FRAG").commit();
-
-
     }
+
 }

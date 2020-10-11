@@ -159,8 +159,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_baseline_done_outline_24"
-                    />
+                    android:src="@drawable/ic_baseline_done_outline_24"/>
 
                 <TextView
                     android:id="@+id/delivered_items_label"
@@ -169,7 +168,7 @@
                     android:layout_centerInParent="true"
                     android:includeFontPadding="false"
                     android:text="123"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"/>
 
                 <TextView
                     android:id="@+id/delivered_items_desc"
@@ -179,8 +178,7 @@
                     android:layout_centerHorizontal="true"
                     android:includeFontPadding="false"
                     android:text="Delivered Items"
-                    android:textSize="20sp" />
-
+                    android:textSize="20sp"/>
             </RelativeLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -196,7 +194,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/items_cards"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

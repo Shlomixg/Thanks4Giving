@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPrefs.getBoolean("firstRun", true)) {
             Intent intent = new Intent(MainActivity.this, IntroActivity.class);
             startActivity(intent);
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putBoolean("firstRun", false).apply();
         }
 
         boolean autoLocation = sharedPrefs.getBoolean("locationPref", false);
@@ -211,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentUser != null) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-
         } else {
             menu.clear();
         }
@@ -258,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         JobInfo jobInfo;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             jobInfo = new JobInfo.Builder(123, componentName)
-                    .setPeriodic(5 * 60 * 1000, 5 * 60 * 1000)
+                    .setPeriodic(60 * 1000, 5 * 60 * 1000)
                     .setPersisted(false)
                     .build();
         } else {

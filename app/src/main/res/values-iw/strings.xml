@@ -46,7 +46,7 @@
     <string name="logout">התנתק</string>
     <string name="new_post">פוסט חדש</string>
     <string name="my_profile">הפרופיל שלי</string>
-    <string name="loading">טוען מידע...</string>
+    <string name="loading">טוען מידע…</string>
     <string name="location_permission">האפליקציה צריכה לקבל הרשאות גישה למיקום</string>
     <string name="attention">שים לב</string>
 
@@ -67,14 +67,14 @@
     <string name="first_slide_title">שלום! ברוך הבא ל- Thanks4Giving!</string>
     <string name="first_slide_desc">בעזרת האפליקציה הזו אנו מקווים שאנשים ימסרו את הדברים שהם לא צריכים שאחרים אולי יצטרכו.</string>
     <string name="second_slide_title">קודם כל אם תרצה לעיין תוכל לעשות זאת בחופשיות!</string>
-    <string name="second_slide_desc">אם תרצה לפרסם תגובות, לייקים או פוסטים משל עצמך תצטרך להירשם.</string>
+    <string name="second_slide_desc">אם תרצה לפרסם תגובות, לייקים או פוסטים משל עצמך תצטרך להירשם . שים לב שהכתובת שתיתן תשמש לקביעת המיקום שלך ולכן חשוב שתהיה אמיתית</string>
     <string name="third_slide_title">ניתן לסנן פוסטים לפי קטגוריה ומיקום.</string>
     <string name="third_slide_desc">בשביל לקבל את הסינון לפי מיקום הטוב ביותר תוכל לאפשר קבלת עדכוני מיקום אוטומטיים מההגדרות.</string>
     <string name="fourth_slide_title">תקבל התראות פוש כאשר מישהו מפרסם תגובה על פוסט שלך.</string>
     <string name="ribbon_text">נמסר!</string>
     <string name="fourth_slide_desc">אם זה אי-פעם יפריע לך תוכל בקלות לכבות את זה דרך ההגדרות.</string>
-    <string name="fifth_slide_title">סיימנו ומוכנים לצאת לדרך!</string>
-    <string name="fifth_slide_desc">תודה שהורדתם את האפליקציה שלנו, ותודה שנתתם!</string>
+    <string name="fifth_slide_title">כאשר מסרת בהצלחה פריט שפרסמת לחץ על האייקון של התווית.</string>
+    <string name="fifth_slide_desc">זהו זה, אתה מוכן להתחיל. תודה שהורדת את האפליקציה שלנו, ותודה שנתת!</string>
     <string name="title_activity_introduction">הקדמה</string>
 
     <string name="validate_name">יש להזין שם</string>
@@ -89,9 +89,9 @@
 
     <string name="already_have_account">קיים משתמש? התחברות</string>
     <string name="cancel">ביטול</string>
-    <string name="dialog_loading_title">המידע נטען...</string>
+    <string name="dialog_loading_title">המידע נטען…</string>
     <string name="dialog_loading_msg">אנא להמתין</string>
-    <string name="dialog_uploading_title">מעלה תמונה...</string>
+    <string name="dialog_uploading_title">מעלה תמונה…</string>
     <string name="dialog_creating_user">יוצרים משתמש חדש</string>
     <string name="dialog_updating_user">מעדכנים נתונים</string>
     <string name="item_name">שם החפץ</string>
@@ -99,6 +99,11 @@
     <string name="item_pickup_address">כתובת איסוף</string>
     <string name="dialog_uploading_post">הפוסט בהעלאה</string>
     <string name="confirm_post">אישור</string>
+
+    <string name="location_loading">אנו מחפשים את מיקומך…</string>
+    <string name="saved_location">האם תרצה להשתמש ב-</string>
+    <string name="pref_theme_title" translatable="false">ערכת נושא</string>
+    <string name="pref_theme_summary">בחר ערכת נושא מועדפת</string>
 
     <string-array name="categories">
         <item name="Electronics">אלקטרוניקה</item>
