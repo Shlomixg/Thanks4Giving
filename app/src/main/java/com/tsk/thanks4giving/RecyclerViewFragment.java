@@ -80,7 +80,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout;
     LovelyProgressDialog progressDialog2;
     AutoCompleteTextView categoryDropdown;
-    int category;
+    int category = -1;
 
     long diff;
     int flagBack = -1, required_days, LOCATION_PERMISSION_REQUEST = 2;
@@ -90,7 +90,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     Query query;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     final DatabaseReference posts = database.getReference().child("posts");
-    final DatabaseReference users = database.getReference().child("users");
 
     public RecyclerViewFragment() {
 
@@ -133,7 +132,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
-                        Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show(); // TODO: Delete
                         if (post.getUserUid().equals(mUserUid))
                             postList.add(post);
                         adapter.notifyDataSetChanged();
@@ -149,7 +147,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         }
 
         if (getArguments() == null) {
-
             progressDialog2 = new LovelyProgressDialog(getContext())
                     .setTopColorRes(R.color.colorPrimary)
                     .setCancelable(false)
@@ -291,7 +288,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             categoryDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    category = position;
+                    category = position - 1;
                 }
             });
 
@@ -434,7 +431,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             postList.clear();
-                            if (category == 0 &&
+                            if (category == -1 &&
                                     !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
                                 filter2.setText(times_spinner.getSelectedItem().toString());
@@ -443,7 +440,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 filter2.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
-                            } else if (category != 0 &&
+                            } else if (category != -1 &&
                                     times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
                                 filter1.setText(categories[category]);
@@ -452,7 +449,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 filter1.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
-                            } else if (category != 0 &&
+                            } else if (category != -1 &&
                                     !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
                                 filter1.setVisibility(View.VISIBLE);
@@ -463,7 +460,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 filter1.animate().rotation(filter1.getRotation() + 360).start();
                                 filter2.setText(times_spinner.getSelectedItem().toString());
                                 filter2.animate().rotation(filter2.getRotation() + 360).start();
-                            } else if (category == 0 &&
+                            } else if (category == -1 &&
                                     times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                                 filter1.setVisibility(View.GONE);
                                 filter2.setVisibility(View.GONE);
@@ -586,7 +583,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 e.printStackTrace();
             }
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
-                    (post.category == category || category == 0)) { // if post contain search
+                    (post.category == category || category == -1)) { // if post contain search
                 if (required_days != -1) {
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                         postList.add(post);
@@ -624,7 +621,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             }
 
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
-                    (post.category == category || category == 0) &&
+                    (post.category == category || category == -1) &&
                     (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)) { // if post contain search
                 if (required_days != -1) {
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {

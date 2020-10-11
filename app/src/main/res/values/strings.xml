@@ -3,7 +3,6 @@
     <item name="open" type="string">Open</item>
     <item name="close" type="string">Close</item>
 
-    <string name="change_picture">Change picture</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="user_name">User Name</string>
@@ -32,37 +31,6 @@
     <string name="sign_password_hint">Password (6 digits or more)</string>
     <string name="confirm_sign_up">Sign Up</string>
     <string name="welcome_guest">Welcome guest</string>
-
-    <string-array name="categories">
-        <item name="Electronics">Electronics</item>
-        <item name="Furniture">Furniture</item>
-        <item name="Sport">Sport</item>
-        <item name="Clothes">Clothes</item>
-        <item name="Games">Games</item>
-    </string-array>
-
-    <string-array name="categories_for_filter">
-        <item name="All Categories">All Categories</item>
-        <item name="Electronics">Electronics</item>
-        <item name="Furniture">Furniture</item>
-        <item name="Sport">Sport</item>
-        <item name="Clothes">Clothes</item>
-        <item name="Games">Games</item>
-    </string-array>
-
-    <string-array name="times">
-        <item name="Time">Time </item>
-        <item name="Today">Today</item>
-        <item name="Last 3 days">Last 3 days</item>
-        <item name="Last week">Last week</item>
-        <item name="All posts">All posts</item>
-    </string-array>
-
-    <string-array name="genders">
-        <item name="Male">Male</item>
-        <item name="Female">Female</item>
-        <item name="Other">Other</item>
-    </string-array>
 
     <string name="need_permissions">Need permissions to open camera or gallery</string>
     <string name="welcome_back">, Welcome back</string>
@@ -144,5 +112,37 @@
     <string name="dialog_uploading_post">Uploading post</string>
     <string name="confirm_post">Confirm</string>
 
+    <string-array name="categories">
+        <item name="Electronics">Electronics</item>
+        <item name="Furniture">Furniture</item>
+        <item name="Sport">Sport</item>
+        <item name="Clothes">Clothes</item>
+        <item name="Games">Games</item>
+        <item name="Toys">Toys</item>
+    </string-array>
+
+    <string-array name="categories_for_filter">
+        <item name="All Categories">All Categories</item>
+        <item name="Electronics">Electronics</item>
+        <item name="Furniture">Furniture</item>
+        <item name="Sport">Sport</item>
+        <item name="Clothes">Clothes</item>
+        <item name="Games">Games</item>
+        <item name="Toys">Toys</item>
+    </string-array>
+
+    <string-array name="times">
+        <item name="Time">Time</item>
+        <item name="Today">Today</item>
+        <item name="Last 3 days">Last 3 days</item>
+        <item name="Last week">Last week</item>
+        <item name="All posts">All posts</item>
+    </string-array>
+
+    <string-array name="genders">
+        <item name="Male">Male</item>
+        <item name="Female">Female</item>
+        <item name="Other">Other</item>
+    </string-array>
 
 </resources>

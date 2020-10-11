@@ -230,32 +230,32 @@ public class SignupFragment extends Fragment {
         final String mail = email_et.getText().toString();
         final String pass = password_et.getText().toString();
         final String name = fullname_et.getText().toString();
+
         final String address = address_et.getText().toString();
+        final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
+                .setTitle(R.string.dialog_creating_user)
+                .setMessage(R.string.dialog_loading_msg);
+        progressDialog.show();
 
         // Sign up new user
         mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
-                            .setTopColorRes(R.color.colorPrimary)
-                            .setCancelable(false)
-                            .setIcon(R.drawable.ic_like) // TODO: Change to app icon or wait icon
-                            .setTitle(R.string.dialog_creating_user)
-                            .setMessage(R.string.dialog_loading_msg);
-                    progressDialog.show();
 
                     final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
                     if (fbUser != null) {
 
                         if (imageUri == null) {
                             if (gender == 1) // If female
-                                imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_woman");
+                                profile_photo_path = "https://i.imgur.com/LYqUljv.png";
                             else {
-                                imageUri = Uri.parse("android.resource://com.tsk.thanks4giving/drawable/profile_man");
+                                profile_photo_path = "https://i.imgur.com/LEKWEA2.png";
                             }
-                        }
-                        uploadPicture();
+                        } else uploadPicture();
 
                         // Updating full name & photo
                         fbUser.updateProfile(new UserProfileChangeRequest.Builder()
@@ -295,6 +295,7 @@ public class SignupFragment extends Fragment {
                     String error = task.getException().getMessage();
                     Log.d("Signup Log", "--- Sign up failed");
                     Log.d("Signup Log", "--- Error: " + error);
+                    progressDialog.dismiss();
                     Snackbar.make(getActivity().findViewById(android.R.id.content), getString(R.string.signup_fail) + " " + error, Snackbar.LENGTH_SHORT).show();
                 }
             }

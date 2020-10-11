@@ -2,7 +2,7 @@
 <resources>
     <string name="open">פתח</string>
     <string name="close">סגור</string>
-    <string name="change_picture">החלף תמונה</string>
+
     <string name="camera">מצלמה</string>
     <string name="gallery">גלריה</string>
     <string name="user_name">שם משתמש</string>
@@ -21,7 +21,7 @@
     <string name="take_picture">צלם תמונה</string>
     <string name="picture_from_gallery">תמונה מהגלריה</string>
     <string name="share">שיתוף</string>
-    <string name="comment">תגובה...</string>
+    <string name="comment">תגובה…</string>
     <string name="post_comment_btn">פרסם</string>
     <string name="gender">מין</string>
     <string name="profile_edit_btn">עריכת פרופיל</string>
@@ -50,19 +50,6 @@
     <string name="location_permission">האפליקציה צריכה לקבל הרשאות גישה למיקום</string>
     <string name="attention">שים לב</string>
 
-    <string-array name="categories">
-        <item name="Electronics">אלקטרוניקה</item>
-        <item name="Furniture">רהיטים</item>
-        <item name="Sport">ספורט</item>
-        <item name="Clothes">בגדים</item>
-        <item name="Games">משחקים</item>
-    </string-array>
-
-    <string-array name="genders">
-        <item name="Male">זכר</item>
-        <item name="Female">נקבה</item>
-        <item name="Other">אחר</item>
-    </string-array>
     <string name="must_be_logged">צריך להיות מחובר על מנת להשתמש במאפיין זה</string>
     <string name="no_empty_comment">לא ניתן לפרסם תגובה ריקה</string>
     <string name="auto_location">מיקום</string>
@@ -112,5 +99,38 @@
     <string name="item_pickup_address">כתובת איסוף</string>
     <string name="dialog_uploading_post">הפוסט בהעלאה</string>
     <string name="confirm_post">אישור</string>
+
+    <string-array name="categories">
+        <item name="Electronics">אלקטרוניקה</item>
+        <item name="Furniture">רהיטים</item>
+        <item name="Sport">ספורט</item>
+        <item name="Clothes">בגדים</item>
+        <item name="Games">משחקים</item>
+        <item name="צעצועים">צעצועים</item>
+    </string-array>
+
+    <string-array name="categories_for_filter">
+        <item name="All Categories">כל הקטגוריות</item>
+        <item name="Electronics">אלקטרוניקה</item>
+        <item name="Furniture">רהיטים</item>
+        <item name="Sport">ספורט</item>
+        <item name="Clothes">בגדים</item>
+        <item name="Games">משחקים</item>
+        <item name="צעצועים">צעצועים</item>
+    </string-array>
+
+    <string-array name="times">
+        <item name="Time">Time</item>
+        <item name="Today">Today</item>
+        <item name="Last 3 days">Last 3 days</item>
+        <item name="Last week">Last week</item>
+        <item name="All posts">All posts</item>
+    </string-array>
+
+    <string-array name="genders">
+        <item name="Male">זכר</item>
+        <item name="Female">נקבה</item>
+        <item name="Other">אחר</item>
+    </string-array>
 
 </resources>
