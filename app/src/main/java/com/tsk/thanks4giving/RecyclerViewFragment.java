@@ -92,9 +92,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     final DatabaseReference posts = database.getReference().child("posts");
     final DatabaseReference users = database.getReference().child("users");
 
-    public RecyclerViewFragment() {
-
-    }
+    public RecyclerViewFragment() { }
 
     public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
         RecyclerViewFragment fragment = new RecyclerViewFragment();
@@ -117,7 +115,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
-        if (getArguments() != null) { // this is a case for profile erea
+
+        if (getArguments() != null) // this is a case for profile area
+        {
             all_buttons_layout.setVisibility(View.GONE);
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -133,7 +133,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
-                        Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show(); // TODO: Delete
                         if (post.getUserUid().equals(mUserUid))
                             postList.add(post);
                         adapter.notifyDataSetChanged();
@@ -141,21 +140,36 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         adapter.notifyDataSetChanged();
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
+            adapter.setListener(new PostAdapter.PostClickListener() {
+                @Override
+                public void onClickListener(int pos, View v) {
+                    String postId = postList.get(pos).postID;
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("PostId", postId);
+                    PostFragment postFragment = new PostFragment();
+                    postFragment.setArguments(bundle);
+                    transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
+                }
+                @Override
+                public void onLongClickListener(int pos, View v) {
+                }
+            });
+            recycler.setAdapter(adapter);
         }
 
-        if (getArguments() == null) {
-
+        if (getArguments() == null)
+        {
             progressDialog2 = new LovelyProgressDialog(getContext())
                     .setTopColorRes(R.color.colorPrimary)
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_baseline_location_on_40) // TODO: Change to app icon or wait icon
-                    .setTitle(getString(R.string.location_loading)) // set text for dialog
-            ;
+                    .setTitle(getString(R.string.location_loading)); // set text for dialog
 
             String[] b = getResources().getStringArray(R.array.times);
 
@@ -556,7 +570,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     postFragment.setArguments(bundle);
                     transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
                 }
-
                 @Override
                 public void onLongClickListener(int pos, View v) {
                 }
@@ -622,7 +635,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
                     (post.category == category || category == 0) &&
                     (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)) { // if post contain search
@@ -677,11 +689,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
-
     @Override
     public void onProviderEnabled(String provider) {
     }
-
     @Override
     public void onProviderDisabled(String provider) {
     }

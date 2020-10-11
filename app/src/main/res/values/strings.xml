@@ -88,7 +88,7 @@
     <string name="attachment_summary_on" translatable="false">Attachment Summer On</string>
     <string name="attachment_title" translatable="false">Attachment Title</string>
     <string name="pref_theme_title">Theme</string>
-    <string name="pref_theme_summary">Choose prefered theme.</string>
+    <string name="pref_theme_summary">Choose preferred theme.</string>
     <string name="loading">Loading data…</string>
     <string name="location_permission">The application must have location permissions</string>
     <string name="attention">Attention</string>
@@ -106,15 +106,15 @@
     <string name="comments_summery">Receive notifications on comments in your posts.</string>
     <string name="new_comment">"You have a new post comment from "</string>
     <string name="new_comment_title">Check your post comments!</string>
-    <string name="first_slide_title">Hello! Wellcome to Thanks4Giving!</string>
+    <string name="first_slide_title">Hello! Welcome to Thanks4Giving!</string>
     <string name="first_slide_desc">With this app we hope people can give away things they dont need which others may need.</string>
     <string name="second_slide_title">First of all if you want to browse you can do so freely!</string>
     <string name="second_slide_desc">If you want to post comments, like or post your own items you will have to sign up. Notice that the address you provide will be used to set your location so it is important to give the real address.</string>
     <string name="third_slide_title">Posts can be filtered by category and by location.</string>
     <string name="third_slide_desc">To get the best location filter you can enable automatic location updates from the settings.</string>
     <string name="fourth_slide_title">You will get push notifications when someone comments on a post of yours.</string>
-    <string name="fourth_slide_desc">If that ever bothers you it can be easly turned off from the settings.</string>
-    <string name="fifth_slide_title">Once you have successfuly given an item you posted click the label icon.</string>
+    <string name="fourth_slide_desc">If that ever bothers you it can be easily turned off from the settings.</string>
+    <string name="fifth_slide_title">Once you have successfully given an item you posted click the label icon.</string>
     <string name="fifth_slide_desc">Thats it, you\'re ready to start. Thank you for downloading our app, and thank you for giving!</string>
     <string name="ribbon_text">Delivered!</string>
     <string name="location_loading">We are looking for your Location..</string>
@@ -133,9 +133,9 @@
 
     <string name="already_have_account">Already Have an Account? Login</string>
     <string name="cancel">Cancel</string>
-    <string name="dialog_loading_title">Loading data...</string>
+    <string name="dialog_loading_title">Loading data…</string>
     <string name="dialog_loading_msg">Please wait</string>
-    <string name="dialog_uploading_title">Uploading photo...</string>
+    <string name="dialog_uploading_title">Uploading photo…</string>
     <string name="dialog_creating_user">Creating new user</string>
     <string name="dialog_updating_user">Updating data</string>
     <string name="item_name">Item Name</string>
@@ -143,6 +143,5 @@
     <string name="item_pickup_address">Pickup address</string>
     <string name="dialog_uploading_post">Uploading post</string>
     <string name="confirm_post">Confirm</string>
-
 
 </resources>

@@ -209,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (currentUser != null) {
             getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-
         } else {
             menu.clear();
         }
