@@ -116,7 +116,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_baseline_hourglass_empty_24" />
+                    android:src="@drawable/ic_hourglass_empty" />
 
                 <TextView
                     android:id="@+id/active_items_label"
