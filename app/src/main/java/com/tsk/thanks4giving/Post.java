@@ -13,14 +13,14 @@ public class Post {
     public String locationMethod;
     public String date;
     public int status; // 1 = available, 0 = not available
-    public String category; // Items general category
+    public int category; // Items general category
     public String postImage; // Item image
 
     public Post() {
 
     }
 
-    public Post(String postID, String userUid, String title, String desc, String address, String coordinates, String locationMethod, String date, int status, String category, String postImage) {
+    public Post(String postID, String userUid, String title, String desc, String address, String coordinates, String locationMethod, String date, int status, int category, String postImage) {
         this.postID = postID;
         this.userUid = userUid;
         this.status = status;
@@ -72,7 +72,7 @@ public class Post {
         return status;
     }
 
-    public String getCategory() {
+    public int getCategory() {
         return category;
     }
 
@@ -118,7 +118,7 @@ public class Post {
         this.status = status;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(int category) {
         this.category = category;
     }
 

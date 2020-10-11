@@ -267,7 +267,7 @@ public class SignupFragment extends Fragment {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 // Saving to DB
                                                 String userUid = fbUser.getUid();
-                                                User user = new User(userUid, name, mail, gender, address, coordinates, imageUri.toString());
+                                                User user = new User(userUid, name, mail, gender, address, coordinates, profile_photo_path);
                                                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
                                                 mDatabase.child("users").child(fbUser.getUid()).setValue(user);
 

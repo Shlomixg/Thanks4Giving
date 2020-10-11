@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -73,11 +74,13 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
     EditText keyword;
     TextView current_text, search_tv, current_search;
-    Spinner spinner, times_spinner;
+    Spinner times_spinner;
     Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter;
     ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
     LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout;
     LovelyProgressDialog progressDialog2;
+    AutoCompleteTextView categoryDropdown;
+    int category;
 
     long diff;
     int flagBack = -1, required_days, LOCATION_PERMISSION_REQUEST = 2;
@@ -137,8 +140,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
-
-
                 }
 
                 @Override
@@ -156,10 +157,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                     .setTitle(getString(R.string.location_loading)) // set text for dialog
             ;
 
-            String[] a = getResources().getStringArray(R.array.categories_for_filter);
             String[] b = getResources().getStringArray(R.array.times);
 
-            spinner = rootView.findViewById(R.id.category_spinner_filter); // ****categories spinner****
+            categoryDropdown = rootView.findViewById(R.id.category_spinner_filter_et); // ****categories spinner****
             times_spinner = rootView.findViewById(R.id.time_spinner_filter);//****times spinner****
             search_btn = rootView.findViewById(R.id.search_btn); // *****First search Button*****
             filter_btn = rootView.findViewById(R.id.filter_btn); // *****First filter Button*****
@@ -217,10 +217,9 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onClick(View v) {
-                    spinner.setSelection(0); // reset spinner
+                    categoryDropdown.clearListSelection(); // reset spinner
                     times_spinner.setSelection(0); // reset spinner
                     linear_current_filter.setVisibility(View.GONE); // hide all current result layout
-
                 }
             });
 
@@ -262,7 +261,6 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 }
             });
 
-
             edit_current_search.setOnClickListener(new View.OnClickListener() { // listener for edit search button - pencil
                 @Override
                 public void onClick(View v) {
@@ -284,31 +282,23 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 }
             });
 
-            final ArrayAdapter<String> adapter1 =
-                    new ArrayAdapter<String>(getActivity(), R.layout.spinner_text_filter, a) {
-                        @Override
-                        public boolean isEnabled(int position) {
-                            // Disable the second item from Spinner
-                            return position != 0;
-                        }
+            final String[] categories = getResources().getStringArray(R.array.categories_for_filter);
 
-                        @Override
-                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                            View view = super.getDropDownView(position, convertView, parent);
-                            TextView tv = (TextView) view;
-                            if (position == 0) {
-                                // Set the disable item text color
-                                tv.setTextColor(Color.GRAY);
-                            } else {
-                                tv.setTextColor(Color.BLACK);
-                            }
-                            return view;
-                        }
-                    };
-            adapter1.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
-            spinner.setAdapter(adapter1);
-            spinner.setSelection(0, false);
-            final ArrayAdapter<String> adapter2 =
+            final ArrayAdapter<String> category_adapter =
+                    new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
+            categoryDropdown.setAdapter(category_adapter);
+            // Dumb way to bind the selected item to it's value
+            categoryDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    category = position;
+                }
+            });
+
+            categoryDropdown.setAdapter(category_adapter);
+            categoryDropdown.clearListSelection();
+            ;
+            final ArrayAdapter<String> date_adapter =
                     new ArrayAdapter<String>(getActivity(), R.layout.time_spinner_text_filter, b) {
                         @Override
                         public boolean isEnabled(int position) {
@@ -329,8 +319,8 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                             return view;
                         }
                     };
-            adapter2.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
-            times_spinner.setAdapter(adapter2);
+            date_adapter.setDropDownViewResource(R.layout.dropdown_menu_categories_item);
+            times_spinner.setAdapter(date_adapter);
             times_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -444,7 +434,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             postList.clear();
-                            if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
+                            if (category == 0 &&
                                     !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
                                 filter2.setText(times_spinner.getSelectedItem().toString());
@@ -453,27 +443,27 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                                 filter2.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
-                            } else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
+                            } else if (category != 0 &&
                                     times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
-                                filter1.setText(spinner.getSelectedItem().toString());
+                                filter1.setText(categories[category]);
                                 filter1.animate().rotation(filter1.getRotation() + 360).start();
                                 filter2.setVisibility(View.GONE);
                                 filter1.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
-                            } else if (!(spinner.getItemAtPosition(0).equals(spinner.getSelectedItem())) &&
+                            } else if (category != 0 &&
                                     !(times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem()))) {
                                 linear_current_filter.setVisibility(View.VISIBLE);
                                 filter1.setVisibility(View.VISIBLE);
                                 filter2.setVisibility(View.VISIBLE);
                                 current_text.setVisibility(View.VISIBLE);
                                 edit_current_filters.setVisibility(View.VISIBLE);
-                                filter1.setText(spinner.getSelectedItem().toString());
+                                filter1.setText(categories[category]);
                                 filter1.animate().rotation(filter1.getRotation() + 360).start();
                                 filter2.setText(times_spinner.getSelectedItem().toString());
                                 filter2.animate().rotation(filter2.getRotation() + 360).start();
-                            } else if (spinner.getItemAtPosition(0).equals(spinner.getSelectedItem()) &&
+                            } else if (category == 0 &&
                                     times_spinner.getItemAtPosition(0).equals(times_spinner.getSelectedItem())) {
                                 filter1.setVisibility(View.GONE);
                                 filter2.setVisibility(View.GONE);
@@ -596,11 +586,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
                 e.printStackTrace();
             }
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
-                    (post.category.equals(spinner.getSelectedItem().toString()) ||
-                            spinner.getSelectedItem().toString().equals("All Categories") ||
-                            spinner.getSelectedItem().toString().equals(spinner.getItemAtPosition(0))))// if post contain search
-
-            {
+                    (post.category == category || category == 0)) { // if post contain search
                 if (required_days != -1) {
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                         postList.add(post);
@@ -616,9 +602,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
     private void nofilters(DataSnapshot snapshot) {
 
-
     }
-
 
     private void showAllPosts(DataSnapshot snapshot) { // show posts by filters and search
         for (DataSnapshot ds : snapshot.getChildren()) {
@@ -640,11 +624,8 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
             }
 
             if (post.desc.toLowerCase().contains(keyword.getText().toString().toLowerCase()) &&
-                    (post.category.equals(spinner.getSelectedItem().toString()) ||
-                            spinner.getSelectedItem().toString().equals("All Categories") ||
-                            spinner.getSelectedItem()
-                                    .toString()
-                                    .equals(spinner.getItemAtPosition(0))) && (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)) { // if post contain search
+                    (post.category == category || category == 0) &&
+                    (location_original.distanceTo(location2) <= bubbleSeekBar.getProgress() * 1000)) { // if post contain search
                 if (required_days != -1) {
                     if (TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) <= required_days) {
                         postList.add(post);
@@ -679,10 +660,7 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
     }
 
     public void filterLocation(DataSnapshot snapshot) {
-
         postList.clear();
-
-
     }
 
     @Override
@@ -698,17 +676,14 @@ public class RecyclerViewFragment extends Fragment implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-
     }
 
     @Override

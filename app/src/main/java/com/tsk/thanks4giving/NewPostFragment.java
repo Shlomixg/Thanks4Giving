@@ -94,7 +94,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
     AutoCompleteTextView categoryDropdown;
     LovelyProgressDialog progressDialog;
 
-    int flag_location = 0;
+    int category, flag_location = 0;
     Handler handler = new Handler();
     Geocoder geocoder;
     LocationManager manager;
@@ -168,6 +168,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         camera_btn = rootView.findViewById(R.id.post_camera_btn);
         confirm_btn = rootView.findViewById(R.id.post_confirm_btn);
 
+        final String[] categories = getResources().getStringArray(R.array.categories);
+
         // Loading data of existing post (which is edited)
         if (mPostID != null && !mPostID.isEmpty()) {
             posts.child(mPostID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -179,7 +181,8 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                         item_desc_et.setText(post.desc);
                         address_et.setText(post.address);
                         coordinates = post.coordinates;
-                        categoryDropdown.setText(post.category, false);
+                        category = post.category;
+                        categoryDropdown.setText(categories[category], false);
                         image_path = post.postImage;
                         Glide.with(getContext()).load(post.postImage).centerCrop().into(image);
 
@@ -206,10 +209,16 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             }
         });
 
-        final String[] categories = getResources().getStringArray(R.array.categories);
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
         categoryDropdown.setAdapter(adapter);
+        // Dumb way to bind the selected item to it's value
+        categoryDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                category = position;
+            }
+        });
 
         return rootView;
     }
@@ -350,7 +359,6 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final String item_name = item_name_et.getText().toString();
         final String item_desc = item_desc_et.getText().toString();
         final String address = address_et.getText().toString();
-        final String category = categoryDropdown.getText().toString();
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date();

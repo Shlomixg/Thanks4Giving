@@ -132,8 +132,8 @@ public class EditProfileFragment extends Fragment {
                 if (user != null) {
                     fullname_et.setText(user.name);
                     address_et.setText(user.address);
-                    genderDropdown.setText(GENDERS[user.gender], false);
                     gender = user.gender;
+                    genderDropdown.setText(GENDERS[gender], false);
                     coordinates = user.coordinates;
                     if (user.profilePhoto != null) {
                         profile_photo_path = user.profilePhoto;
@@ -167,6 +167,7 @@ public class EditProfileFragment extends Fragment {
         final ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_gender_item, GENDERS);
         genderDropdown.setAdapter(adapter);
+        // Dumb way to bind the selected item to it's value
         genderDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
