@@ -170,11 +170,11 @@ public class MainActivity extends AppCompatActivity {
         if (intent.hasExtra("post")) {
             String postID = intent.getStringExtra("post");
             FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
             Bundle bundle = new Bundle();
             bundle.putString("PostId", postID);
             PostFragment postFragment = new PostFragment();
             postFragment.setArguments(bundle);
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.flContent, postFragment, "POST_FRAG").commit();
         } else {
             setFragment(new RecyclerViewFragment(), RECYCLER_FRAG);
