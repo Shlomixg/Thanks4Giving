@@ -12,37 +12,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".RecyclerViewFragment">
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post Filtering"
+            android:textSize="40dp"
+            android:layout_gravity="center"/>
         <LinearLayout
             android:id="@+id/all_buttons_layout"
             android:layout_width="match_parent"
-            android:visibility="gone"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.xw.repo.BubbleSeekBar
-                android:id="@+id/BubbleSeekBar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_weight="4"
-                android:visibility="gone"
-                app:bsb_bubble_color="#BD574F"
-                app:bsb_bubble_text_color="@color/colorWhite"
-                app:bsb_max="200"
-                app:bsb_min="1"
-                app:bsb_progress="0"
-                app:bsb_second_track_color="#3F51B5"
-                app:bsb_section_count="2"
-                app:bsb_section_text_position="bottom_sides"
-                app:bsb_show_progress_in_float="true"
-                app:bsb_show_section_mark="true"
-                app:bsb_show_section_text="true"
-                app:bsb_show_thumb_text="true"
-                app:bsb_track_color="@color/colorAccent" />
+
 
             <Button
                 android:id="@+id/search_btn"
+                android:visibility="gone"
                 android:layout_width="30dp"
                 android:layout_height="60dp"
                 android:padding="10dp"
@@ -51,22 +37,18 @@
 
             <Button
                 android:id="@+id/filter_btn"
+                android:visibility="gone"
                 android:layout_width="10sp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
                 android:padding="10dp"
                 android:background="@drawable/ic_baseline_filter_list_24" />
 
-            <Button
-                android:id="@+id/location_filter"
-                android:layout_width="30sp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:background="@drawable/ic_baseline_gps_fixed_24" />
+
+
+
 
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/all_filters"
@@ -74,12 +56,58 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C6C4C4">
+                <TextView
+                    android:id="@+id/search_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:textSize="20dp"
+                    android:text="Sort by Keyword" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+
+                <EditText
+                    android:id="@+id/keyword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:hint="@string/keywordhint" />
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C6C4C4">
+                <TextView
+                    android:id="@+id/category_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:textSize="20dp"
+                    android:text="Sort by Category" />
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_filter"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                >
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/category_spinner_filter_tf"
@@ -101,27 +129,49 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C6C4C4">
+                <TextView
+                    android:id="@+id/time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:textSize="20dp"
+                    android:text="Sort by Time" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/Timee"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
                 <Spinner
                     android:id="@+id/time_spinner_filter"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:padding="5dp"
                     android:textAlignment="center" />
-
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linear_filter_submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                >
 
                 <Button
                     android:id="@+id/submit_filter"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
@@ -132,19 +182,12 @@
                     android:textColor="@color/colorWhite"
                     android:textSize="20sp" />
 
-                <Button
-                    android:id="@+id/clean_filter_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:gravity="center"
-                    android:text="@string/cleanfilters"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="20sp" />
+
 
                 <ImageButton
                     android:id="@+id/close_all_filters"
                     android:layout_width="wrap_content"
+                    android:visibility="gone"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
                     android:src="@drawable/ic_baseline_close_24"
@@ -153,6 +196,55 @@
                     android:textSize="20sp"/>
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C6C4C4">
+                <TextView
+                    android:id="@+id/location_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="25dp"
+                    android:textSize="20dp"
+                    android:text="Sort by Distance" />
+            </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/location_filter"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:text="@string/filter_by_location"
+        android:textColor="@color/colorWhite"
+        app:icon="@drawable/ic_gps"
+        app:iconTint="@color/colorWhite" />
+
+    <com.xw.repo.BubbleSeekBar
+        android:id="@+id/BubbleSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_weight="4"
+        android:visibility="gone"
+        app:bsb_bubble_color="#BD574F"
+        app:bsb_bubble_text_color="@color/colorWhite"
+        app:bsb_max="200"
+        app:bsb_min="1"
+        app:bsb_progress="0"
+        app:bsb_second_track_color="#3F51B5"
+        app:bsb_section_count="2"
+        app:bsb_section_text_position="bottom_sides"
+        app:bsb_show_progress_in_float="true"
+        app:bsb_show_section_mark="true"
+        app:bsb_show_section_text="true"
+        app:bsb_show_thumb_text="true"
+        app:bsb_track_color="@color/colorAccent" />
+</LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linear_current_filter"
@@ -209,65 +301,32 @@
 
             </LinearLayout>
 
+
             <LinearLayout
-                android:id="@+id/linear_search"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/current_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="30dp"
-                    android:background="#833131"
-                    android:padding="3dp"
-                    android:text="Your search: "
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp"
-                    android:textStyle="italic"
-                    android:visibility="gone" />
-
+                android:layout_gravity="center">
                 <Button
-                    android:id="@+id/your_search"
+                    android:id="@+id/sub"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/search_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginStart="25dp"
-                    android:text="Search" />
-
-                <EditText
-                    android:id="@+id/keyword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/keywordhint" />
-
-                <ImageButton
-                    android:id="@+id/close_current_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:background="@null"
-                    android:padding="15dp"
-                    android:src="@drawable/ic_baseline_edit_24"
-                    android:textColor="@color/colorWhite"
+                    android:layout_marginRight="10dp"
+                    android:text="Apply"
                     android:textSize="20sp"
-                    android:visibility="gone" />
+                    android:textColor="@color/colorWhite"/>
+                <Button
+                    android:id="@+id/clean_filter_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="center"
+                    android:text="@string/cleanfilters"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linear_submitsearch"
                 android:layout_width="match_parent"
@@ -298,21 +357,12 @@
                     android:textSize="20sp"/>
 
             </LinearLayout>
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/search_floating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_baseline_search_245"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                />
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
