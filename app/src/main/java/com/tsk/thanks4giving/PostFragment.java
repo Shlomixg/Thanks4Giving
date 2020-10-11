@@ -344,7 +344,7 @@ public class PostFragment extends Fragment {
                 sendIntent.setType("image/*");
                 Bitmap bitmap = loadBitmapFromView(post_image_view, post_image_view.getWidth(), post_image_view.getHeight()); // CREATE BITMAP
                 sendIntent.putExtra(Intent.EXTRA_STREAM, SaveImage(bitmap));
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + desc_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store or click this link www.one.co.il");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "#Thank4Giving\nIt's Free\nProduct:" + desc_tv.getText().toString() + "\nFind this Item in our Thank4Giving App and contact the Item owner.\nLets install our app from play store");
                 startActivity(sendIntent);
             }
         });
