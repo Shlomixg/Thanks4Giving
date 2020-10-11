@@ -77,9 +77,9 @@ public class RecyclerViewFragment extends Fragment {
     EditText keyword;
     TextView current_text, search_tv, current_search;
     Spinner times_spinner;
-    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter;
+    Button filter_btn, search_btn, clean_btn, submit_filter_btn, submit_search_btn, filter1, filter2, search_keyword, location_filter,your_search;
     ImageButton close_filter_button, close_search_btn, edit_current_filters, edit_current_search;
-    LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout;
+    LinearLayout filters, search, filter_submit, search_submit, linear_current_filter, all_buttons_layout,linear_search;
     LovelyProgressDialog progressDialog2;
     AutoCompleteTextView categoryDropdown;
     FloatingActionButton search_floating;
@@ -120,8 +120,12 @@ public class RecyclerViewFragment extends Fragment {
         query = posts;
         View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         all_buttons_layout = rootView.findViewById(R.id.all_buttons_layout);
-
+        linear_search= rootView.findViewById(R.id.linear_search);
+        linear_current_filter=rootView.findViewById(R.id.linear_current_filter);
         keyword = rootView.findViewById(R.id.keyword);
+        your_search=rootView.findViewById(R.id.your_search);
+        filter1=rootView.findViewById(R.id.filter1);
+        filter2=rootView.findViewById(R.id.filter2);
 
         refreshLayout = rootView.findViewById(R.id.refresh);
         adapter = new PostAdapter(postList);
@@ -129,7 +133,9 @@ public class RecyclerViewFragment extends Fragment {
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
-        if (getArguments() != null && getArguments().getInt("flag") != 2)  {          all_buttons_layout.setVisibility(View.GONE);
+        if (getArguments() != null && getArguments().getInt("flag") != 2)  {
+
+            all_buttons_layout.setVisibility(View.GONE);
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -161,13 +167,70 @@ public class RecyclerViewFragment extends Fragment {
         if (getArguments() == null || getArguments().getInt("flag") == 2) {
 
             if (getArguments() != null) {
-                keyword.setText(getArguments().getString("keyword"));
+//                keyword.setText(getArguments().getString("keyword"));
                 word = getArguments().getString("keyword");
                 time = getArguments().getString("time");
                 distance = getArguments().getInt("distance");
 //                category = getArguments().getInt("category");
                 location_original.setLatitude(getArguments().getDouble("lat"));
                 location_original.setLongitude(getArguments().getDouble("long"));
+
+                if (word!=null && !word.equals(""))
+                {
+                    Toast.makeText(getContext(), "yess", Toast.LENGTH_SHORT).show();
+                    linear_search.setVisibility(View.VISIBLE);
+                    your_search.setText(word);
+                    your_search.animate().rotation(your_search.getRotation() + 360).start();
+
+                }
+                else
+                {
+                    linear_search.setVisibility(View.GONE);
+                }
+                Toast.makeText(getContext(), "cat"+ category+", time "+time, Toast.LENGTH_SHORT).show();
+                if (category!=0 && !time.equals("Time"))
+                {
+                    linear_current_filter.setVisibility(View.VISIBLE);
+                    filter1.setVisibility(View.VISIBLE);
+                    filter2.setVisibility(View.VISIBLE);
+                    filter1.setText("cat");
+                    filter2.setText(time);
+                    filter1.animate().rotation(filter1.getRotation() + 360).start();
+                    filter2.animate().rotation(filter2.getRotation() + 360).start();
+                    Toast.makeText(getContext(), "11", Toast.LENGTH_SHORT).show();
+
+
+                }
+                else if (!time.equals("Time") && category==0) // only time
+                {
+                    linear_current_filter.setVisibility(View.VISIBLE);
+                    filter1.setVisibility(View.GONE);
+                    filter2.setVisibility(View.VISIBLE);
+                    filter2.setText(time);
+                    filter2.animate().rotation(filter1.getRotation() + 360).start();
+                    Toast.makeText(getContext(), "22", Toast.LENGTH_SHORT).show();
+
+                }
+
+                else if (category!=0 && (time.equals("Time"))) // only category
+                {
+                    linear_current_filter.setVisibility(View.VISIBLE);
+                    filter1.setVisibility(View.VISIBLE);
+                    filter1.setText("category");
+                    filter1.animate().rotation(filter1.getRotation() + 360).start();
+                    filter2.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "sssdsdsdsdsd", Toast.LENGTH_SHORT).show();
+                }
+//                else
+//                {
+//                    linear_current_filter.setVisibility(View.GONE);
+//
+//                }
+
+
+
+
+
 //                postList = getArguments().getParcelableArrayList("array");
                 Toast.makeText(getContext(), getArguments().getString("keyword")
                         + getArguments().getString("time")
