@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +14,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,13 +31,11 @@ public class RecyclerViewFragment extends Fragment {
     private static final String ARG_STATUS = "itemsStatus";
     private String mUserUid;
     private int mItemsStatus;
-
     final String POST_FRAG = "Post Fragment";
 
     ArrayList<Post> postList = new ArrayList<>();
     RecyclerView recycler;
     PostAdapter adapter;
-
     SwipeRefreshLayout refreshLayout;
     FloatingActionButton search_fab;
     final String RECYCLER_FRAG = "Recycler View Fragment";
@@ -54,7 +49,6 @@ public class RecyclerViewFragment extends Fragment {
     final DatabaseReference posts = database.getReference().child("posts");
 
     public RecyclerViewFragment() {
-
     }
 
     public static RecyclerViewFragment newInstance(String userUid, String itemsStatus) {
@@ -112,13 +106,12 @@ public class RecyclerViewFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
-
         }
+
         // if filtered
         else if (getArguments().getInt("flag") == 2) {
             word = getArguments().getString("keyword");
@@ -131,7 +124,6 @@ public class RecyclerViewFragment extends Fragment {
                 @Override
                 public void onRefresh() {
                     refreshLayout.setRefreshing(false);
-
                 }
             });
 
@@ -142,13 +134,10 @@ public class RecyclerViewFragment extends Fragment {
                     Collections.reverse(postList);
                     adapter.notifyDataSetChanged();
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
-
-
         }
 
         adapter.setListener(new PostAdapter.PostClickListener() {
@@ -163,7 +152,6 @@ public class RecyclerViewFragment extends Fragment {
                 postFragment.setArguments(bundle);
                 transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
             }
-
             @Override
             public void onLongClickListener(int pos, View v) {
             }
@@ -193,10 +181,8 @@ public class RecyclerViewFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }

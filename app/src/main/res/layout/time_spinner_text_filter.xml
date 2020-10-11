@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:ellipsize="marquee"
-    android:paddingLeft="12dp"
+    android:paddingStart="12dp"
     android:layout_margin="10dp"
     android:textSize="20sp"
     android:textColor="@color/quantum_black_100"

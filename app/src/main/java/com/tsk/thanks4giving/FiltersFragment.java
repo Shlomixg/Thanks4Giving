@@ -1,12 +1,15 @@
 package com.tsk.thanks4giving;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -24,10 +25,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.google.android.material.button.MaterialButton;
 import com.xw.repo.BubbleSeekBar;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 public class FiltersFragment extends Fragment implements LocationListener {
 
@@ -42,9 +43,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
     Location location_original = new Location("dummyProvider");
     LocationManager manager;
 
-    public FiltersFragment() {
-
-    }
+    public FiltersFragment() { }
 
     @Nullable
     @Override
@@ -77,7 +76,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 progressDialog = new LovelyProgressDialog(getContext())
                         .setTopColorRes(R.color.colorPrimary)
                         .setCancelable(false)
-                        .setIcon(R.drawable.ic_giftbox_outline)
+                        .setIcon(R.drawable.ic_address_location)
                         .setTitle(R.string.location_loading)
                         .setMessage(R.string.location_permission);
 
@@ -146,11 +145,30 @@ public class FiltersFragment extends Fragment implements LocationListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-//                showSettingsDialog(getString(R.string.location_permission));
+                showSettingsDialog(getString(R.string.location_permission));
             } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Request location updates:
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, FiltersFragment.this);
             }
         }
+    }
+
+    public void showSettingsDialog(String explanation) {
+        new LovelyStandardDialog(getContext())
+                .setTopColorRes(R.color.colorPrimary)
+                .setCancelable(false)
+                .setPositiveButton(R.string.settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.ic_launcher_foreground)
+                .setTitle(R.string.attention)
+                .setMessage(explanation)
+                .show();
     }
 }

@@ -6,16 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.facebook.shimmer.Shimmer;
 import com.google.android.material.button.MaterialButton;
@@ -30,9 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.skydoves.androidribbon.RibbonLayout;
 import com.skydoves.androidribbon.RibbonView;
 import com.skydoves.androidribbon.ShimmerRibbonView;
-
 import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
@@ -54,7 +49,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
-
         void onLongClickListener(int pos, View v);
     }
 
@@ -84,12 +78,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             itemDescTV = itemView.findViewById(R.id.post_item_desc);
             itemDateTV = itemView.findViewById(R.id.post_date);
             userNameTV = itemView.findViewById(R.id.post_user_name);
-
             like_btn = itemView.findViewById(R.id.post_like_btn);
             comment_btn = itemView.findViewById(R.id.post_comment_btn);
             ribbon_btn = itemView.findViewById(R.id.ribbon_btn);
             edit_btn = itemView.findViewById(R.id.post_edit_btn);
-
             ribbonWrapper = itemView.findViewById(R.id.ribbon_wrapper);
             ribbonLayout = itemView.findViewById(R.id.post_ribbon_layout);
 
@@ -161,7 +153,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     holder.userNameTV.setText(user.name);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -193,10 +184,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                     holder.ribbonLayout.setRibbonBottom(ribbonView);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
@@ -208,7 +197,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 if (currentUser != null && snapshot.hasChild(currentUser.getUid()))
                     holder.like_btn.setIcon(like_fill);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -220,7 +208,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 int size = (int) snapshot.getChildrenCount();
                 holder.comment_btn.setText("" + size);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -267,7 +254,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                                 holder.like_btn.setIcon(like_fill);
                             }
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
@@ -297,7 +283,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                             posts.child(postID).child("status").setValue(0);
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }

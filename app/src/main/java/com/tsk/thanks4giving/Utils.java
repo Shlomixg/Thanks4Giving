@@ -1,37 +1,17 @@
 package com.tsk.thanks4giving;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-
-import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 
 public class Utils {
 
     static SharedPreferences sharedPrefs;
-
     private final static int THEME_DEFAULT = 1;
     private final static int THEME_LIGHT = 2;
     private final static int THEME_DARK = 3;
-
     private static final String KEY_PREF_THEME = "pref_theme";
     private static final String KEY_COMMENT = "commentSwitch";
-    private static final String KEY_FIRST = "firstRun";
 
     static void loadPrefs(SharedPreferences sharedPrefs) {
         Utils.sharedPrefs = sharedPrefs;
@@ -54,12 +34,6 @@ public class Utils {
         }
     }
 
-    // TODO: Delete this function or not?
-    public static int getTheme() {
-        String theme = sharedPrefs.getString(KEY_PREF_THEME, "1");
-        return Integer.parseInt(theme);
-    }
-
     private static void setTheme(int theme) {
         switch (theme) {
             case THEME_DEFAULT:
@@ -73,5 +47,4 @@ public class Utils {
                 break;
         }
     }
-
 }

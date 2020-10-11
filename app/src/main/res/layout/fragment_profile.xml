@@ -134,7 +134,7 @@
                     android:layout_below="@id/active_items_label"
                     android:layout_centerHorizontal="true"
                     android:includeFontPadding="false"
-                    android:text="Active Items"
+                    android:text="@string/active_items"
                     android:textSize="20sp" />
 
             </RelativeLayout>
@@ -177,7 +177,7 @@
                     android:layout_below="@id/delivered_items_label"
                     android:layout_centerHorizontal="true"
                     android:includeFontPadding="false"
-                    android:text="Delivered Items"
+                    android:text="@string/delivered_items"
                     android:textSize="20sp" />
             </RelativeLayout>
 

@@ -1,13 +1,8 @@
 package com.tsk.thanks4giving;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -18,22 +13,17 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -51,48 +41,28 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignupFragment extends Fragment {
 
-    static final int REQUEST_IMAGE_CAPTURE = 2;
-    static final int PICK_IMAGE = 3;
-    CircleImageView profile_image;
+
     TextInputEditText fullname_et, address_et, email_et, password_et;
-    MaterialButton camera_btn, gallery_btn, confirm_btn, login_btn;
+    MaterialButton  confirm_btn, login_btn;
     AutoCompleteTextView genderDropdown;
     int gender, flag_location;
-    File file;
     Uri imageUri;
-    String coordinates, randomKey, profile_photo_path;
-
+    String coordinates, profile_photo_path;
     FirebaseAuth mAuth;
     StorageReference storageReference;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
     }
@@ -174,7 +144,7 @@ public class SignupFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.dialog_creating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -200,7 +170,6 @@ public class SignupFragment extends Fragment {
                                 profile_photo_path = "https://i.imgur.com/LEKWEA2.png";
                             }
                         }
-
                         // Updating full name & photo
                         fbUser.updateProfile(new UserProfileChangeRequest.Builder()
                                 .setPhotoUri(Uri.parse(profile_photo_path))

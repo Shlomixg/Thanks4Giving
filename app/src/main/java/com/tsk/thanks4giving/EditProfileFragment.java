@@ -16,12 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
@@ -58,19 +56,15 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileFragment extends Fragment {
-
-    String TAG = "Profile Frag";
 
     static final int REQUEST_IMAGE_CAPTURE = 2;
     static final int PICK_IMAGE = 3;
@@ -97,7 +91,7 @@ public class EditProfileFragment extends Fragment {
         progressLoadingDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_like)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.dialog_loading_title)
                 .setMessage(R.string.dialog_loading_msg);
         progressLoadingDialog.show();
@@ -200,12 +194,11 @@ public class EditProfileFragment extends Fragment {
 
                             @Override
                             public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Camera"); // TODO: Strings with explanation
+                                showSettingsDialog(getString(R.string.camera_permissions));
                             }
 
                             @Override
                             public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
                                 permissionToken.continuePermissionRequest();
                             }
                         })
@@ -226,12 +219,11 @@ public class EditProfileFragment extends Fragment {
 
                             @Override
                             public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                showSettingsDialog("Browse"); // TODO: Strings with explanation
+                                showSettingsDialog(getString(R.string.gallery_permissions));
                             }
 
                             @Override
                             public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                // TODO: Display dialog with explanation why this permission needed
                                 permissionToken.continuePermissionRequest();
                             }
                         })
@@ -260,7 +252,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.dialog_updating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -321,7 +313,7 @@ public class EditProfileFragment extends Fragment {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_giftbox_outline)
+                .setIcon(R.drawable.ic_launcher_foreground)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();
@@ -353,8 +345,8 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_giftbox_outline)
-                .setTitle(R.string.dialog_uploading_title); // TODO: Move to strings
+                .setIcon(R.drawable.ic_launcher_foreground)
+                .setTitle(R.string.dialog_uploading_title);
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();
         StorageReference riversRef = storageReference.child("ProfileImages/" + randomKey);
@@ -373,7 +365,6 @@ public class EditProfileFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // TODO: Handle unsuccessful uploads
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override

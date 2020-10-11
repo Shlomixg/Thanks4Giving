@@ -64,10 +64,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentC
                         .into(holder.profile_photo_iv);
                 holder.user_name.setText(user.name);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
