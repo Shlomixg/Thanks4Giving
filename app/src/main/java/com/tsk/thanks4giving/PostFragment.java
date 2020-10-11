@@ -97,6 +97,7 @@ public class PostFragment extends Fragment {
     final DatabaseReference likes = database.getReference().child("likes");
 
     String postID, userID;
+    // THIS IS NOT SECURE!! if not using cloud functions to send messages then at least encrypt this key!!
     final String SK = "AAAAV2IEwl0:APA91bGzC8ukmt6UCf6kWMg4XzoHl9RthEfzBWrhv0HGOjEHrXVr6QwsbEgdXOC2Bb79AJ-P4v4Zh0eWiqPUdamh2P83EhEFymkv3cIA-_iQ7lFSdHNlL4n11oqivy-ahWphe-ANbAYl";
 
     final String[] topic = new String[1];
@@ -404,7 +405,7 @@ public class PostFragment extends Fragment {
                     comments.child(postID).push().setValue(newComment);
                     comment_et.setText("");
 
-                    // Send notification to post owner
+                    // Send notification to post owner, everything from here and until the end of this OnClickListener should be done with cloud functions!
                     String textToSend = getString(R.string.new_comment) + userName;
                     posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
