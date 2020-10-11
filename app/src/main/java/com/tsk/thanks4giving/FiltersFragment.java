@@ -38,8 +38,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
     MaterialButton apply_btn, location_btn;
     LovelyProgressDialog progressDialog;
     AutoCompleteTextView categoryDropdown;
-    int category, LOCATION_PERMISSION_REQUEST = 2;
-    long diff;
+    int category = -1, LOCATION_PERMISSION_REQUEST = 2;
     Location location_original = new Location("dummyProvider");
     LocationManager manager;
 

@@ -42,7 +42,6 @@ public class RecyclerViewFragment extends Fragment {
     PostAdapter adapter;
 
     SwipeRefreshLayout refreshLayout;
-    String keyword;
     FloatingActionButton search_fab;
     final String RECYCLER_FRAG = "Recycler View Fragment";
     String word = "";
@@ -82,23 +81,16 @@ public class RecyclerViewFragment extends Fragment {
         recycler.setAdapter(adapter);
 
         if (getArguments() == null) {
-            posts.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    postList.clear();
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        Post post = ds.getValue(Post.class);
-                        postList.add(post);
-                        adapter.notifyDataSetChanged();
-                        Collections.reverse(postList);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
+            loadPosts();
 
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                public void onRefresh() {
+                    loadPosts();
+                    refreshLayout.setRefreshing(false);
                 }
             });
+
         } else if (getArguments().getInt("flag") != 2) {
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -115,9 +107,7 @@ public class RecyclerViewFragment extends Fragment {
                     postList.clear();
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
-                        if (post.getUserUid().equals(mUserUid))
-                            postList.add(post);
-                        adapter.notifyDataSetChanged();
+                        if (post.getUserUid().equals(mUserUid)) postList.add(post);
                         Collections.reverse(postList);
                         adapter.notifyDataSetChanged();
                     }
@@ -137,11 +127,18 @@ public class RecyclerViewFragment extends Fragment {
             location_original.setLatitude(getArguments().getDouble("lat"));
             location_original.setLongitude(getArguments().getDouble("long"));
 
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshLayout.setRefreshing(false);
+
+                }
+            });
+
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    postList.clear();
-                    filterPosts(snapshot, word);
+                    filterPosts(snapshot);
                     Collections.reverse(postList);
                     adapter.notifyDataSetChanged();
                 }
@@ -151,25 +148,7 @@ public class RecyclerViewFragment extends Fragment {
                 }
             });
 
-            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    refreshLayout.setRefreshing(false);
-                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            postList.clear();
-                            filterPosts(snapshot, word);
-                            Collections.reverse(postList);
-                            adapter.notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-                }
-            });
         }
 
         adapter.setListener(new PostAdapter.PostClickListener() {
@@ -201,7 +180,28 @@ public class RecyclerViewFragment extends Fragment {
         return rootView;
     }
 
-    private void filterPosts(DataSnapshot snapshot, String word) {
+    public void loadPosts() {
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post post = ds.getValue(Post.class);
+                    postList.add(post);
+                    adapter.notifyDataSetChanged();
+                    Collections.reverse(postList);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void filterPosts(DataSnapshot snapshot) {
         postList.clear();
         for (DataSnapshot ds : snapshot.getChildren()) {
             Post post = ds.getValue(Post.class);
