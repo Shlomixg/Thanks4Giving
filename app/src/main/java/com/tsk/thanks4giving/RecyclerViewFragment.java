@@ -74,6 +74,7 @@ public class RecyclerViewFragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(adapter);
 
+        // Show all posts
         if (getArguments() == null) {
             loadPosts();
 
@@ -85,34 +86,20 @@ public class RecyclerViewFragment extends Fragment {
                 }
             });
 
-        } else if (getArguments().getInt("flag") != 2) {
+        }
+        // Show posts of selected user
+        else if (getArguments().getInt("flag") != 2) {
+            loadUserPosts();
+
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     refreshLayout.setRefreshing(false);
-                }
-            });
-            mUserUid = getArguments().getString(ARG_USER_UID);
-            mItemsStatus = getArguments().getInt(ARG_STATUS);
-            query = posts.orderByChild("status").equalTo(mItemsStatus);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    postList.clear();
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        Post post = ds.getValue(Post.class);
-                        if (post.getUserUid().equals(mUserUid)) postList.add(post);
-                        Collections.reverse(postList);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    loadUserPosts();
                 }
             });
         }
-
-        // if filtered
+        // show filtered posts
         else if (getArguments().getInt("flag") == 2) {
             word = getArguments().getString("keyword");
             distance = getArguments().getInt("distance");
@@ -120,22 +107,13 @@ public class RecyclerViewFragment extends Fragment {
             location_original.setLatitude(getArguments().getDouble("lat"));
             location_original.setLongitude(getArguments().getDouble("long"));
 
+            filterPosts();
+
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     refreshLayout.setRefreshing(false);
-                }
-            });
-
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    filterPosts(snapshot);
-                    Collections.reverse(postList);
-                    adapter.notifyDataSetChanged();
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    filterPosts();
                 }
             });
         }
@@ -168,6 +146,27 @@ public class RecyclerViewFragment extends Fragment {
         return rootView;
     }
 
+    private void loadUserPosts() {
+        mUserUid = getArguments().getString(ARG_USER_UID);
+        mItemsStatus = getArguments().getInt(ARG_STATUS);
+        query = posts.orderByChild("status").equalTo(mItemsStatus);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post post = ds.getValue(Post.class);
+                    if (post.getUserUid().equals(mUserUid)) postList.add(post);
+                    Collections.reverse(postList);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
     public void loadPosts() {
         posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -187,34 +186,44 @@ public class RecyclerViewFragment extends Fragment {
         });
     }
 
-    private void filterPosts(DataSnapshot snapshot) {
-        postList.clear();
-        for (DataSnapshot ds : snapshot.getChildren()) {
-            Post post = ds.getValue(Post.class);
-            String coordinates = post.coordinates;
-            String a[] = coordinates.split(",");
-            Location location2 = new Location("dummyProvider");
-            location2.setLatitude(Double.parseDouble(a[0]));
-            location2.setLongitude(Double.parseDouble(a[1]));
-            word = word.toLowerCase();
+    private void filterPosts() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Post post = ds.getValue(Post.class);
+                    String coordinates = post.coordinates;
+                    String a[] = coordinates.split(",");
+                    Location location2 = new Location("dummyProvider");
+                    location2.setLatitude(Double.parseDouble(a[0]));
+                    location2.setLongitude(Double.parseDouble(a[1]));
+                    word = word.toLowerCase();
 
-            String desc = post.desc.toLowerCase();
-            String title = post.title.toLowerCase();
+                    String desc = post.desc.toLowerCase();
+                    String title = post.title.toLowerCase();
 
-            Log.d("category", "Category: " + category);
-            Log.d("category", "Post Category: " + post.category);
+                    Log.d("category", "Category: " + category);
+                    Log.d("category", "Post Category: " + post.category);
 
-            // if post contain search
-            if (desc.contains(word) || title.contains(word)) {
-                if (post.category == category || category == -1) {
-                    if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
-                        if (location_original.distanceTo(location2) <= distance)
-                            postList.add(post);
-                    } else
-                        postList.add(post);
+                    // if post contain search
+                    if (desc.contains(word) || title.contains(word)) {
+                        if (post.category == category || category == -1) {
+                            if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
+                                if (location_original.distanceTo(location2) <= distance)
+                                    postList.add(post);
+                            } else
+                                postList.add(post);
+                        }
+                    }
                 }
+                Collections.reverse(postList);
+                adapter.notifyDataSetChanged();
             }
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void setFragment(Fragment fragment, String FRAG) {

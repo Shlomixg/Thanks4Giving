@@ -137,7 +137,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
             progressDialog = new LovelyProgressDialog(getContext())
                     .setTopColorRes(R.color.colorPrimary)
                     .setCancelable(false)
-                    .setIcon(R.drawable.ic_launcher_foreground)
+                    .setIcon(R.drawable.ic_giftbox_outline)
                     .setTitle(R.string.dialog_loading_title)
                     .setMessage(R.string.dialog_loading_msg);
             progressDialog.show();
@@ -329,7 +329,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                 .setCancelable(false)
                 .setTitle(getString(R.string.dialog_uploading_post))
                 .setMessage(R.string.dialog_loading_msg)
-                .setIcon(R.drawable.ic_launcher_foreground);
+                .setIcon(R.drawable.ic_giftbox_outline);
         uploadProgressDialog.show();
 
         if (flag_location == 0) location_method = "GPS";
@@ -393,7 +393,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();
@@ -473,7 +473,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         final LovelyProgressDialog uploadPicProgressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_uploading_title)
                 .setMessage(R.string.dialog_loading_msg);
         uploadPicProgressDialog.show();

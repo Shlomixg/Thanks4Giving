@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="10dp">
+        android:padding="12dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/keyword_tf"
@@ -26,9 +25,10 @@
                 android:id="@+id/keyword_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_email"
+                android:drawableStart="@drawable/ic_baseline_search_245"
+                android:drawableTint="@color/colorPrimary"
                 android:drawablePadding="10dp"
-                android:inputType="textEmailAddress" />
+                android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_add"
+                android:drawableTint="@color/colorPrimary"
                 android:drawablePadding="10dp"
                 android:inputType="none" />
 

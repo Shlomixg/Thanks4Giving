@@ -36,7 +36,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
     BubbleSeekBar bubbleSeekBar;
 
     EditText keyword;
-    MaterialButton apply_btn, location_btn;
+    MaterialButton apply_btn, clear_btn, location_btn;
     LovelyProgressDialog progressDialog;
     AutoCompleteTextView categoryDropdown;
     int category = -1, LOCATION_PERMISSION_REQUEST = 2;
@@ -52,6 +52,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
         refreshLayout = rootView.findViewById(R.id.refresh);
         keyword = rootView.findViewById(R.id.keyword_et);
         apply_btn = rootView.findViewById(R.id.apply_filters_btn);
+        clear_btn = rootView.findViewById(R.id.clean_filter_btn);
         location_btn = rootView.findViewById(R.id.location_filter_btn);
         categoryDropdown = rootView.findViewById(R.id.category_spinner_filter_et);
         bubbleSeekBar = rootView.findViewById(R.id.BubbleSeekBar);
@@ -76,15 +77,12 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 progressDialog = new LovelyProgressDialog(getContext())
                         .setTopColorRes(R.color.colorPrimary)
                         .setCancelable(false)
-                        .setIcon(R.drawable.ic_launcher_foreground)
+                        .setIcon(R.drawable.ic_giftbox_outline)
                         .setTitle(R.string.location_loading)
                         .setMessage(R.string.location_permission);
-
-                progressDialog.show(); // start loading dialog
-
                 location_btn.setVisibility(View.GONE);
 
-                if (Build.VERSION.SDK_INT >= 23) { // check permissions for gps location and get it.
+                if (Build.VERSION.SDK_INT >= 23) {
                     int hasLocationPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
                     if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
@@ -111,6 +109,19 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
                 recyclerViewFragment.setArguments(bundle);
                 transaction.replace(R.id.flContent, recyclerViewFragment, "ff").addToBackStack(null).commit();
+            }
+        });
+
+        clear_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keyword.setText("");
+                category = -1;
+                categoryDropdown.setText("", false);
+                location_original.reset();
+                bubbleSeekBar.setProgress(200);
+                location_btn.setVisibility(View.VISIBLE);
+                bubbleSeekBar.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -148,9 +159,29 @@ public class FiltersFragment extends Fragment implements LocationListener {
                 showSettingsDialog(getString(R.string.location_permission));
             } else if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // Request location updates:
+
+                progressDialog.show();
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, FiltersFragment.this);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final String[] categories = getResources().getStringArray(R.array.categories_for_filter);
+
+        final ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getContext(), R.layout.dropdown_menu_categories_item, categories);
+        categoryDropdown.setAdapter(adapter);
+        // Dumb way to bind the selected item to it's value
+        categoryDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                category = position - 1;
+            }
+        });
     }
 
     public void showSettingsDialog(String explanation) {
@@ -166,7 +197,7 @@ public class FiltersFragment extends Fragment implements LocationListener {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
+
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -27,16 +28,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -166,17 +171,15 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         // Setting the first fragment
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getActiveNetwork() == null)
-        {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getActiveNetwork() == null) {
             midLO = findViewById(R.id.textView_area);
             midIV = findViewById(R.id.mid_image);
             midTV = findViewById(R.id.mid_text);
             midLO.setVisibility(View.VISIBLE);
             midIV.setImageResource(R.drawable.ic_baseline_cloud_off_24);
             midTV.setText(getString(R.string.no_internet));
-        }
-        else if (intent.hasExtra("post")) {
+        } else if (intent.hasExtra("post")) {
             String postID = intent.getStringExtra("post");
             FragmentManager fragmentManager = getSupportFragmentManager();
             Bundle bundle = new Bundle();

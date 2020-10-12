@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
         progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_loading_title)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();

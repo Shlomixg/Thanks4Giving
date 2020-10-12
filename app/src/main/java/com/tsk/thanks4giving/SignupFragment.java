@@ -13,11 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.basgeekball.awesomevalidation.utility.RegexTemplate;
@@ -43,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,7 +55,7 @@ public class SignupFragment extends Fragment {
 
 
     TextInputEditText fullname_et, address_et, email_et, password_et;
-    MaterialButton  confirm_btn, login_btn;
+    MaterialButton confirm_btn, login_btn;
     AutoCompleteTextView genderDropdown;
     int gender, flag_location;
     Uri imageUri;
@@ -144,7 +147,7 @@ public class SignupFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_creating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();

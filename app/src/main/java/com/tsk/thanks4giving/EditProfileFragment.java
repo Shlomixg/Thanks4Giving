@@ -91,7 +91,7 @@ public class EditProfileFragment extends Fragment {
         progressLoadingDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_loading_title)
                 .setMessage(R.string.dialog_loading_msg);
         progressLoadingDialog.show();
@@ -252,7 +252,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_updating_user)
                 .setMessage(R.string.dialog_loading_msg);
         progressDialog.show();
@@ -313,7 +313,7 @@ public class EditProfileFragment extends Fragment {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.attention)
                 .setMessage(explanation)
                 .show();
@@ -345,7 +345,7 @@ public class EditProfileFragment extends Fragment {
         final LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
                 .setTopColorRes(R.color.colorPrimary)
                 .setCancelable(false)
-                .setIcon(R.drawable.ic_launcher_foreground)
+                .setIcon(R.drawable.ic_giftbox_outline)
                 .setTitle(R.string.dialog_uploading_title);
         progressDialog.show();
         randomKey = UUID.randomUUID().toString();
