@@ -172,7 +172,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         category = post.category;
 
         holder.itemTitleTV.setText(post.title);
-        holder.itemCategoryTV.setText(categories[category]); // test
+        holder.itemCategoryTV.setText(categories[category]);
         holder.itemDescTV.setText(post.desc);
         holder.itemDateTV.setText(post.date);
 

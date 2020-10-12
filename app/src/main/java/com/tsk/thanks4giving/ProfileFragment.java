@@ -131,9 +131,6 @@ public class ProfileFragment extends Fragment {
                     FragmentManager fragmentManager = getParentFragmentManager();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.flContent, new EditProfileFragment(), TAG).addToBackStack(null).commit();
-                } else {
-                    // TODO: Send Message
-                    Toast.makeText(getContext(), "TODO: Send Message", Toast.LENGTH_SHORT).show();
                 }
             }
         });

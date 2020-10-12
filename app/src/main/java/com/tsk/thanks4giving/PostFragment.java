@@ -216,12 +216,16 @@ public class PostFragment extends Fragment {
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("PostFragment", "Error - Poster - User id: " + post.userUid);
+                            Log.d("PostFragment", "Error: " + error);
                         }
                     });
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostFragment", "Error - Post id: " + postID);
+                Log.d("PostFragment", "Error: " + error);
             }
         });
 
@@ -235,6 +239,8 @@ public class PostFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostFragment", "Error - Like - Post id: " + postID);
+                Log.d("PostFragment", "Error: " + error);
             }
         });
 
@@ -252,6 +258,8 @@ public class PostFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostFragment", "Error - Comment - Post id: " + postID);
+                Log.d("PostFragment", "Error: " + error);
             }
         });
 

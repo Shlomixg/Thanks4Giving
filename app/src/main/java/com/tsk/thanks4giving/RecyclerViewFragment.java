@@ -92,6 +92,8 @@ public class RecyclerViewFragment extends Fragment {
         }
         // Show posts of selected user
         else if (getArguments().getInt("flag") != 2) {
+            search_fab.setVisibility(View.GONE);
+
             loadUserPosts();
 
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
