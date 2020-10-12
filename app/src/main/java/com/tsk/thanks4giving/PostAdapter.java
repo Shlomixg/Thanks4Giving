@@ -3,6 +3,7 @@ package com.tsk.thanks4giving;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         CircleImageView profile_photo_civ;
         TextView itemTitleTV, itemCategoryTV, itemDescTV, itemDateTV, userNameTV;
         MaterialButton like_btn, comment_btn, ribbon_btn, edit_btn;
-        LinearLayout ribbonWrapper;
+        LinearLayout ribbonBtnWrapper;
         RibbonLayout ribbonLayout;
 
         public PostCardHolder(@NonNull View itemView) {
@@ -82,7 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             comment_btn = itemView.findViewById(R.id.post_comment_btn);
             ribbon_btn = itemView.findViewById(R.id.ribbon_btn);
             edit_btn = itemView.findViewById(R.id.post_edit_btn);
-            ribbonWrapper = itemView.findViewById(R.id.ribbon_wrapper);
+            ribbonBtnWrapper = itemView.findViewById(R.id.ribbon_wrapper);
             ribbonLayout = itemView.findViewById(R.id.post_ribbon_layout);
 
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +119,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         like = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like, null);
         like_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like_fill, null);
 
-        post = list.get(position);
+        post = list.get(holder.getAdapterPosition());
         final String postID = post.postID, userID = post.userUid;
         final int status = post.status;
 
@@ -142,7 +143,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         .build()
                 ).build();
 
-        users.child(post.userUid).addValueEventListener(new ValueEventListener() {
+        users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -155,6 +156,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostAdapter", "Error - User - User id: " + post.userUid);
+                Log.d("PostAdapter", "Error - User - Post id: " + postID);
+                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
@@ -162,9 +166,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         if (currentUser != null && post.userUid.equals(currentUser.getUid())) {
             holder.edit_btn.setVisibility(View.VISIBLE);
             if (status == 1) {
-                holder.ribbonWrapper.setVisibility(View.VISIBLE);
+                holder.ribbonBtnWrapper.setVisibility(View.VISIBLE);
             } else if (status == 0) {
-                holder.ribbonWrapper.setVisibility(View.GONE);
+                holder.ribbonBtnWrapper.setVisibility(View.GONE);
             }
         }
 
@@ -186,6 +190,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostAdapter", "Error - Ribbon - Post id: " + postID);
+                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
@@ -199,6 +205,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostAdapter", "Error - Likes - Post id: " + postID);
+                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
@@ -210,6 +218,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostAdapter", "Error - Comments - Post id: " + postID);
+                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
@@ -243,7 +253,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 if (currentUser != null) {
                     final String currUserUid = currentUser.getUid(),
                             currUserName = currentUser.getDisplayName();
-                    likes.child(postID).addValueEventListener(new ValueEventListener() {
+                    likes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(currUserUid)) {
@@ -256,6 +266,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("PostAdapter", "Error - Like Button - Post id: " + postID);
+                            Log.d("PostAdapter", "Error: " + error);
                         }
                     });
                 } else {
@@ -274,17 +286,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.ribbon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                posts.child(postID).addValueEventListener(new ValueEventListener() {
+                posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Post post = snapshot.getValue(Post.class);
                         if (post != null && post.status == 1) {
-                            holder.ribbonWrapper.setVisibility(View.GONE);
+                            holder.ribbonBtnWrapper.setVisibility(View.GONE);
                             posts.child(postID).child("status").setValue(0);
                         }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d("PostAdapter", "Error - Ribbon Button - Post id: " + postID);
+                        Log.d("PostAdapter", "Error: " + error);
                     }
                 });
             }

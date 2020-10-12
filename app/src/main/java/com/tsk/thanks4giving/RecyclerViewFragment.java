@@ -156,7 +156,7 @@ public class RecyclerViewFragment extends Fragment {
         mUserUid = getArguments().getString(ARG_USER_UID);
         mItemsStatus = getArguments().getInt(ARG_STATUS);
         query = posts.orderByChild("status").equalTo(mItemsStatus);
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
@@ -177,14 +177,15 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     public void loadPosts() {
-        posts.addValueEventListener(new ValueEventListener() {
+        posts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
                 adapter.notifyDataSetChanged();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    if (post != null) postList.add(post);
+                    if (post != null)
+                        postList.add(post);
                 }
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
@@ -197,7 +198,7 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     private void filterPosts() {
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();

@@ -329,6 +329,8 @@ public class PostFragment extends Fragment {
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("PostFragment", "Error - Like Button - Post id: " + postID);
+                            Log.d("PostFragment", "Error: " + error);
                         }
                     });
                 } else {
@@ -372,6 +374,8 @@ public class PostFragment extends Fragment {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d("PostFragment", "Error - Ribbon Button - Post id: " + postID);
+                        Log.d("PostFragment", "Error: " + error);
                     }
                 });
             }
@@ -492,6 +496,8 @@ public class PostFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("PostFragment", "Error - Coordinates - Post id: " + postID);
+                Log.d("PostFragment", "Error: " + error);
             }
         });
     }
