@@ -70,10 +70,10 @@
     <string name="second_slide_desc">אם תרצה לפרסם תגובות, לייקים או פוסטים משל עצמך תצטרך להירשם . שים לב שהכתובת שתיתן תשמש לקביעת המיקום שלך ולכן חשוב שתהיה אמיתית</string>
     <string name="third_slide_title">ניתן לסנן פוסטים לפי קטגוריה ומיקום.</string>
     <string name="third_slide_desc">בשביל להגיע לתפריט הסינונים לחץ על זכוכית המגדלת בפינה התחתונה.</string>
-    <string name="fourth_slide_title">תקבל התראות פוש כאשר מישהו מפרסם תגובה על פוסט שלך.</string>
+    <string name="fourth_slide_title">תקבל התראות פוש על תגובות בפוסטים שלך.</string>
     <string name="ribbon_text">נמסר!</string>
     <string name="fourth_slide_desc">אם זה אי-פעם יפריע לך תוכל בקלות לכבות את זה דרך ההגדרות.</string>
-    <string name="fifth_slide_title">כאשר מסרת בהצלחה פריט שפרסמת לחץ על האייקון של המתנה.</string>
+    <string name="fifth_slide_title">כאשר מסרת פריט לחץ על האייקון של המתנה.</string>
     <string name="fifth_slide_desc">זהו זה, אתה מוכן להתחיל. תודה שהורדת את האפליקציה שלנו, ותודה שנתת!</string>
     <string name="title_activity_introduction">הקדמה</string>
 
@@ -103,7 +103,6 @@
 
     <string name="location_loading">אנו מחפשים את מיקומך…</string>
     <string name="saved_location">האם תרצה להשתמש ב-</string>
-    <string name="pref_theme_title" translatable="false">ערכת נושא</string>
     <string name="pref_theme_summary">בחר ערכת נושא מועדפת</string>
     <string name="new_user_signup">רשומים? להתחברות</string>
 
@@ -141,5 +140,6 @@
     <string name="delivered_items">פריטים שנמסרו</string>
     <string name="welcome">ברוך הבא</string>
     <string name="sign_up_to_start_enjoy_stuff">הירשם כדי להתחיל להנות</string>
+    <string name="pref_theme_title">ערכת נושא</string>
 
 </resources>
