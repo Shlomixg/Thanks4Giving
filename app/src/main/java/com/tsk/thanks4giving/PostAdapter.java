@@ -142,7 +142,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         .build()
                 ).build();
 
-        users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+        users.child(post.userUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -243,7 +243,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 if (currentUser != null) {
                     final String currUserUid = currentUser.getUid(),
                             currUserName = currentUser.getDisplayName();
-                    likes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    likes.child(postID).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(currUserUid)) {
@@ -274,7 +274,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.ribbon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                posts.child(postID).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Post post = snapshot.getValue(Post.class);
