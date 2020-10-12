@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -396,6 +397,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
         int low = 10, high = 1000000, result = r.nextInt(high - low) + low;
         file = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "" + result + ".jpg"); // eran
         imageUri = FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".provider", file);
+        Toast.makeText(getContext(), imageUri.toString(), Toast.LENGTH_SHORT).show();
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // eran
         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -472,6 +474,7 @@ public class NewPostFragment extends Fragment implements LocationListener, Adapt
 
         if (requestCode == PICK_IMAGE && resultCode == getActivity().RESULT_OK) {
             imageUri = data.getData();
+            Toast.makeText(getContext(), imageUri.toString(), Toast.LENGTH_SHORT).show();
             image.setImageURI(imageUri);
             uploadPicture();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {

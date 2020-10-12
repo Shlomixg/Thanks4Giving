@@ -145,6 +145,8 @@ public class RecyclerViewFragment extends Fragment {
                 @Override
                 public void onRefresh() {
                     refreshLayout.setRefreshing(false);
+                    Toast.makeText(getContext(), "her", Toast.LENGTH_SHORT).show(); // TODO: Delete
+
                 }
             });
             mUserUid = getArguments().getString(ARG_USER_UID);
@@ -155,7 +157,6 @@ public class RecyclerViewFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot ds : snapshot.getChildren()) {
                         Post post = ds.getValue(Post.class);
-                        Toast.makeText(getContext(), post.getAddress(), Toast.LENGTH_SHORT).show(); // TODO: Delete
                         if (post.getUserUid().equals(mUserUid))
                             postList.add(post);
                         adapter.notifyDataSetChanged();
