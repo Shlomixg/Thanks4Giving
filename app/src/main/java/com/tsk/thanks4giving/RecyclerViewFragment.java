@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -130,6 +133,7 @@ public class RecyclerViewFragment extends Fragment {
                 postFragment.setArguments(bundle);
                 transaction.replace(R.id.flContent, postFragment, POST_FRAG).addToBackStack(null).commit();
             }
+
             @Override
             public void onLongClickListener(int pos, View v) {
             }
@@ -154,13 +158,16 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
+                adapter.notifyDataSetChanged();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    if (post.getUserUid().equals(mUserUid)) postList.add(post);
-                    Collections.reverse(postList);
-                    adapter.notifyDataSetChanged();
+                    if (post != null && post.userUid.equals(mUserUid))
+                        postList.add(post);
                 }
+                Collections.reverse(postList);
+                adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -172,14 +179,15 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
+                adapter.notifyDataSetChanged();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    postList.add(post);
-                    adapter.notifyDataSetChanged();
-                    Collections.reverse(postList);
-                    adapter.notifyDataSetChanged();
+                    if (post != null) postList.add(post);
                 }
+                Collections.reverse(postList);
+                adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -191,35 +199,39 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
+                adapter.notifyDataSetChanged();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Post post = ds.getValue(Post.class);
-                    String coordinates = post.coordinates;
-                    String a[] = coordinates.split(",");
-                    Location location2 = new Location("dummyProvider");
-                    location2.setLatitude(Double.parseDouble(a[0]));
-                    location2.setLongitude(Double.parseDouble(a[1]));
-                    word = word.toLowerCase();
+                    if (post != null) {
+                        String coordinates = post.coordinates;
+                        String a[] = coordinates.split(",");
+                        Location location2 = new Location("dummyProvider");
+                        location2.setLatitude(Double.parseDouble(a[0]));
+                        location2.setLongitude(Double.parseDouble(a[1]));
+                        word = word.toLowerCase();
 
-                    String desc = post.desc.toLowerCase();
-                    String title = post.title.toLowerCase();
+                        String desc = post.desc.toLowerCase();
+                        String title = post.title.toLowerCase();
 
-                    Log.d("category", "Category: " + category);
-                    Log.d("category", "Post Category: " + post.category);
+                        Log.d("category", "Category: " + category);
+                        Log.d("category", "Post Category: " + post.category);
 
-                    // if post contain search
-                    if (desc.contains(word) || title.contains(word)) {
-                        if (post.category == category || category == -1) {
-                            if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
-                                if (location_original.distanceTo(location2) <= distance)
+                        // if post contain search
+                        if (desc.contains(word) || title.contains(word)) {
+                            if (post.category == category || category == -1) {
+                                if (location_original.getLatitude() != 0.0 && location_original.getLongitude() != 0.0) {
+                                    if (location_original.distanceTo(location2) <= distance)
+                                        postList.add(post);
+                                } else
                                     postList.add(post);
-                            } else
-                                postList.add(post);
+                            }
                         }
                     }
                 }
                 Collections.reverse(postList);
                 adapter.notifyDataSetChanged();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
