@@ -28,16 +28,21 @@ import com.google.firebase.database.ValueEventListener;
 import com.skydoves.androidribbon.RibbonLayout;
 import com.skydoves.androidribbon.RibbonView;
 import com.skydoves.androidribbon.ShimmerRibbonView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder> {
 
-    private ArrayList<Post> list;
+    private List<Post> postList;
     private PostClickListener listener;
+
     final String PROFILE_FRAG = "Profile Fragment";
     final String NEW_POST_FRAG = "New Post Fragment";
-    Post post;
     int category;
 
     final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -46,7 +51,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     final DatabaseReference posts = database.getReference().child("posts");
     final DatabaseReference comments = database.getReference().child("comments");
     final DatabaseReference likes = database.getReference().child("likes");
-    Drawable like, like_fill, delivered;
+    Drawable like, like_fill;
 
     interface PostClickListener {
         void onClickListener(int pos, View v);
@@ -57,8 +62,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         this.listener = listener;
     }
 
-    public PostAdapter(ArrayList<Post> postList) {
-        this.list = postList;
+    public PostAdapter(List<Post> postList) {
+        this.postList = postList;
     }
 
     public class PostCardHolder extends RecyclerView.ViewHolder {
@@ -72,19 +77,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
         public PostCardHolder(@NonNull View itemView) {
             super(itemView);
-            post_image_view = itemView.findViewById(R.id.post_item_img);
-            profile_photo_civ = itemView.findViewById(R.id.post_profile_img);
-            itemTitleTV = itemView.findViewById(R.id.post_item_title);
-            itemCategoryTV = itemView.findViewById(R.id.post_item_category);
-            itemDescTV = itemView.findViewById(R.id.post_item_desc);
-            itemDateTV = itemView.findViewById(R.id.post_date);
-            userNameTV = itemView.findViewById(R.id.post_user_name);
-            like_btn = itemView.findViewById(R.id.post_like_btn);
-            comment_btn = itemView.findViewById(R.id.post_comment_btn);
-            ribbon_btn = itemView.findViewById(R.id.ribbon_btn);
-            edit_btn = itemView.findViewById(R.id.post_edit_btn);
-            ribbonBtnWrapper = itemView.findViewById(R.id.ribbon_wrapper);
-            ribbonLayout = itemView.findViewById(R.id.post_ribbon_layout);
+            post_image_view = (ImageView) itemView.findViewById(R.id.post_item_img);
+            profile_photo_civ = (CircleImageView) itemView.findViewById(R.id.post_profile_img);
+            itemTitleTV = (TextView) itemView.findViewById(R.id.post_item_title);
+            itemCategoryTV = (TextView) itemView.findViewById(R.id.post_item_category);
+            itemDescTV = (TextView) itemView.findViewById(R.id.post_item_desc);
+            itemDateTV = (TextView) itemView.findViewById(R.id.post_date);
+            userNameTV = (TextView) itemView.findViewById(R.id.post_user_name);
+            like_btn = (MaterialButton) itemView.findViewById(R.id.post_like_btn);
+            comment_btn = (MaterialButton) itemView.findViewById(R.id.post_comment_btn);
+            ribbon_btn = (MaterialButton) itemView.findViewById(R.id.ribbon_btn);
+            edit_btn = (MaterialButton) itemView.findViewById(R.id.post_edit_btn);
+            ribbonBtnWrapper = (LinearLayout) itemView.findViewById(R.id.ribbon_wrapper);
+            ribbonLayout = (RibbonLayout) itemView.findViewById(R.id.post_ribbon_layout);
+
+            like = ResourcesCompat.getDrawable(itemView.getResources(), R.drawable.ic_like, null);
+            like_fill = ResourcesCompat.getDrawable(itemView.getResources(), R.drawable.ic_like_fill, null);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,7 +101,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         listener.onClickListener(getAdapterPosition(), v);
                 }
             });
-
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -113,15 +120,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final PostCardHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final PostCardHolder holder, int position) {
+        holder.setIsRecyclable(false);
+
         final Context context = holder.itemView.getContext();
-
-        like = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like, null);
-        like_fill = ResourcesCompat.getDrawable(holder.itemView.getResources(), R.drawable.ic_like_fill, null);
-
-        post = list.get(holder.getAdapterPosition());
-        final String postID = post.postID, userID = post.userUid;
-        final int status = post.status;
+        final Post post = postList.get(holder.getAdapterPosition());
 
         final ShimmerRibbonView ribbonView = new ShimmerRibbonView.Builder(context)
                 .setRibbonView(new RibbonView.Builder(context)
@@ -143,6 +146,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                         .build()
                 ).build();
 
+        if (post.status == 0) {
+            holder.ribbonLayout.setRibbonBottom(ribbonView);
+        }
+
         users.child(post.userUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -156,18 +163,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("PostAdapter", "Error - User - User id: " + post.userUid);
-                Log.d("PostAdapter", "Error - User - Post id: " + postID);
-                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
         Glide.with(context).load(post.postImage).fitCenter().into(holder.post_image_view);
         if (currentUser != null && post.userUid.equals(currentUser.getUid())) {
             holder.edit_btn.setVisibility(View.VISIBLE);
-            if (status == 1) {
+            if (post.status == 1) {
                 holder.ribbonBtnWrapper.setVisibility(View.VISIBLE);
-            } else if (status == 0) {
+            } else if (post.status == 0) {
                 holder.ribbonBtnWrapper.setVisibility(View.GONE);
             }
         }
@@ -180,22 +184,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
         holder.itemDescTV.setText(post.desc);
         holder.itemDateTV.setText(post.date);
 
-        posts.child(postID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Post post = snapshot.getValue(Post.class);
-                if (post != null && post.status == 0) {
-                    holder.ribbonLayout.setRibbonBottom(ribbonView);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("PostAdapter", "Error - Ribbon - Post id: " + postID);
-                Log.d("PostAdapter", "Error: " + error);
-            }
-        });
-
-        likes.child(postID).addValueEventListener(new ValueEventListener() {
+        likes.child(post.postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int size = (int) snapshot.getChildrenCount();
@@ -205,12 +194,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("PostAdapter", "Error - Likes - Post id: " + postID);
-                Log.d("PostAdapter", "Error: " + error);
+
             }
         });
 
-        comments.child(postID).addValueEventListener(new ValueEventListener() {
+        comments.child(post.postID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int size = (int) snapshot.getChildrenCount();
@@ -218,8 +206,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("PostAdapter", "Error - Comments - Post id: " + postID);
-                Log.d("PostAdapter", "Error: " + error);
             }
         });
 
@@ -228,7 +214,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) context;
                 Bundle bundle = new Bundle();
-                bundle.putString("userUid", userID);
+                bundle.putString("userUid", post.userUid);
                 ProfileFragment fragment = new ProfileFragment();
                 fragment.setArguments(bundle);
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, PROFILE_FRAG).addToBackStack(null).commit();
@@ -240,7 +226,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) context;
                 Bundle bundle = new Bundle();
-                bundle.putString("postID", postID);
+                bundle.putString("postID", post.postID);
                 NewPostFragment fragment = new NewPostFragment();
                 fragment.setArguments(bundle);
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.flContent, fragment, NEW_POST_FRAG).addToBackStack(null).commit();
@@ -253,21 +239,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
                 if (currentUser != null) {
                     final String currUserUid = currentUser.getUid(),
                             currUserName = currentUser.getDisplayName();
-                    likes.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    likes.child(post.postID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.hasChild(currUserUid)) {
-                                likes.child(postID).child(currUserUid).removeValue();
+                                likes.child(post.postID).child(currUserUid).removeValue();
                                 holder.like_btn.setIcon(like);
                             } else {
-                                likes.child(postID).child(currUserUid).setValue(currUserName);
+                                likes.child(post.postID).child(currUserUid).setValue(currUserName);
                                 holder.like_btn.setIcon(like_fill);
                             }
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            Log.d("PostAdapter", "Error - Like Button - Post id: " + postID);
-                            Log.d("PostAdapter", "Error: " + error);
                         }
                     });
                 } else {
@@ -276,29 +260,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
             }
         });
 
-        holder.comment_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                // TODO: Open comment edit text or delete this
-            }
-        });
-
         holder.ribbon_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                posts.child(postID).addListenerForSingleValueEvent(new ValueEventListener() {
+                posts.child(post.postID).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Post post = snapshot.getValue(Post.class);
                         if (post != null && post.status == 1) {
                             holder.ribbonBtnWrapper.setVisibility(View.GONE);
-                            posts.child(postID).child("status").setValue(0);
+                            posts.child(post.postID).child("status").setValue(0);
                         }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.d("PostAdapter", "Error - Ribbon Button - Post id: " + postID);
-                        Log.d("PostAdapter", "Error: " + error);
                     }
                 });
             }
@@ -307,6 +282,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostCardHolder
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return postList.size();
     }
 }

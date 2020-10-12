@@ -72,10 +72,11 @@ public class RecyclerViewFragment extends Fragment {
         recycler = rootView.findViewById(R.id.recycler);
         search_fab = rootView.findViewById(R.id.search_floating);
 
-        adapter = new PostAdapter(postList);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new PostAdapter(postList);
         recycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         // Show all posts
         if (getArguments() == null) {
@@ -104,6 +105,7 @@ public class RecyclerViewFragment extends Fragment {
                 }
             });
         }
+
         // show filtered posts
         else if (getArguments().getInt("flag") == 2) {
             word = getArguments().getString("keyword");
@@ -195,6 +197,7 @@ public class RecyclerViewFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+
     }
 
     private void filterPosts() {
