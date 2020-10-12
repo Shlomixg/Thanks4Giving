@@ -20,7 +20,7 @@ public class IntroActivity extends AppIntro {
         addSlide(AppIntroFragment.newInstance(getString(R.string.second_slide_title), getString(R.string.second_slide_desc),
                 R.drawable.second_slide, Color.CYAN, Color.BLACK, Color.BLACK));
         addSlide(AppIntroFragment.newInstance(getString(R.string.third_slide_title), getString(R.string.third_slide_desc),
-                R.drawable.third_slide, Color.WHITE, Color.BLACK, Color.BLACK));
+                R.drawable.third_slide, Color.LTGRAY, Color.BLACK, Color.BLACK));
         addSlide(AppIntroFragment.newInstance(getString(R.string.fourth_slide_title), getString(R.string.fourth_slide_desc),
                 R.drawable.fourth_slide, Color.CYAN, Color.BLACK, Color.BLACK));
         addSlide(AppIntroFragment.newInstance(getString(R.string.fifth_slide_title), getString(R.string.fifth_slide_desc),
